@@ -42,8 +42,10 @@ const en: Dict = {
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');
+let _v = $state(0); // 版本号，强制 Svelte 追踪变化
 
 export function t(key: string): string {
+  void _v; // 建立响应式依赖
   const dict = currentLang === 'zh-CN' ? zh : en;
   return dict[key] || key;
 }
@@ -54,6 +56,7 @@ export function getLang(): Lang {
 
 export function setLang(lang: Lang) {
   currentLang = lang;
+  _v++; // 触发所有 t() 调用点更新
   localStorage.setItem('qd-lang', lang);
   document.documentElement.setAttribute('lang', lang);
 }

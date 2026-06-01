@@ -56,9 +56,10 @@ export function getLang(): Lang {
 
 export function setLang(lang: Lang) {
   currentLang = lang;
-  _v++; // 触发所有 t() 调用点更新
+  _v++;
   localStorage.setItem('qd-lang', lang);
   document.documentElement.setAttribute('lang', lang);
+  setTimeout(() => location.reload(), 100);
 }
 
 setLang(currentLang);

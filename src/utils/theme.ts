@@ -58,7 +58,7 @@ function adaptTextColor(cssValue: string) {
   const root = document.documentElement;
 
   if (lum < 0.5) {
-    // 深色壁纸 → 浅色主题（暗色模式变量）
+    root.setAttribute('data-theme', 'dark');
     root.style.setProperty('--text-color', '#e2e8f0');
     root.style.setProperty('--card-bg', 'rgba(30, 41, 59, 0.9)');
     root.style.setProperty('--card-border', 'rgba(255,255,255,0.06)');
@@ -66,7 +66,7 @@ function adaptTextColor(cssValue: string) {
     root.style.setProperty('--input-bg', 'rgba(255,255,255,0.06)');
     document.body.style.color = '#e2e8f0';
   } else {
-    // 浅色壁纸 → 深色主题（亮色模式变量）
+    root.setAttribute('data-theme', 'light');
     root.style.setProperty('--text-color', '#1e293b');
     root.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.85)');
     root.style.setProperty('--card-border', 'rgba(0,0,0,0.06)');

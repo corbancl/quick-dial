@@ -19,6 +19,13 @@
   let isEdit = $state(false);
   let error = $state('');
 
+  // 预填充时自动获取 favicon（右键菜单场景）
+  $effect(() => {
+    if (url && !icon) {
+      fetchFavicon(url);
+    }
+  });
+
   // 外部调用此函数来填入编辑数据，避免 prop 对象引用问题
   export function fillEditData(data: { title: string; url: string; icon: string; groupId: string }) {
     title = data.title || '';

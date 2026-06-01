@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Quick Dial - 呲啦起始页",
+  "version": "1.0.3",
+  "version_name": "1.0.3",
+  "description": "极简无广告浏览器新标签页，支持自定义导航、多引擎搜索、天气农历、壁纸主题。替代原生标签页的最佳选择。",
+  "author": "Quick Dial",
+  "homepage_url": "https://www.cilacila.cn",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "action": {
+    "default_icon": {
+      "16": "js.png",
+      "48": "js.png",
+      "128": "js.png"
+    },
+    "default_title": "Quick Dial"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://api.ruseo.cn/*",
+    "https://sync.ruseo.cn/*",
+    "https://picsum.photos/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://api.ruseo.cn https://sync.ruseo.cn https://picsum.photos"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "js.png",
+    "48": "js.png",
+    "128": "js.png"
+  }
+}

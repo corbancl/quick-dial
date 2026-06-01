@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# Pro 后端代码（闭源）
+api/
+BUSINESS_PLAN.md

@@ -103,7 +103,7 @@ import { t } from '../utils/i18n.svelte';
   }
 
   function formatTime(iso: string | null): string {
-    if (!iso) return '从未同步';
+    if (!iso) return t('sync.never');
     try {
       const d = new Date(iso);
       return d.toLocaleString('zh-CN');

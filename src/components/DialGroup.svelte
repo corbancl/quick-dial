@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import type { DialItem, DialGroup as DialGroupType } from '../types';
   import DialCard from './DialCard.svelte';
 

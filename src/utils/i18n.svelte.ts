@@ -23,6 +23,9 @@ const zh: Dict = {
   'recent.title': '最近访问','recent.empty': '暂无最近访问',
   'dial.empty': '点击 + 添加第一个导航',
   'group.limit': '{current}/{max} 个分组 · Pro 无限',
+  'group.add': '添加分组','group.done': '完成','group.addBtn': '添加',
+  'wp.local': '上传本地图片','wp.url': '输入图片链接','wp.apply': '应用',
+  'sync.never': '从未同步',
 };
 
 const en: Dict = {
@@ -46,6 +49,9 @@ const en: Dict = {
   'recent.title': 'Recent Sites','recent.empty': 'No recent sites',
   'dial.empty': 'Click + to add your first dial',
   'group.limit': '{current}/{max} groups · Pro unlimited',
+  'group.add': 'Add Group','group.done': 'Done','group.addBtn': 'Add',
+  'wp.local': 'Upload Image','wp.url': 'Image URL','wp.apply': 'Apply',
+  'sync.never': 'Never synced',
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');

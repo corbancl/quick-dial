@@ -115,7 +115,7 @@ import { t } from '../utils/i18n.svelte';
         placeholder="输入分组名称"
         onkeydown={(e) => { if (e.key === 'Enter') handleAddGroup(); }}
       />
-      <button class="btn btn-primary" onclick={handleAddGroup}>添加</button>
+      <button class="btn btn-primary" onclick={handleAddGroup}>{t('group.addBtn')}</button>
     </div>
 
     <!-- 分组列表 -->
@@ -161,7 +161,7 @@ import { t } from '../utils/i18n.svelte';
     {/if}
 
     <div class="form-actions">
-      <button class="btn btn-secondary" onclick={oncancel}>完成</button>
+      <button class="btn btn-secondary" onclick={oncancel}>{t('group.done')}</button>
     </div>
   </div>
 </div>

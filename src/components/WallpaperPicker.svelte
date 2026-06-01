@@ -206,10 +206,10 @@ import { t } from '../utils/i18n.svelte';
           class="form-input"
           type="text"
           bind:value={customUrl}
-          placeholder="输入图片链接..."
+          placeholder={t('wp.url') + '...'}
           onkeydown={(e) => { if (e.key === 'Enter') handleCustomUrl(); }}
         />
-        <button class="btn btn-secondary" onclick={handleCustomUrl}>应用</button>
+        <button class="btn btn-secondary" onclick={handleCustomUrl}>{t('wp.apply')}</button>
       </div>
     {/if}
 

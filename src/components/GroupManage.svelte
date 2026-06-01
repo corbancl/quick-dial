@@ -55,7 +55,7 @@ import { t } from '../utils/i18n.svelte';
     const group = state.groups.find(g => g.id === id);
     const dialCount = state.items.filter(d => d.groupId === id).length;
     const msg = group
-      ? `确定删除分组"${group.name}"？${dialCount > 0 ? `组内 ${dialCount} 个导航也会被删除。` : ''}`
+      ? `${t('common.confirmDelete')}"${t(group.name)}"？${dialCount > 0 ? `${dialCount} 个导航也会被删除。` : ''}`
       : '确定删除该分组？';
 
     if (confirm(msg)) {

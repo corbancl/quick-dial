@@ -105,7 +105,7 @@ import { t } from '../utils/i18n.svelte';
         <label class="form-label" for="dial-group">{t('dial.group')}</label>
         <select id="dial-group" class="form-select" bind:value={groupId}>
           {#each getDialsState().groups as g}
-            <option value={g.id}>{g.name}</option>
+            <option value={g.id}>{t(g.name)}</option>
           {/each}
         </select>
       </div>

@@ -33,6 +33,8 @@ const zh: Dict = {
   'cat.common': '常用','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
   'pro.cssPlaceholder': '/* 在此输入自定义 CSS */',
   'icon.customUrl': '自定义图标 URL',
+  // Default group names (stored in data, translated at render)
+  '常用': '常用',
 };
 
 const en: Dict = {
@@ -66,6 +68,7 @@ const en: Dict = {
   'cat.common': 'Common','cat.social': 'Social','cat.dev': 'Dev','cat.media': 'Media','cat.office': 'Office','cat.study': 'Study','cat.brand': 'Brand',
   'pro.cssPlaceholder': '/* Enter custom CSS here */',
   'icon.customUrl': 'Custom Icon URL',
+  '常用': 'Default',
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');

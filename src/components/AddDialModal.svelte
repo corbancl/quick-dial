@@ -71,7 +71,7 @@
   function fetchFavicon(raw: string) {
     try {
       const u = new URL(raw.startsWith('http') ? raw : `https://${raw}`);
-      icon = `https://favicon.im/${u.hostname}`;
+      icon = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(u.hostname)}`;
     } catch { /* ignore */ }
   }
 </script>

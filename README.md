@@ -1,7 +1,7 @@
 # Quick Dial · 呲啦起始页
 
 > 极简无广告浏览器新标签页 — 开源免费版  
-> Pro 增强功能：https://www.cilacila.cn
+> 在线使用：https://cilacila.cn · Pro 增强：https://www.cilacila.cn
 
 ## 特性
 

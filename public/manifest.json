@@ -16,14 +16,15 @@
     "default_title": "Quick Dial"
   },
   "minimum_chrome_version": "88",
-  "permissions": ["storage"],
+  "permissions": ["storage", "contextMenus"],
   "host_permissions": [
     "https://api.ruseo.cn/*",
     "https://sync.ruseo.cn/*",
-    "https://picsum.photos/*"
+    "https://picsum.photos/*",
+    "https://api.qrserver.com/*"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://api.ruseo.cn https://sync.ruseo.cn https://picsum.photos"
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://api.qrserver.com https://api.ruseo.cn https://sync.ruseo.cn https://picsum.photos data:; connect-src 'self' https://api.ruseo.cn https://sync.ruseo.cn https://picsum.photos"
   },
   "background": {
     "service_worker": "background.js"

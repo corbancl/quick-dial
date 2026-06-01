@@ -6,12 +6,14 @@
   interface Props {
     onsave: (data: { title: string; url: string; icon: string; groupId: string }) => void;
     oncancel: () => void;
+    prefillTitle?: string;
+    prefillUrl?: string;
   }
 
-  let { onsave, oncancel }: Props = $props();
+  let { onsave, oncancel, prefillTitle = '', prefillUrl = '' }: Props = $props();
 
-  let title = $state('');
-  let url = $state('');
+  let title = $state(prefillTitle);
+  let url = $state(prefillUrl);
   let icon = $state('');
   let groupId = $state('');
   let isEdit = $state(false);
@@ -50,7 +52,7 @@
 
   function handleUrlPaste(e: ClipboardEvent) {
     const pasted = e.clipboardData?.getData('text') || '';
-    if (!pasted || title.trim()) return; // 已有标题则不覆盖
+    if (!pasted || title.trim()) return;
     try {
       const u = new URL(pasted.startsWith('http') ? pasted : `https://${pasted}`);
       const host = u.hostname.replace(/^www\./, '');
@@ -58,23 +60,19 @@
       if (parts.length >= 2) {
         title = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
       }
-      // 根据域名推荐图标
-      const domainIcons: Record<string, string> = {
-        'github.com': 'fa-github',
-        'bilibili.com': '📺',
-        'zhihu.com': '💡',
-        'google.com': 'fa-google',
-        'bing.com': '🔎',
-        'baidu.com': '🔍',
-        'youtube.com': 'fa-youtube',
-        'twitter.com': 'fa-x-twitter',
-        'stackoverflow.com': 'fa-stack-overflow',
-        'npmjs.com': '📦',
-      };
-      if (!icon && domainIcons[host]) {
-        icon = domainIcons[host];
-      }
-    } catch { /* ignore invalid URLs */ }
+      if (!icon) fetchFavicon(pasted);
+    } catch { /* ignore */ }
+  }
+
+  function handleUrlBlur() {
+    if (url.trim() && !icon) fetchFavicon(url.trim());
+  }
+
+  function fetchFavicon(raw: string) {
+    try {
+      const u = new URL(raw.startsWith('http') ? raw : `https://${raw}`);
+      icon = `https://favicon.im/${u.hostname}`;
+    } catch { /* ignore */ }
   }
 </script>
 
@@ -88,7 +86,7 @@
       </div>
       <div class="form-group">
         <label class="form-label" for="dial-url">网站链接</label>
-        <input id="dial-url" class="form-input" type="text" bind:value={url} placeholder="粘贴链接自动识别名称" onpaste={handleUrlPaste} required autocomplete="url" />
+        <input id="dial-url" class="form-input" type="text" bind:value={url} placeholder="粘贴链接自动识别名称" onpaste={handleUrlPaste} onblur={handleUrlBlur} required autocomplete="url" />
       </div>
       <div class="form-group">
         <!-- svelte-ignore a11y_label_has_associated_control -->

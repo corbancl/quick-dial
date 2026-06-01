@@ -9,6 +9,7 @@
   import WallpaperPicker from './components/WallpaperPicker.svelte';
   import ImportExport from './components/ImportExport.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
+  import AddDialModal from './components/AddDialModal.svelte';
   import StatisticsPanel from './components/StatisticsPanel.svelte';
   import SyncPanel from './components/SyncPanel.svelte';
   import SubscribePanel from './components/SubscribePanel.svelte';
@@ -21,9 +22,12 @@
   import { initRecentSites, getRecentSites } from './stores/recentSites.svelte';
   import { getIsPro } from './stores/subscription.svelte';
   import { isLoggedIn } from './utils/sync';
+  import { checkSubscription } from './utils/payment';
+  import { showToast } from './utils/toast.svelte';
   import { checkStorageSupport, loadData, saveData } from './utils/storage';
   import { registerShortcut, focusSearch } from './utils/keyboard';
   import { getToasts, dismissToast } from './utils/toast.svelte';
+  import { getContextAdd } from './utils/contextMenu';
   import type { AppData } from './types';
 
   const VERSION = 'v1.0.3';
@@ -35,7 +39,37 @@
   let showSync = $state(false);
   let showSubscribe = $state(false);
   let showHelp = $state(false);
+  let showAddDial = $state(false);
+  let addDialPrefill = $state({ title: '', url: '' });
   let cardExpanded = $state(false);
+
+  // 轮询右键菜单添加（扩展环境）
+  $effect(() => {
+    const interval = setInterval(async () => {
+      const data = await getContextAdd();
+      if (data) {
+        addDialPrefill = { title: data.title, url: data.url };
+        showAddDial = true;
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  });
+
+  // Pro 过期提醒（每24小时检查一次）
+  let proExpiryChecked = $state(false);
+  $effect(() => {
+    if (proExpiryChecked || !getIsPro() || !isLoggedIn()) return;
+    proxied: {
+      checkSubscription().then(s => {
+        proExpiryChecked = true;
+        if (!s.expireAt) return; // 终身
+        const daysLeft = Math.ceil((new Date(s.expireAt).getTime() - Date.now()) / 86400000);
+        if (daysLeft <= 7 && daysLeft > 0) {
+          showToast(`Pro 将于 ${daysLeft} 天后到期，请及时续费`, daysLeft <= 3 ? 'error' : 'info', 5000);
+        }
+      });
+    }
+  });
 
   // 初始化
   if (!checkStorageSupport()) {
@@ -75,6 +109,19 @@
   }
 
   // 键盘快捷键
+  // 保存右键菜单添加的导航
+  function handleDialSave(data: { title: string; url: string; icon: string; groupId: string }) {
+    addDial({
+      title: data.title,
+      url: data.url,
+      icon: data.icon,
+      groupId: data.groupId || ensureDefaultGroup(),
+      sortOrder: getDialsState().items.length,
+    });
+    showAddDial = false;
+    addDialPrefill = { title: '', url: '' };
+  }
+
   registerShortcut('k', focusSearch, '聚焦搜索', { ctrl: true });
   registerShortcut(',', () => showSettings = true, '打开设置', { ctrl: true });
   registerShortcut('b', () => showWallpaperPicker = true, '壁纸设置', { ctrl: true, shift: true });
@@ -218,6 +265,15 @@
 
 {#if showHelp}
   <HelpPanel onclose={() => showHelp = false} />
+{/if}
+
+{#if showAddDial}
+  <AddDialModal
+    onsave={handleDialSave}
+    oncancel={() => showAddDial = false}
+    prefillTitle={addDialPrefill.title}
+    prefillUrl={addDialPrefill.url}
+  />
 {/if}
 
 <style>

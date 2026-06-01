@@ -117,10 +117,10 @@ import { t } from '../utils/i18n.svelte';
 
     {#if isLoggedIn()}
       <!-- 已{t('sync.login')} -->
-      <p class="sync-notice">💡 数据不会自动同步，点按钮手动上传或下载</p>
+      <p class="sync-notice">💡 {t('sync.manual')}</p>
       <div class="sync-status">
         <span class="sync-user">👤 {getUsername()}</span>
-        <span class="sync-time">同步时间：{formatTime(getLastSyncTime())}</span>
+        <span class="sync-time">{t('sync.syncTime')}：{formatTime(getLastSyncTime())}</span>
       </div>
 
       {#if getIsPro()}

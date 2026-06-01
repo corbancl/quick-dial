@@ -24,8 +24,13 @@ const zh: Dict = {
   'dial.empty': '点击 + 添加第一个导航',
   'group.limit': '{current}/{max} 个分组 · Pro 无限',
   'group.add': '添加分组','group.done': '完成','group.addBtn': '添加',
-  'wp.local': '上传本地图片','wp.url': '输入图片链接','wp.apply': '应用',
+  'wp.local': '上传本地图片','wp.url': '输入图片链接','wp.apply': '应用','wp.placeholder': '输入图片链接...',
   'sync.never': '从未同步',
+  'dial.addToGroup': '添加到本组',
+  'pro.monthly': '月度会员','pro.yearly': '年度会员','pro.lifetime': '终身会员','pro.expire': '到期：',
+  'settings.engine': '默认搜索引擎',
+  'pro.customFooterEg': '例如：我的公司',
+  'cat.common': '常用','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
 };
 
 const en: Dict = {
@@ -50,8 +55,13 @@ const en: Dict = {
   'dial.empty': 'Click + to add your first dial',
   'group.limit': '{current}/{max} groups · Pro unlimited',
   'group.add': 'Add Group','group.done': 'Done','group.addBtn': 'Add',
-  'wp.local': 'Upload Image','wp.url': 'Image URL','wp.apply': 'Apply',
+  'wp.local': 'Upload Image','wp.url': 'Image URL','wp.apply': 'Apply','wp.placeholder': 'Paste image URL...',
   'sync.never': 'Never synced',
+  'dial.addToGroup': 'Add to Group',
+  'pro.monthly': 'Monthly','pro.yearly': 'Yearly','pro.lifetime': 'Lifetime','pro.expire': 'Expires: ',
+  'settings.engine': 'Default Engine',
+  'pro.customFooterEg': 'e.g. My Company',
+  'cat.common': 'Common','cat.social': 'Social','cat.dev': 'Dev','cat.media': 'Media','cat.office': 'Office','cat.study': 'Study','cat.brand': 'Brand',
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');

@@ -44,7 +44,7 @@ import { t } from '../utils/i18n.svelte';
     <span class="group-name">{group.name}</span>
     <span class="group-count">{dials.length}</span>
     <div class="group-actions">
-      <button class="btn-icon-sm" onclick={() => onadd(group.id)} title="添加到本组" aria-label="添加导航">
+      <button class="btn-icon-sm" onclick={() => onadd(group.id)} title={t('dial.addToGroup')} aria-label={t('dial.add')}>
         <i class="fa-solid fa-plus"></i>
       </button>
     </div>

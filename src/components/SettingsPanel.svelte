@@ -43,7 +43,9 @@
   // 订阅详细信息
   let subPlan = $state('');
   let subExpire = $state('');
-  let subPlanLabel = $derived(({monthly:'月度', yearly:'年度', lifetime:'终身', free:'免费'} as Record<string,string>)[subPlan] || subPlan || 'Pro');
+  function pn(p: string) {
+    return {monthly: t('pro.monthly'), yearly: t('pro.yearly'), lifetime: t('pro.lifetime'), free: 'Free'}[p] || p;
+  };
 
   $effect(() => {
     if (getIsPro()) {
@@ -88,20 +90,20 @@
 
 <div class="modal-overlay" bind:this={overlayEl}>
   <div class="modal-content" bind:this={contentEl}>
-    <h3 class="modal-title">设置</h3>
+    <h3 class="modal-title">{t('settings.title')}</h3>
 
     <div class="settings-list">
       <!-- 主题 -->
       <div class="setting-item">
         <div class="setting-info">
-          <span class="setting-label">外观主题</span>
-          <span class="setting-hint">壁纸自动适配深浅模式</span>
+          <span class="setting-label">{t('settings.theme')}</span>
+          <span class="setting-hint">{t('settings.themeHint')}</span>
         </div>
       </div>
 
       <!-- 搜索引擎 -->
       <div class="setting-item">
-        <label class="setting-label" for="search-engine">默认搜索引擎</label>
+        <label class="setting-label" for="search-engine">{t('settings.engine')}</label>
         <select id="search-engine" class="form-select" value={getSettings().searchEngine} onchange={handleSearchEngineChange}>
           <option value="google">Google</option>
           <option value="baidu">百度</option>
@@ -114,7 +116,7 @@
 
       <!-- 时钟样式 -->
       <div class="setting-item">
-        <label class="setting-label" for="clock-style">时钟样式</label>
+        <label class="setting-label" for="clock-style">{t('clock.styles')}</label>
         <select id="clock-style" class="form-select" value={getSettings().clockStyle} onchange={handleClockStyleChange}>
           <option value="digital">{t('clock.digital')}</option>
           <option value="minimal">{t('clock.minimal')}</option>
@@ -136,7 +138,7 @@
 
       <!-- 显示日期 -->
       <div class="setting-item">
-        <label class="setting-label" for="show-date">显示日期</label>
+        <label class="setting-label" for="show-date">{t('settings.showDate')}</label>
         <label class="toggle">
           <input id="show-date" type="checkbox" checked={getSettings().showDate} onchange={(e) => setShowDate((e.target as HTMLInputElement).checked)} />
           <span class="toggle-slider"></span>
@@ -145,7 +147,7 @@
 
       <!-- 显示星期 -->
       <div class="setting-item">
-        <label class="setting-label" for="show-weekday">显示星期</label>
+        <label class="setting-label" for="show-weekday">{t('settings.showWeekday')}</label>
         <label class="toggle">
           <input id="show-weekday" type="checkbox" checked={getSettings().showWeekday} onchange={(e) => setShowWeekday((e.target as HTMLInputElement).checked)} />
           <span class="toggle-slider"></span>
@@ -154,7 +156,7 @@
 
       <!-- 显示最近访问 -->
       <div class="setting-item">
-        <label class="setting-label" for="show-recent">显示最近访问</label>
+        <label class="setting-label" for="show-recent">{t('settings.showRecent')}</label>
         <label class="toggle">
           <input id="show-recent" type="checkbox" checked={getSettings().showRecentSites} onchange={(e) => setShowRecentSites((e.target as HTMLInputElement).checked)} />
           <span class="toggle-slider"></span>
@@ -164,7 +166,7 @@
       <!-- 最近访问数量 -->
       {#if getSettings().showRecentSites}
         <div class="setting-item">
-          <label class="setting-label" for="recent-count">最近访问数量</label>
+          <label class="setting-label" for="recent-count">{t('settings.recentCount')}</label>
           <input
             id="recent-count"
             class="form-input"
@@ -180,7 +182,7 @@
 
       <!-- 新标签页打开 -->
       <div class="setting-item">
-        <label class="setting-label" for="open-new-tab">新标签页打开链接</label>
+        <label class="setting-label" for="open-new-tab">{t('settings.newTab')}</label>
         <label class="toggle">
           <input id="open-new-tab" type="checkbox" checked={getSettings().openInNewTab} onchange={(e) => setOpenInNewTab((e.target as HTMLInputElement).checked)} />
           <span class="toggle-slider"></span>
@@ -193,9 +195,9 @@
       <div class="card-section custom-css-card">
         <div class="card-header">
           <span class="card-icon">🎨</span>
-          <span class="card-title">自定义 CSS</span>
+          <span class="card-title">{t('pro.customCss')}</span>
         </div>
-        <p class="card-desc">注入自定义样式，实时生效</p>
+        <p class="card-desc">{t('pro.customCssDesc')}</p>
         <textarea id="custom-css" class="custom-css-input"
           rows="6"
           value={customCss}
@@ -208,25 +210,25 @@
     <!-- Pro 订阅 -->
     <div class="pro-section">
       <div class="pro-header">
-        <span class="pro-title">Quick Dial Pro</span>
+        <span class="pro-title">{t('pro.title')}</span>
         {#if getIsPro()}
-          <span class="pro-status active">已激活</span>
+          <span class="pro-status active">{t('pro.active')}</span>
         {:else}
-          <span class="pro-status">未激活</span>
+          <span class="pro-status">{t('pro.inactive')}</span>
         {/if}
       </div>
 
       <!-- Pro 已激活：订阅信息 + 续费 -->
       {#if getIsPro()}
         <div class="sub-info">
-          <div class="sub-plan-name">{subPlanLabel}会员</div>
+          <div class="sub-plan-name">{pn(subPlan)}</div>
           {#if subExpire}
-            <div class="sub-expire">到期：{subExpire.slice(0, 10)}</div>
+            <div class="sub-expire">{t('pro.expire')}{subExpire.slice(0, 10)}</div>
           {:else}
             <div class="sub-expire lifetime">终身有效</div>
           {/if}
           {#if subPlan !== 'lifetime' && onsubscribe}
-            <button class="btn btn-outline btn-renew" onclick={onsubscribe}>续费 / 升级</button>
+            <button class="btn btn-outline btn-renew" onclick={onsubscribe}>{t('pro.renew')}</button>
           {/if}
         </div>
 
@@ -234,14 +236,14 @@
         <div class="card-section">
           <div class="card-header">
             <span class="card-icon">✏️</span>
-            <span class="card-title">自定义底部</span>
+            <span class="card-title">{t('pro.customFooter')}</span>
           </div>
-          <p class="card-desc">替换版权栏中的"cilacila.cn"</p>
+          <p class="card-desc">{t('pro.customFooterDesc')}</p>
           <div class="form-group" style="margin:0">
             <input class="form-input" id="custom-footer" type="text"
               value={localStorage.getItem('quick-dial-custom-footer') || ''}
               oninput={(e) => { localStorage.setItem('quick-dial-custom-footer', (e.target as HTMLInputElement).value); }}
-              placeholder="例如：我的公司 © 2026"
+              placeholder={t('pro.customFooterEg')}
               maxlength="40"
             />
           </div>

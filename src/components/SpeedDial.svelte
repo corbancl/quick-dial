@@ -177,10 +177,10 @@ import { t } from '../utils/i18n.svelte';
   <!-- 添加导航按钮 -->
   <div class="add-dial-row">
     <button class="btn btn-secondary" onclick={() => openAddDial()}>
-      <i class="fa-solid fa-plus"></i> 添加导航
+      <i class="fa-solid fa-plus"></i> {t('dial.add')}
     </button>
     <button class="btn btn-secondary" onclick={() => showGroupManage = true}>
-      <i class="fa-solid fa-folder-tree"></i> 管理分组
+      <i class="fa-solid fa-folder-tree"></i> {t('group.manage')}
     </button>
   </div>
 </div>

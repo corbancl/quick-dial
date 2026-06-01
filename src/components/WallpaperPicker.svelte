@@ -169,7 +169,7 @@ import { t } from '../utils/i18n.svelte';
     <div class="upload-section">
       {#if getIsPro()}
         <label class="btn btn-secondary upload-btn">
-          <i class="fa-solid fa-upload"></i> 上传本地图片
+          <i class="fa-solid fa-upload"></i> {t('wp.local')}
           <input type="file" accept="image/*" onchange={handleFileUpload} hidden />
         </label>
         <button 

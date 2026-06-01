@@ -1,7 +1,14 @@
 <script lang="ts">
+  import { t } from '../utils/i18n.svelte';
+
   interface Props {
     value: string;
     onselect: (icon: string) => void;
+  }
+
+  // 分类名翻译映射
+  function cn(n: string) {
+    return ({'常用':'cat.common','社交':'cat.social','开发':'cat.dev','媒体':'cat.media','办公':'cat.office','学习':'cat.study','品牌':'cat.brand'} as Record<string,string>)[n] || n;
   }
 
   let { value, onselect }: Props = $props();
@@ -149,7 +156,7 @@
         class:active={activeCategory === cat.name}
         onclick={(e) => switchCategory(cat.name, e)}
       >
-        {cat.name}
+        {t(cn(cat.name))}
       </button>
     {/each}
   </div>

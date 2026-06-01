@@ -43,6 +43,21 @@
       return url;
     }
   }
+
+  function exportCSV() {
+    const counts = getClickCounts();
+    const rows = Object.entries(counts).sort(([,a],[,b]) => b - a);
+    let csv = '网站,点击次数\n';
+    for (const [url, count] of rows) {
+      csv += `"${url}",${count}\n`;
+    }
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'quick-dial-stats-' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
 </script>
 
 <div class="modal-overlay" bind:this={overlayEl}>
@@ -76,6 +91,7 @@
     {/if}
 
     <div class="form-actions">
+      <button class="btn btn-secondary" onclick={exportCSV}>导出 CSV</button>
       <button class="btn btn-secondary" onclick={() => { clearClickCounts(); }}>清除数据</button>
       <button class="btn btn-secondary" onclick={onclose}>关闭</button>
     </div>

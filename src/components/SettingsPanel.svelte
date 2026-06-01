@@ -219,6 +219,23 @@
             <button class="btn btn-outline btn-renew" onclick={onsubscribe}>续费 / 升级</button>
           {/if}
         </div>
+
+        <!-- 自定义底部文案 -->
+        <div class="card-section">
+          <div class="card-header">
+            <span class="card-icon">✏️</span>
+            <span class="card-title">自定义底部</span>
+          </div>
+          <p class="card-desc">替换版权栏中的"cilacila.cn"</p>
+          <div class="form-group" style="margin:0">
+            <input class="form-input" id="custom-footer" type="text"
+              value={localStorage.getItem('quick-dial-custom-footer') || ''}
+              oninput={(e) => { localStorage.setItem('quick-dial-custom-footer', (e.target as HTMLInputElement).value); }}
+              placeholder="例如：我的公司 © 2026"
+              maxlength="40"
+            />
+          </div>
+        </div>
       {:else}
         <div class="pro-features">
           <div class="pro-feature">

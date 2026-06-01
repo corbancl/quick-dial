@@ -41,6 +41,7 @@
   let showHelp = $state(false);
   let showAddDial = $state(false);
   let addDialPrefill = $state({ title: '', url: '' });
+  let customFooter = $state(localStorage.getItem('quick-dial-custom-footer') || '');
   let cardExpanded = $state(false);
 
   // 轮询右键菜单添加（扩展环境）
@@ -234,7 +235,11 @@
         <span class="footer-pro-badge">PRO</span>
       {/if}
       <span class="footer-divider"></span>
-      <a class="footer-domain" href="https://www.cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a>
+      {#if isLoggedIn() && getIsPro() && customFooter}
+        <span class="footer-custom">{customFooter}</span>
+      {:else}
+        <a class="footer-domain" href="https://www.cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a>
+      {/if}
     </div>
   </footer>
 </div>
@@ -330,6 +335,11 @@
     transition: opacity 0.2s;
   }
   .footer-domain:hover { opacity: 1; }
+
+  .footer-custom {
+    font-weight: 600;
+    opacity: 0.8;
+  }
 
   .footer-divider {
     width: 1px;

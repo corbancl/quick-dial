@@ -47,13 +47,13 @@
   function handleSubmit(e: Event) {
     e.preventDefault();
     error = '';
-    if (!title.trim()) { error = '请输入网站名称'; return; }
-    if (!url.trim()) { error = '请输入网站链接'; return; }
+    if (!title.trim()) { error = '请输入' + t('dial.name'); return; }
+    if (!url.trim()) { error = '请输入' + t('dial.url'); return; }
     let finalUrl: string;
     try {
       finalUrl = url.startsWith('http') ? url : `https://${url}`;
       new URL(finalUrl);
-    } catch { error = '请输入有效的链接'; return; }
+    } catch { error = 'URL 格式不正确'; return; }
     onsave({ title: title.trim(), url: finalUrl, icon: icon.trim(), groupId });
   }
 
@@ -85,15 +85,15 @@
 
 <div class="modal-overlay">
   <div class="modal-content">
-    <h3 class="modal-title">{isEdit ? '编辑导航' : '添加导航'}</h3>
+    <h3 class="modal-title">{isEdit ? t('dial.edit') : t('dial.add')}</h3>
     <form onsubmit={handleSubmit}>
       <div class="form-group">
-        <label class="form-label" for="dial-title">网站名称</label>
+        <label class="form-label" for="dial-title">{t('dial.name')}</label>
         <input id="dial-title" class="form-input" type="text" bind:value={title} placeholder="例如：GitHub" required autocomplete="off" />
       </div>
       <div class="form-group">
-        <label class="form-label" for="dial-url">网站链接</label>
-        <input id="dial-url" class="form-input" type="text" bind:value={url} placeholder="粘贴链接自动识别名称" onpaste={handleUrlPaste} onblur={handleUrlBlur} required autocomplete="url" />
+        <label class="form-label" for="dial-url">{t('dial.url')}</label>
+        <input id="dial-url" class="form-input" type="text" bind:value={url} placeholder="{t('dial.urlPlaceholder')}" onpaste={handleUrlPaste} onblur={handleUrlBlur} required autocomplete="url" />
       </div>
       <div class="form-group">
         <!-- svelte-ignore a11y_label_has_associated_control -->
@@ -112,8 +112,8 @@
         <div class="form-error" role="alert">{error}</div>
       {/if}
       <div class="form-actions">
-        <button type="button" class="btn btn-secondary" onclick={oncancel}>取消</button>
-        <button type="submit" class="btn btn-primary">{isEdit ? '保存' : '添加'}</button>
+        <button type="button" class="btn btn-secondary" onclick={oncancel}>{t('dial.cancel')}</button>
+        <button type="submit" class="btn btn-primary">{isEdit ? t('dial.save') : t('dial.add')}</button>
       </div>
     </form>
   </div>

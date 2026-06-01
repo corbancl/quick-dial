@@ -8,10 +8,10 @@
   }
 
   const steps: Step[] = [
-    { title: '搜索直达', desc: '在搜索框输入关键词，按 Enter 或点搜索按钮', icon: '🔍' },
-    { title: '添加导航', desc: '点右下角 + 按钮，粘贴网址自动识别名称和图标', icon: '📌' },
-    { title: '自定义壁纸', desc: '点 🎨 按钮选择 12 种精美渐变，打造专属风格', icon: '🎨' },
-    { title: '账户管理', desc: '前往官网 www.cilacila.cn 绑定邮箱、找回密码、管理订阅', icon: '🌐' },
+    { title: t('onboard.step1Title'), desc: '在搜索框输入关键词，按 Enter 或点搜索按钮', icon: '🔍' },
+    { title: t('onboard.step2Title'), desc: '点右下角 + 按钮，粘贴网址自动识别名称和图标', icon: '📌' },
+    { title: t('onboard.step3Title'), desc: '点 🎨 按钮选择 12 种精美渐变，打造专属风格', icon: '🎨' },
+    { title: t('onboard.step4Title'), desc: '前往官网 www.cilacila.cn 绑定邮箱、找回密码、管理订阅', icon: '🌐' },
   ];
 
   let show = $state(false);
@@ -56,9 +56,9 @@
       </div>
 
       <div class="onboard-actions">
-        <button class="btn btn-secondary" onclick={dismiss}>跳过</button>
+        <button class="btn btn-secondary" onclick={dismiss}>{t('onboard.skip')}</button>
         <button class="btn btn-primary" onclick={next}>
-          {current < steps.length - 1 ? '下一步' : '开始使用'}
+          {current < steps.length - 1 ? t('onboard.next') : t('onboard.start')}
         </button>
       </div>
     </div>

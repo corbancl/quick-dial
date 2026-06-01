@@ -40,7 +40,7 @@
 
   async function handleAuth() {
     if (!username.trim() || !password.trim()) {
-      status = '请填写用户名和密码';
+      status = '请填写' + t('sync.user') + '和' + t('sync.password');
       statusOk = false;
       return;
     }
@@ -49,7 +49,7 @@
     const result = isLogin ? await login(username.trim(), password) : await register(username.trim(), password);
     if (result.ok) {
       syncProStatus();
-      showToast(isLogin ? '登录成功' : '注册成功', 'success');
+      showToast(isLogin ? t('sync.login') + '成功' : t('sync.register') + '成功', 'success');
       onclose();
       return;
     }
@@ -85,7 +85,7 @@
         }
         styleEl.textContent = result.data.customCss;
       }
-      status = '已下载云端数据，3秒后自动刷新...';
+      status = t('sync.downloaded');
       statusOk = true;
       setTimeout(() => window.location.reload(), 3000);
     } else {
@@ -97,7 +97,7 @@
 
   function handleLogout() {
     logout();
-    showToast('已退出登录', 'info');
+    showToast(t('sync.logout'), 'info');
     onclose();
   }
 
@@ -112,10 +112,10 @@
 
 <div class="modal-overlay" bind:this={overlayEl}>
   <div class="modal-content" bind:this={contentEl}>
-    <h3 class="modal-title">☁️ 云同步</h3>
+    <h3 class="modal-title">☁️ {t('sync.title')}</h3>
 
     {#if isLoggedIn()}
-      <!-- 已登录 -->
+      <!-- 已{t('sync.login')} -->
       <p class="sync-notice">💡 数据不会自动同步，点按钮手动上传或下载</p>
       <div class="sync-status">
         <span class="sync-user">👤 {getUsername()}</span>
@@ -125,10 +125,10 @@
       {#if getIsPro()}
         <div class="sync-actions">
           <button class="btn btn-primary" onclick={handleUpload} disabled={loading}>
-            {loading ? '同步中...' : '📤 上传到云端'}
+            {loading ? '同步中...' : '📤 ' + t('sync.upload')}
           </button>
           <button class="btn btn-secondary" onclick={handleDownload} disabled={loading}>
-            📥 从云端下载
+            {'📥 ' + t('sync.download')}
           </button>
         </div>
       {:else}
@@ -136,32 +136,32 @@
       {/if}
 
       <div class="form-actions">
-        <button class="btn btn-secondary" onclick={handleLogout}>退出登录</button>
+        <button class="btn btn-secondary" onclick={handleLogout}>{t('sync.logout')}</button>
         <button class="btn btn-secondary" onclick={onclose}>关闭</button>
       </div>
     {:else}
-      <!-- 登录/注册 -->
+      <!-- {t('sync.login')}/{t('sync.register')} -->
       <div class="form-group">
-        <label class="form-label" for="sync-username">用户名</label>
+        <label class="form-label" for="sync-username">{t('sync.user')}</label>
         <input id="sync-username" class="form-input" type="text" bind:value={username} placeholder="至少2个字符" />
       </div>
       <div class="form-group">
-        <label class="form-label" for="sync-password">密码</label>
+        <label class="form-label" for="sync-password">{t('sync.password')}</label>
         <input id="sync-password" class="form-input" type="password" bind:value={password} placeholder="至少6位" onkeydown={(e) => e.key === 'Enter' && handleAuth()} />
       </div>
 
       <div class="form-actions">
         <button class="btn btn-primary" onclick={handleAuth} disabled={loading}>
-          {loading ? '处理中...' : (isLogin ? '登录' : '注册')}
+          {loading ? '处理中...' : (isLogin ? t('sync.login') : t('sync.register'))}
         </button>
         <button class="btn btn-secondary" onclick={onclose}>关闭</button>
       </div>
 
       <p class="auth-switch">
         {#if isLogin}
-          没有账号？<button class="link-btn" onclick={() => { isLogin = false; status = ''; }}>立即注册</button>
+          没有账号？<button class="link-btn" onclick={() => { isLogin = false; status = ''; }}>立即{t('sync.register')}</button>
         {:else}
-          已有账号？<button class="link-btn" onclick={() => { isLogin = true; status = ''; }}>去登录</button>
+          已有账号？<button class="link-btn" onclick={() => { isLogin = true; status = ''; }}>去{t('sync.login')}</button>
         {/if}
       </p>
     {/if}

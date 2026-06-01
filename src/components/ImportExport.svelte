@@ -8,6 +8,7 @@
   import { getIsPro } from '../stores/subscription.svelte';
   import { generateId } from '../types';
   import type { AppData, DialItem, DialGroup } from '../types';
+  import { t } from '../utils/i18n.svelte';
 
   interface Props {
     onclose: () => void;
@@ -187,7 +188,7 @@
   }
 
   function clearData() {
-    if (!confirm('确定清空所有数据？此操作不可恢复！')) return;
+    if (!confirm(t('ie.clear') + '？此操作不可恢复！')) return;
     initDials({ dials: [], groups: [] });
     initRecentSites([]);
     localStorage.removeItem('speed-dial-data');
@@ -198,17 +199,17 @@
 
 <div class="modal-overlay" bind:this={overlayEl}>
   <div class="modal-content" bind:this={contentEl}>
-    <h3 class="modal-title">导入 / 导出</h3>
+    <h3 class="modal-title">{t('ie.title')}</h3>
 
     <div class="ie-actions">
       <button class="btn btn-primary" onclick={exportData} disabled={isProcessing}>
-        <i class="fa-solid fa-file-export"></i> 导出备份
+        <i class="fa-solid fa-file-export"></i> {t('ie.export')}
       </button>
       <button class="btn btn-secondary" onclick={importData} disabled={isProcessing}>
-        <i class="fa-solid fa-file-import"></i> 导入备份
+        <i class="fa-solid fa-file-import"></i> {t('ie.import')}
       </button>
       <button class="btn btn-secondary" onclick={importBookmarks} disabled={isProcessing}>
-        <i class="fa-solid fa-bookmark"></i> 导入浏览器书签
+        <i class="fa-solid fa-bookmark"></i> {t('ie.importBookmarks')}
       </button>
       <p class="ie-hint">免费版最多 3 个分组，超出的文件夹自动归入"默认收藏"。<br/>开通 Pro 可创建无限分组。</p>
     </div>
@@ -221,7 +222,7 @@
 
     <div class="ie-danger">
       <button class="btn btn-danger" onclick={clearData} disabled={isProcessing}>
-        <i class="fa-solid fa-trash-can"></i> 清空所有数据
+        <i class="fa-solid fa-trash-can"></i> {t('ie.clear')}
       </button>
     </div>
 

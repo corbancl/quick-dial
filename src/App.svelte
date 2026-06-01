@@ -228,7 +228,7 @@
 
   <footer class="app-footer">
     <div class="footer-inner">
-      <span>© 2026 呲啦起始页</span>
+      <span>© 2026 {t('footer.copyright')}</span>
       <span class="footer-divider"></span>
       <span class="footer-version">{VERSION}</span>
       {#if isLoggedIn() && getIsPro()}

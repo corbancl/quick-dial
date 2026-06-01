@@ -32,7 +32,7 @@
 
 <div class="modal-overlay" bind:this={overlayEl}>
   <div class="modal-content" bind:this={contentEl}>
-    <h3 class="modal-title">⌨️ 键盘快捷键</h3>
+    <h3 class="modal-title">⌨️ {t('help.title')}</h3>
     <div class="shortcut-list">
       {#each shortcuts as s}
         <div class="shortcut-row">

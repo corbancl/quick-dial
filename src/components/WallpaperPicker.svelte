@@ -133,7 +133,7 @@
           brightness: 100,
         });
       } else {
-        alert('获取随机壁纸失败，请稍后重试');
+        alert(t('wp.random') + ' 失败，请稍后重试');
       }
     } finally {
       loadingRandom = false;
@@ -145,7 +145,7 @@
 
 <div class="modal-overlay" bind:this={overlayEl}>
   <div class="modal-content wallpaper-modal" bind:this={contentEl} role="presentation">
-    <h3 class="modal-title">壁纸设置</h3>
+    <h3 class="modal-title">{t('wp.title')}</h3>
 
     <!-- 预设壁纸 -->
     <div class="preset-grid">
@@ -179,7 +179,7 @@
           {#if loadingRandom}
             <i class="fa-solid fa-spinner fa-spin"></i> 加载中...
           {:else}
-            <i class="fa-solid fa-shuffle"></i> 随机壁纸
+            <i class="fa-solid fa-shuffle"></i> {t('wp.random')}
           {/if}
         </button>
       {:else}
@@ -191,7 +191,7 @@
           {#if loadingRandom}
             <i class="fa-solid fa-spinner fa-spin"></i> 加载中...
           {:else}
-            <i class="fa-solid fa-shuffle"></i> 随机壁纸
+            <i class="fa-solid fa-shuffle"></i> {t('wp.random')}
           {/if}
         </button>
         <span class="pro-tip">🔒 上传壁纸需 Pro</span>

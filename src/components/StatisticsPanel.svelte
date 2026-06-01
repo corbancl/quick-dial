@@ -62,22 +62,22 @@
 
 <div class="modal-overlay" bind:this={overlayEl}>
   <div class="modal-content" bind:this={contentEl}>
-    <h3 class="modal-title">访问统计</h3>
+    <h3 class="modal-title">{t('stats.title')}</h3>
 
     <div class="stats-summary">
       <div class="stat-item">
         <span class="stat-value">{getTotalClicks()}</span>
-        <span class="stat-label">总点击</span>
+        <span class="stat-label">{t('stats.total')}</span>
       </div>
       <div class="stat-item">
         <span class="stat-value">{Object.keys(getClickCounts()).length}</span>
-        <span class="stat-label">站点数</span>
+        <span class="stat-label">{t('stats.sites')}</span>
       </div>
     </div>
 
     {#if getTopSites().length > 0}
       <div class="stats-list">
-        <h4 class="stats-subtitle">点击排行</h4>
+        <h4 class="stats-subtitle">{t('stats.ranking')}</h4>
         {#each getTopSites() as site, i}
           <div class="stats-row">
             <span class="stats-rank">{i + 1}</span>
@@ -87,12 +87,12 @@
         {/each}
       </div>
     {:else}
-      <p class="stats-empty">暂无访问数据</p>
+      <p class="stats-empty">{t('stats.empty')}</p>
     {/if}
 
     <div class="form-actions">
-      <button class="btn btn-secondary" onclick={exportCSV}>导出 CSV</button>
-      <button class="btn btn-secondary" onclick={() => { clearClickCounts(); }}>清除数据</button>
+      <button class="btn btn-secondary" onclick={exportCSV}>{t('stats.export')}</button>
+      <button class="btn btn-secondary" onclick={() => { clearClickCounts(); }}>{t('stats.clear')}</button>
       <button class="btn btn-secondary" onclick={onclose}>关闭</button>
     </div>
   </div>

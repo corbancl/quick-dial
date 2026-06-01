@@ -76,7 +76,7 @@
 
 <div class="modal-overlay" bind:this={overlayEl}>
   <div class="modal-content subscribe-modal" bind:this={contentEl}>
-    <h3 class="modal-title">⚡ 升级 Quick Dial Pro</h3>
+    <h3 class="modal-title">⚡ {t('sub.title')}</h3>
 
     {#if showQr}
       ...
@@ -92,7 +92,7 @@
             <span class="qr-amount">¥{orderInfo.amount.toFixed(2)}</span>
           </div>
         {/if}
-        <p class="qr-tip">支付完成后，刷新页面即可激活 Pro</p>
+        <p class="qr-tip">{t('sub.paidRefresh')}</p>
       </div>
       <div class="form-actions">
         <button class="btn btn-secondary" onclick={() => showQr = false}>返回</button>
@@ -132,7 +132,7 @@
 
       <div class="form-actions">
         <button class="btn btn-primary btn-pay" onclick={handlePay} disabled={loading}>
-          {loading ? '创建订单中...' : '立即支付'}
+          {loading ? t('sub.creating') : t('sub.pay')}
         </button>
         <button class="btn btn-secondary" onclick={onclose}>关闭</button>
       </div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import { getDialsState, addGroup, updateGroup, removeGroup, reorderGroups, FREE_GROUP_LIMIT } from '../stores/dials.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
 

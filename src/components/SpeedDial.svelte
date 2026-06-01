@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import type { DialItem } from '../types';
   import { getDialsState, addDial, updateDial, removeDial, addGroup, moveDialToGroup, reorderDials, ensureDefaultGroup } from '../stores/dials.svelte';
   import { tick } from 'svelte';

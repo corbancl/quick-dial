@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import { getSettings } from '../stores/settings.svelte';
   import { getDisplaySites } from '../stores/recentSites.svelte';
   import type { RecentSite } from '../types';

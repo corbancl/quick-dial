@@ -5,6 +5,9 @@ dist/
 
 # Pro 后端代码（闭源）
 api/
+
+# Pro 商业模式（闭源）
+website/
 BUSINESS_PLAN.md
 
 # 工具目录

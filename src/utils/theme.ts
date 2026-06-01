@@ -1,4 +1,5 @@
 import type { ThemeMode, WallpaperConfig } from '../types';
+import { getLang } from './i18n.svelte';
 
 export function applyTheme(mode: ThemeMode, primaryColor: string): void {
   const root = document.documentElement;
@@ -77,13 +78,21 @@ function adaptTextColor(cssValue: string) {
 }
 
 export function formatDate(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}年${m}月${d}日`;
+  const lang = getLang();
+  if (lang === 'zh-CN') {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}年${m}月${d}日`;
+  }
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 export function formatWeekday(date: Date): string {
-  const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-  return weekdays[date.getDay()];
+  const lang = getLang();
+  const weekdays: Record<string, string[]> = {
+    'zh-CN': ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+    'en': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  };
+  return (weekdays[lang] || weekdays['zh-CN'])[date.getDay()];
 }

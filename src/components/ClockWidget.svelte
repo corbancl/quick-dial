@@ -115,21 +115,21 @@ import { t } from '../utils/i18n.svelte';
         <div class="flip-card">
           <span class="flip-digit">{String(hours).padStart(2, '0')}</span>
         </div>
-        <span class="flip-label">时</span>
+        <span class="flip-label">{t('clock.hour')}</span>
       </div>
       <span class="flip-separator">:</span>
       <div class="flip-unit">
         <div class="flip-card">
           <span class="flip-digit">{String(minutes).padStart(2, '0')}</span>
         </div>
-        <span class="flip-label">分</span>
+        <span class="flip-label">{t('clock.minute')}</span>
       </div>
       <span class="flip-separator">:</span>
       <div class="flip-unit">
         <div class="flip-card">
           <span class="flip-digit">{String(seconds).padStart(2, '0')}</span>
         </div>
-        <span class="flip-label">秒</span>
+        <span class="flip-label">{t('clock.second')}</span>
       </div>
     </div>
     <div class="clock-info">

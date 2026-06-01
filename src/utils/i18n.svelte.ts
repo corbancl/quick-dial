@@ -3,7 +3,7 @@ type Dict = Record<string, string>;
 
 const zh: Dict = {
   'search.placeholder': '搜索或输入网址','search.go': '搜索','search.engine': '搜索引擎',
-  'clock.styles': '时钟样式','clock.digital': '数字','clock.minimal': '极简','clock.classic': '经典','clock.flip': '翻页','clock.neon': '霓虹','clock.binary': '二进制',
+  'clock.styles': '时钟样式','clock.digital': '数字','clock.minimal': '极简','clock.classic': '经典','clock.flip': '翻页','clock.neon': '霓虹','clock.binary': '二进制','clock.hour': '时','clock.minute': '分','clock.second': '秒',
   'settings.title': '设置','settings.theme': '外观主题','settings.themeHint': '壁纸自动适配深浅模式','settings.showDate': '显示日期','settings.showWeekday': '显示星期','settings.showLunar': '显示农历','settings.showWeather': '显示天气','settings.showRecent': '显示最近访问','settings.recentCount': '最近访问数量','settings.newTab': '新标签页打开',
   'pro.title': 'Quick Dial Pro','pro.active': '已激活','pro.inactive': '未激活','pro.upgrade': '升级 Quick Dial Pro','pro.renew': '续费 / 升级','pro.feature1': '6 种免费 + 6 种 Pro 引擎 + 自定义','pro.feature2': '云端数据同步','pro.feature3': '自定义上传壁纸','pro.feature4': '自定义 CSS 样式','pro.customCss': '自定义 CSS','pro.customCssDesc': '注入自定义样式，实时生效','pro.customFooter': '自定义底部','pro.customFooterDesc': '替换版权栏中的域名',
   'sync.title': '云同步','sync.manual': '数据不会自动同步，点按钮手动上传或下载','sync.upload': '上传到云端','sync.download': '从云端下载','sync.downloaded': '已下载云端数据，3秒后自动刷新...','sync.logout': '退出登录','sync.login': '登录','sync.register': '注册','sync.noAccount': '没有账号？','sync.hasAccount': '已有账号？','sync.goRegister': '立即注册','sync.goLogin': '去登录','sync.user': '用户名','sync.password': '密码','sync.proRequired': '云同步需 Pro，去设置升级','sync.syncTime': '同步时间',
@@ -31,11 +31,13 @@ const zh: Dict = {
   'settings.engine': '默认搜索引擎',
   'pro.customFooterEg': '例如：我的公司',
   'cat.common': '常用','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
+  'pro.cssPlaceholder': '/* 在此输入自定义 CSS */',
+  'icon.customUrl': '自定义图标 URL',
 };
 
 const en: Dict = {
   'search.placeholder': 'Search or enter URL','search.go': 'Search','search.engine': 'Search Engine',
-  'clock.styles': 'Clock Style','clock.digital': 'Digital','clock.minimal': 'Minimal','clock.classic': 'Classic','clock.flip': 'Flip','clock.neon': 'Neon','clock.binary': 'Binary',
+  'clock.styles': 'Clock Style','clock.digital': 'Digital','clock.minimal': 'Minimal','clock.classic': 'Classic','clock.flip': 'Flip','clock.neon': 'Neon','clock.binary': 'Binary','clock.hour': 'H','clock.minute': 'M','clock.second': 'S',
   'settings.title': 'Settings','settings.theme': 'Appearance','settings.themeHint': 'Adapts to wallpaper','settings.showDate': 'Show Date','settings.showWeekday': 'Show Weekday','settings.showLunar': 'Show Lunar','settings.showWeather': 'Show Weather','settings.showRecent': 'Show Recent Sites','settings.recentCount': 'Recent Sites Count','settings.newTab': 'Open in New Tab',
   'pro.title': 'Quick Dial Pro','pro.active': 'Active','pro.inactive': 'Inactive','pro.upgrade': 'Upgrade to Pro','pro.renew': 'Renew','pro.feature1': '6 free + 6 Pro engines + custom','pro.feature2': 'Cloud sync','pro.feature3': 'Custom wallpaper upload','pro.feature4': 'Custom CSS','pro.customCss': 'Custom CSS','pro.customCssDesc': 'Inject custom styles','pro.customFooter': 'Custom Footer','pro.customFooterDesc': 'Replace domain in copyright',
   'sync.title': 'Cloud Sync','sync.manual': 'Sync is manual - upload or download on demand','sync.upload': 'Upload','sync.download': 'Download','sync.downloaded': 'Downloaded! Refreshing...','sync.logout': 'Logout','sync.login': 'Login','sync.register': 'Register','sync.noAccount': 'No account?','sync.hasAccount': 'Already have one?','sync.goRegister': 'Sign up','sync.goLogin': 'Sign in','sync.user': 'Username','sync.password': 'Password','sync.proRequired': 'Cloud sync requires Pro','sync.syncTime': 'Last sync',
@@ -62,6 +64,8 @@ const en: Dict = {
   'settings.engine': 'Default Engine',
   'pro.customFooterEg': 'e.g. My Company',
   'cat.common': 'Common','cat.social': 'Social','cat.dev': 'Dev','cat.media': 'Media','cat.office': 'Office','cat.study': 'Study','cat.brand': 'Brand',
+  'pro.cssPlaceholder': '/* Enter custom CSS here */',
+  'icon.customUrl': 'Custom Icon URL',
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');

@@ -202,7 +202,7 @@
           rows="6"
           value={customCss}
           oninput={handleCustomCssChange}
-          placeholder={'/* 在此输入自定义 CSS */\nbody {\n  \n}'}
+          placeholder={t('pro.cssPlaceholder')}
         ></textarea>
       </div>
     {/if}

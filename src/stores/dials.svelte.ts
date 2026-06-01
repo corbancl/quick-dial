@@ -1,5 +1,6 @@
-import type { DialItem, DialGroup } from '../types';
-import { generateId } from '../types';
+  import type { DialItem, DialGroup } from '../types';
+  import { generateId } from '../types';
+  import { t } from '../utils/i18n.svelte';
 import { getIsPro } from './subscription.svelte';
 
 export const FREE_GROUP_LIMIT = 3;
@@ -119,9 +120,10 @@ export function moveDialToGroup(dialId: string, targetGroupId: string): void {
 
 // ====== 默认分组 ======
 export function ensureDefaultGroup(): string {
-  let defaultGroup = state.groups.find(g => g.name === '常用');
+  const defaultName = t('group.default');
+  let defaultGroup = state.groups.find(g => g.name === defaultName || g.name === '常用');
   if (!defaultGroup) {
-    defaultGroup = addGroup('常用');
+    defaultGroup = addGroup(defaultName);
   }
   return defaultGroup.id;
 }

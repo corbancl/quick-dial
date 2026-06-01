@@ -10,6 +10,20 @@
   function cn(n: string) {
     return ({'常用':'cat.common','社交':'cat.social','开发':'cat.dev','媒体':'cat.media','办公':'cat.office','学习':'cat.study','品牌':'cat.brand'} as Record<string,string>)[n] || n;
   }
+  // 图标名翻译映射
+  function il(n: string) {
+    const m: Record<string,string> = {
+      '网页':'icon.webpage','邮箱':'icon.email','搜索':'icon.search','主页':'icon.home',
+      '收藏':'icon.star','置顶':'icon.pin','列表':'icon.list','链接':'icon.link','灵感':'icon.idea','笔记':'icon.note',
+      '聊天':'icon.chat','微信':'icon.wechat','QQ':'icon.qq','手机':'icon.phone','邮件':'icon.mail','通知':'icon.notify','社区':'icon.community','评论':'icon.comment',
+      '代码':'icon.code','数据库':'icon.db','云服务':'icon.cloud','工具':'icon.tools','包管理':'icon.pkg','部署':'icon.deploy','设置':'icon.settings','插件':'icon.plugin',
+      '视频':'icon.video','音乐':'icon.music','影视':'icon.movie','新闻':'icon.news','游戏':'icon.game','相册':'icon.photo','设计':'icon.design',
+      '图表':'icon.chart','日历':'icon.calendar','文件':'icon.file','购物':'icon.shop','财务':'icon.finance','数据':'icon.data','归档':'icon.archive','附件':'icon.attach',
+      '阅读':'icon.read','教育':'icon.edu','文档':'icon.doc','研究':'icon.research','百科':'icon.wiki','目标':'icon.goal','成就':'icon.achieve',
+    };
+    const k = m[n];
+    return k ? t(k) : n;
+  }
 
   let { value, onselect }: Props = $props();
 
@@ -169,21 +183,21 @@
         class="icon-btn"
         class:selected={value === item.value}
         onclick={() => select(item.value)}
-        title={item.label}
+        title={il(item.label)}
       >
         {#if item.type === 'emoji'}
           <span class="icon-emoji">{item.value}</span>
         {:else}
           <i class="{item.value} icon-fa"></i>
         {/if}
-        <span class="icon-label">{item.label}</span>
+        <span class="icon-label">{il(item.label)}</span>
       </button>
     {/each}
   </div>
 
   <!-- 自定义 URL（高级选项） -->
   <details class="picker-advanced">
-    <summary class="advanced-toggle">自定义图标 URL</summary>
+    <summary class="advanced-toggle">{t('icon.customUrl')}</summary>
     <div class="advanced-content">
       <input
         type="text"

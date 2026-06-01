@@ -2,6 +2,7 @@
   import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setRecentSitesCount, setOpenInNewTab } from '../stores/settings.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
   import { checkSubscription } from '../utils/payment';
+  import { t, getLang, setLang } from '../utils/i18n.svelte';
   import type { ClockStyle } from '../types';
 
   interface Props {
@@ -115,12 +116,21 @@
       <div class="setting-item">
         <label class="setting-label" for="clock-style">时钟样式</label>
         <select id="clock-style" class="form-select" value={getSettings().clockStyle} onchange={handleClockStyleChange}>
-          <option value="digital">数字</option>
-          <option value="minimal">极简</option>
-          <option value="classic">经典</option>
-          <option value="flip">翻页</option>
-          <option value="neon">霓虹</option>
-          <option value="binary">二进制</option>
+          <option value="digital">{t('clock.digital')}</option>
+          <option value="minimal">{t('clock.minimal')}</option>
+          <option value="classic">{t('clock.classic')}</option>
+          <option value="flip">{t('clock.flip')}</option>
+          <option value="neon">{t('clock.neon')}</option>
+          <option value="binary">{t('clock.binary')}</option>
+        </select>
+      </div>
+
+      <!-- 语言 -->
+      <div class="setting-item">
+        <label class="setting-label" for="lang">Language / 语言</label>
+        <select id="lang" class="form-select" value={getLang()} onchange={(e) => setLang((e.target as HTMLSelectElement).value as 'zh-CN' | 'en')}>
+          <option value="zh-CN">中文</option>
+          <option value="en">English</option>
         </select>
       </div>
 

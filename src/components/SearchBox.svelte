@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getSettings, setSearchEngine } from '../stores/settings.svelte';
   import { getAvailableEngines, getAllEngines, getLockedEngines, buildSearchUrl } from '../utils/search';
+  import { t } from '../utils/i18n.svelte';
   import { getIsPro, addCustomEngine, removeCustomEngine } from '../stores/subscription.svelte';
   import type { SearchEngine } from '../types';
 
@@ -90,7 +91,7 @@
       type="text"
       bind:value={keyword}
       onkeydown={handleKeydown}
-      placeholder="搜索..."
+      placeholder={t('search.placeholder')}
       class="search-input"
     />
 

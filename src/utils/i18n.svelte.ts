@@ -1,0 +1,283 @@
+type Lang = 'zh-CN' | 'en';
+type Dict = Record<string, string>;
+
+const zh: Dict = {
+  // Search
+  'search.placeholder': '搜索或输入网址',
+  'search.go': '搜索',
+  'search.engine': '搜索引擎',
+
+  // Clock
+  'clock.styles': '时钟样式',
+  'clock.digital': '数字',
+  'clock.minimal': '极简',
+  'clock.classic': '经典',
+  'clock.flip': '翻页',
+  'clock.neon': '霓虹',
+  'clock.binary': '二进制',
+
+  // Settings
+  'settings.title': '设置',
+  'settings.theme': '外观主题',
+  'settings.themeHint': '壁纸自动适配深浅模式',
+  'settings.showDate': '显示日期',
+  'settings.showWeekday': '显示星期',
+  'settings.showLunar': '显示农历',
+  'settings.showWeather': '显示天气',
+  'settings.showRecent': '显示最近访问',
+  'settings.recentCount': '最近访问数量',
+  'settings.newTab': '新标签页打开',
+
+  // Pro
+  'pro.title': 'Quick Dial Pro',
+  'pro.active': '已激活',
+  'pro.inactive': '未激活',
+  'pro.upgrade': '升级 Quick Dial Pro',
+  'pro.renew': '续费 / 升级',
+  'pro.feature1': '6 种免费 + 6 种 Pro 引擎 + 自定义',
+  'pro.feature2': '云端数据同步',
+  'pro.feature3': '自定义上传壁纸',
+  'pro.feature4': '自定义 CSS 样式',
+  'pro.customCss': '自定义 CSS',
+  'pro.customCssDesc': '注入自定义样式，实时生效',
+  'pro.customFooter': '自定义底部',
+  'pro.customFooterDesc': '替换版权栏中的域名',
+
+  // Sync
+  'sync.title': '云同步',
+  'sync.manual': '数据不会自动同步，点按钮手动上传或下载',
+  'sync.upload': '上传到云端',
+  'sync.download': '从云端下载',
+  'sync.downloaded': '已下载云端数据，3秒后自动刷新...',
+  'sync.logout': '退出登录',
+  'sync.login': '登录',
+  'sync.register': '注册',
+  'sync.noAccount': '没有账号？',
+  'sync.hasAccount': '已有账号？',
+  'sync.goRegister': '立即注册',
+  'sync.goLogin': '去登录',
+  'sync.user': '用户名',
+  'sync.password': '密码',
+  'sync.proRequired': '云同步需 Pro，去设置升级',
+  'sync.syncTime': '同步时间',
+
+  // Import/Export
+  'ie.title': '导入 / 导出',
+  'ie.export': '导出备份',
+  'ie.import': '导入备份',
+  'ie.importBookmarks': '导入浏览器书签',
+  'ie.bookmarkHint': '免费版最多 3 个分组，超出的文件夹自动归入"默认收藏"。开通 Pro 可创建无限分组。',
+  'ie.clear': '清空所有数据',
+  'ie.close': '关闭',
+
+  // Add Dial
+  'dial.add': '添加导航',
+  'dial.edit': '编辑导航',
+  'dial.name': '网站名称',
+  'dial.url': '网站链接',
+  'dial.urlPlaceholder': '粘贴链接自动识别名称',
+  'dial.icon': '图标',
+  'dial.group': '分组',
+  'dial.save': '保存',
+  'dial.cancel': '取消',
+
+  // Wallpaper
+  'wp.title': '壁纸设置',
+  'wp.random': '随机壁纸',
+  'wp.upload': '上传图片',
+
+  // Subscribe
+  'sub.title': '升级 Quick Dial Pro',
+  'sub.pay': '立即支付',
+  'sub.creating': '创建订单中...',
+  'sub.scanHint': '请使用{method}扫码支付',
+  'sub.paidRefresh': '支付完成后，刷新页面即可激活 Pro',
+
+  // Statistics
+  'stats.title': '访问统计',
+  'stats.total': '总点击',
+  'stats.sites': '站点数',
+  'stats.ranking': '点击排行',
+  'stats.empty': '暂无访问数据',
+  'stats.clear': '清除数据',
+  'stats.export': '导出 CSV',
+
+  // Onboarding
+  'onboard.skip': '跳过',
+  'onboard.next': '下一步',
+  'onboard.start': '开始使用',
+  'onboard.step1Title': '搜索直达',
+  'onboard.step1Desc': '在搜索框输入关键词，按 Enter 或点搜索按钮',
+  'onboard.step2Title': '添加导航',
+  'onboard.step2Desc': '点右下角 + 按钮，粘贴网址自动识别名称和图标',
+  'onboard.step3Title': '自定义壁纸',
+  'onboard.step3Desc': '点 🎨 按钮选择 12 种精美渐变，打造专属风格',
+  'onboard.step4Title': '账户管理',
+  'onboard.step4Desc': '前往官网 www.cilacila.cn 绑定邮箱、找回密码、管理订阅',
+
+  // Help
+  'help.title': '键盘快捷键',
+  'help.tip': '按 ? 随时打开此面板',
+
+  // Footer
+  'footer.copyright': '呲啦起始页',
+
+  // Group
+  'group.manage': '分组管理',
+  'group.default': '默认收藏',
+  'group.unnamed': '未命名',
+
+  // Common
+  'common.close': '关闭',
+  'common.save': '保存',
+  'common.cancel': '取消',
+  'common.loading': '处理中...',
+  'common.success': '成功',
+  'common.error': '错误',
+
+  // Weather
+  'weather.humidity': '湿度',
+  'weather.wind': '风力',
+  'weather.forecast': '天气预报',
+
+  // Payment
+  'pay.wechat': '微信支付',
+  'pay.alipay': '支付宝',
+  'pay.monthly': '月度',
+  'pay.yearly': '年度',
+  'pay.lifetime': '终身',
+};
+
+const en: Dict = {
+  'search.placeholder': 'Search or enter URL',
+  'search.go': 'Search',
+  'search.engine': 'Search Engine',
+  'clock.styles': 'Clock Style',
+  'clock.digital': 'Digital',
+  'clock.minimal': 'Minimal',
+  'clock.classic': 'Classic',
+  'clock.flip': 'Flip',
+  'clock.neon': 'Neon',
+  'clock.binary': 'Binary',
+  'settings.title': 'Settings',
+  'settings.theme': 'Appearance',
+  'settings.themeHint': 'Wallpaper auto-adapts dark/light mode',
+  'settings.showDate': 'Show Date',
+  'settings.showWeekday': 'Show Weekday',
+  'settings.showLunar': 'Show Lunar',
+  'settings.showWeather': 'Show Weather',
+  'settings.showRecent': 'Show Recent Sites',
+  'settings.recentCount': 'Recent Sites Count',
+  'settings.newTab': 'Open in New Tab',
+  'pro.title': 'Quick Dial Pro',
+  'pro.active': 'Active',
+  'pro.inactive': 'Inactive',
+  'pro.upgrade': 'Upgrade to Quick Dial Pro',
+  'pro.renew': 'Renew / Upgrade',
+  'pro.feature1': '6 free + 6 Pro engines + custom',
+  'pro.feature2': 'Cloud sync',
+  'pro.feature3': 'Custom wallpaper upload',
+  'pro.feature4': 'Custom CSS',
+  'pro.customCss': 'Custom CSS',
+  'pro.customCssDesc': 'Inject custom styles, live preview',
+  'pro.customFooter': 'Custom Footer',
+  'pro.customFooterDesc': 'Replace domain in copyright bar',
+  'sync.title': 'Cloud Sync',
+  'sync.manual': 'Data does not sync automatically. Upload or download manually.',
+  'sync.upload': 'Upload to Cloud',
+  'sync.download': 'Download from Cloud',
+  'sync.downloaded': 'Data downloaded. Refreshing in 3 seconds...',
+  'sync.logout': 'Logout',
+  'sync.login': 'Login',
+  'sync.register': 'Register',
+  'sync.noAccount': 'No account?',
+  'sync.hasAccount': 'Already have an account?',
+  'sync.goRegister': 'Register',
+  'sync.goLogin': 'Login',
+  'sync.user': 'Username',
+  'sync.password': 'Password',
+  'sync.proRequired': 'Cloud sync requires Pro',
+  'sync.syncTime': 'Last sync',
+  'ie.title': 'Import / Export',
+  'ie.export': 'Export Backup',
+  'ie.import': 'Import Backup',
+  'ie.importBookmarks': 'Import Browser Bookmarks',
+  'ie.bookmarkHint': 'Free version supports up to 3 groups. Extra folders are merged into "Default". Upgrade to Pro for unlimited groups.',
+  'ie.clear': 'Clear All Data',
+  'ie.close': 'Close',
+  'dial.add': 'Add Quick Dial',
+  'dial.edit': 'Edit Quick Dial',
+  'dial.name': 'Site Name',
+  'dial.url': 'Site URL',
+  'dial.urlPlaceholder': 'Paste URL to auto-detect name',
+  'dial.icon': 'Icon',
+  'dial.group': 'Group',
+  'dial.save': 'Save',
+  'dial.cancel': 'Cancel',
+  'wp.title': 'Wallpaper',
+  'wp.random': 'Random Wallpaper',
+  'wp.upload': 'Upload Image',
+  'sub.title': 'Upgrade to Quick Dial Pro',
+  'sub.pay': 'Pay Now',
+  'sub.creating': 'Creating order...',
+  'sub.scanHint': 'Scan with {method} to pay',
+  'sub.paidRefresh': 'After payment, refresh to activate Pro',
+  'stats.title': 'Statistics',
+  'stats.total': 'Total Clicks',
+  'stats.sites': 'Sites',
+  'stats.ranking': 'Top Sites',
+  'stats.empty': 'No data yet',
+  'stats.clear': 'Clear Data',
+  'stats.export': 'Export CSV',
+  'onboard.skip': 'Skip',
+  'onboard.next': 'Next',
+  'onboard.start': 'Get Started',
+  'onboard.step1Title': 'Search Instantly',
+  'onboard.step1Desc': 'Type a keyword in the search box and press Enter',
+  'onboard.step2Title': 'Add Quick Dials',
+  'onboard.step2Desc': 'Click + to add sites. Paste a URL to auto-detect name and icon.',
+  'onboard.step3Title': 'Choose Wallpaper',
+  'onboard.step3Desc': 'Pick from 12 gorgeous gradients to match your style',
+  'onboard.step4Title': 'Account Management',
+  'onboard.step4Desc': 'Visit www.cilacila.cn to bind email, reset password, and manage subscriptions',
+  'help.title': 'Keyboard Shortcuts',
+  'help.tip': 'Press ? anytime to open this panel',
+  'footer.copyright': 'Quick Dial',
+  'group.manage': 'Manage Groups',
+  'group.default': 'Default',
+  'group.unnamed': 'Unnamed',
+  'common.close': 'Close',
+  'common.save': 'Save',
+  'common.cancel': 'Cancel',
+  'common.loading': 'Loading...',
+  'common.success': 'Success',
+  'common.error': 'Error',
+  'weather.humidity': 'Humidity',
+  'weather.wind': 'Wind',
+  'weather.forecast': 'Forecast',
+  'pay.wechat': 'WeChat',
+  'pay.alipay': 'Alipay',
+  'pay.monthly': 'Monthly',
+  'pay.yearly': 'Yearly',
+  'pay.lifetime': 'Lifetime',
+};
+
+let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');
+const dict = $derived(currentLang === 'zh-CN' ? zh : en);
+
+export function t(key: string): string {
+  return dict[key] || key;
+}
+
+export function getLang(): Lang {
+  return currentLang;
+}
+
+export function setLang(lang: Lang) {
+  currentLang = lang;
+  localStorage.setItem('qd-lang', lang);
+  document.documentElement.setAttribute('lang', lang);
+}
+
+// 初始化
+setLang(currentLang);

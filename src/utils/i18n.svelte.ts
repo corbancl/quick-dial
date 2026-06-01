@@ -59,7 +59,7 @@ export function setLang(lang: Lang) {
   _v++;
   localStorage.setItem('qd-lang', lang);
   document.documentElement.setAttribute('lang', lang);
-  setTimeout(() => location.reload(), 100);
 }
 
+// 初始化
 setLang(currentLang);

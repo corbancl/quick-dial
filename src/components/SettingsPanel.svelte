@@ -128,7 +128,7 @@
       <!-- 语言 -->
       <div class="setting-item">
         <label class="setting-label" for="lang">Language / 语言</label>
-        <select id="lang" class="form-select" value={getLang()} onchange={(e) => setLang((e.target as HTMLSelectElement).value as 'zh-CN' | 'en')}>
+        <select id="lang" class="form-select" value={getLang()} onchange={(e) => { setLang((e.target as HTMLSelectElement).value as 'zh-CN' | 'en'); setTimeout(() => location.reload(), 100); }}>
           <option value="zh-CN">中文</option>
           <option value="en">English</option>
         </select>

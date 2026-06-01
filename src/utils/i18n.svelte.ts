@@ -89,6 +89,9 @@ export function setLang(lang: Lang) {
   _v++;
   localStorage.setItem('qd-lang', lang);
   document.documentElement.setAttribute('lang', lang);
+  document.title = lang === 'zh-CN'
+    ? '呲啦起始页 - 极简无广告浏览器新标签页'
+    : 'Quick Dial - Clean, Ad-Free Browser New Tab';
 }
 
 // 初始化

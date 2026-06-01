@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import { onMount } from 'svelte';
 
   interface Step {

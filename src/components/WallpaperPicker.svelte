@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import { getWallpaper, setWallpaper, setBlur, setBrightness } from '../stores/wallpaper.svelte';
   import { fetchRandomWallpaper } from '../utils/weather';
   import { getIsPro } from '../stores/subscription.svelte';

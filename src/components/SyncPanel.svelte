@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import { getIsPro, syncProStatus } from '../stores/subscription.svelte';
   import { isLoggedIn, getUsername, login, register, logout, uploadSync, downloadSync, getLastSyncTime } from '../utils/sync';
   import { loadData, saveData } from '../utils/storage';

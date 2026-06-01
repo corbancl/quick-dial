@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import { getClickCounts, getTotalClicks, clearClickCounts } from '../stores/recentSites.svelte';
 
   interface Props {

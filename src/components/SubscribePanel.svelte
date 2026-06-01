@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import { getUsername } from '../utils/sync';
   import { PLANS, createOrder, generateQRCodeSVG } from '../utils/payment';
   import type { PlanInfo } from '../utils/payment';

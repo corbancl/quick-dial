@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from '../utils/i18n.svelte';
   import type { DialItem } from '../types';
   import { getDialsState } from '../stores/dials.svelte';
   import IconPicker from './IconPicker.svelte';

@@ -138,7 +138,7 @@ import { t } from '../utils/i18n.svelte';
 
       <div class="form-actions">
         <button class="btn btn-secondary" onclick={handleLogout}>{t('sync.logout')}</button>
-        <button class="btn btn-secondary" onclick={onclose}>关闭</button>
+        <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
       </div>
     {:else}
       <!-- {t('sync.login')}/{t('sync.register')} -->
@@ -155,7 +155,7 @@ import { t } from '../utils/i18n.svelte';
         <button class="btn btn-primary" onclick={handleAuth} disabled={loading}>
           {loading ? '处理中...' : (isLogin ? t('sync.login') : t('sync.register'))}
         </button>
-        <button class="btn btn-secondary" onclick={onclose}>关闭</button>
+        <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
       </div>
 
       <p class="auth-switch">

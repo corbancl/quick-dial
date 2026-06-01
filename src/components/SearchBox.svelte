@@ -148,7 +148,7 @@
               placeholder="搜索URL（用{keyword}占位）"
             />
             <div class="custom-actions">
-              <button class="btn-custom-cancel" onclick={() => showCustomForm = false}>取消</button>
+              <button class="btn-custom-cancel" onclick={() => showCustomForm = false}>{t('dial.cancel')}</button>
               <button class="btn-custom-save" onclick={handleAddCustom}>添加</button>
             </div>
           </div>

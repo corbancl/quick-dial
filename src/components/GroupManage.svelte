@@ -103,7 +103,7 @@
 
 <div class="modal-overlay" bind:this={overlayEl}>
   <div class="modal-content" bind:this={contentEl}>
-    <h3 class="modal-title">管理分组</h3>
+    <h3 class="modal-title">{t('group.manage')}</h3>
 
     <!-- 添加新分组 -->
     <div class="add-group-row">
@@ -148,7 +148,7 @@
     <!-- 分组上限提示 -->
     {#if limitReached}
       <div class="limit-notice">
-        ⚡ 免费版最多 {FREE_GROUP_LIMIT} 个分组，<span class="pro-link">升级 Pro 解锁无限分组</span>
+        ⚡ 免费版最多 {FREE_GROUP_LIMIT} 个分组，<span class="pro-link">Pro: {t('group.manage')}</span>
       </div>
     {/if}
 

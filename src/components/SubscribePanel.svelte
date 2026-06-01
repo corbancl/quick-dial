@@ -97,7 +97,7 @@ import { t } from '../utils/i18n.svelte';
       </div>
       <div class="form-actions">
         <button class="btn btn-secondary" onclick={() => showQr = false}>返回</button>
-        <button class="btn btn-secondary" onclick={onclose}>关闭</button>
+        <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
       </div>
     {:else}
       <!-- 选择套餐 -->
@@ -135,7 +135,7 @@ import { t } from '../utils/i18n.svelte';
         <button class="btn btn-primary btn-pay" onclick={handlePay} disabled={loading}>
           {loading ? t('sub.creating') : t('sub.pay')}
         </button>
-        <button class="btn btn-secondary" onclick={onclose}>关闭</button>
+        <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
       </div>
     {/if}
 

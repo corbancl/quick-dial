@@ -102,7 +102,7 @@ import { t } from '../utils/i18n.svelte';
         <IconPicker value={icon} onselect={(v) => icon = v} />
       </div>
       <div class="form-group">
-        <label class="form-label" for="dial-group">所属分组</label>
+        <label class="form-label" for="dial-group">{t('dial.group')}</label>
         <select id="dial-group" class="form-select" bind:value={groupId}>
           {#each getDialsState().groups as g}
             <option value={g.id}>{g.name}</option>

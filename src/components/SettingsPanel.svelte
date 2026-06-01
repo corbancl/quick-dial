@@ -292,7 +292,7 @@
     </div>
 
     <div class="form-actions">
-      <button class="btn btn-secondary" onclick={onclose}>关闭</button>
+      <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
     </div>
   </div>
 </div>

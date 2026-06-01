@@ -169,7 +169,7 @@
     <div class="empty-state">
       <div class="empty-icon"><i class="fa-regular fa-rectangle-list"></i></div>
       <p class="empty-text">暂无导航，点击下方按钮添加</p>
-      <button class="btn btn-primary" onclick={() => openAddDial()}><i class="fa-solid fa-plus"></i> 添加导航</button>
+      <button class="btn btn-primary" onclick={() => openAddDial()}><i class="fa-solid fa-plus"></i> {t('dial.add')}</button>
     </div>
   {/each}
 

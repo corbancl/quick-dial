@@ -24,7 +24,7 @@
     "https://api.qrserver.com/*"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https: data:; connect-src 'self' https://api.ruseo.cn https://sync.ruseo.cn https://picsum.photos"
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://rescdn.apihz.cn https: data:; connect-src 'self' https://api.ruseo.cn https://sync.ruseo.cn https://picsum.photos https://rescdn.apihz.cn"
   },
   "background": {
     "service_worker": "background.js"

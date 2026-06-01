@@ -15,7 +15,7 @@
 
 <div class="recent-sites">
   <div class="recent-header">
-    <span class="recent-title">最近访问</span>
+    <span class="recent-title">{t('recent.title')}</span>
   </div>
   <div class="recent-list">
     {#each getSites() as site, i}
@@ -24,7 +24,7 @@
         <span class="recent-name">{site.title}</span>
       </button>
     {:else}
-      <p class="recent-empty">暂无最近访问记录</p>
+      <p class="recent-empty">{t('recent.empty')}记录</p>
     {/each}
   </div>
 </div>

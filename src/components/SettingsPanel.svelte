@@ -250,7 +250,7 @@
         <div class="pro-features">
           <div class="pro-feature">
             <span class="feature-check">✓</span>
-            <span>6 种免费 + 6 种 Pro 引擎 + 自定义</span>
+            <span>{t('pro.feature1')}</span>
           </div>
           <div class="pro-feature">
             <span class="feature-check">✓</span>
@@ -262,7 +262,7 @@
           </div>
           <div class="pro-feature">
             <span class="feature-check">✓</span>
-            <span>自定义 CSS 样式</span>
+            <span>{t('pro.feature4')}</span>
           </div>
         </div>
 

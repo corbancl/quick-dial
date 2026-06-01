@@ -148,14 +148,14 @@
     <!-- 分组上限提示 -->
     {#if limitReached}
       <div class="limit-notice">
-        ⚡ 免费版最多 {FREE_GROUP_LIMIT} 个分组，<span class="pro-link">Pro: {t('group.manage')}</span>
+        ⚡ 免费版最多 {FREE_GROUP_LIMIT} 个分组，<span class="pro-link">Pro 无限</span>
       </div>
     {/if}
 
     <!-- 免费用户分组状态 -->
     {#if !getIsPro()}
       <div class="group-cap-info">
-        {getDialsState().groups.length} / {FREE_GROUP_LIMIT} 个分组 · <span class="pro-link">Pro 无限</span>
+        {getDialsState().groups.length} / {FREE_GROUP_LIMIT} 个分组 · <span class="pro-link">{t('pro.title')} 无限</span>
       </div>
     {/if}
 

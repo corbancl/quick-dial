@@ -19,6 +19,10 @@ const zh: Dict = {
   'common.close': '关闭','common.save': '保存','common.cancel': '取消','common.loading': '处理中...',
   'weather.humidity': '湿度','weather.wind': '风力','weather.forecast': '天气预报',
   'pay.wechat': '微信支付','pay.alipay': '支付宝','pay.monthly': '月度','pay.yearly': '年度','pay.lifetime': '终身',
+  // Additional UI
+  'recent.title': '最近访问','recent.empty': '暂无最近访问',
+  'dial.empty': '点击 + 添加第一个导航',
+  'group.limit': '{current}/{max} 个分组 · Pro 无限',
 };
 
 const en: Dict = {
@@ -39,6 +43,9 @@ const en: Dict = {
   'common.close': 'Close','common.save': 'Save','common.cancel': 'Cancel','common.loading': 'Loading...',
   'weather.humidity': 'Humidity','weather.wind': 'Wind','weather.forecast': 'Forecast',
   'pay.wechat': 'WeChat','pay.alipay': 'Alipay','pay.monthly': 'Monthly','pay.yearly': 'Yearly','pay.lifetime': 'Lifetime',
+  'recent.title': 'Recent Sites','recent.empty': 'No recent sites',
+  'dial.empty': 'Click + to add your first dial',
+  'group.limit': '{current}/{max} groups · Pro unlimited',
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');

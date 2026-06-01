@@ -6,3 +6,7 @@ dist/
 # Pro 后端代码（闭源）
 api/
 BUSINESS_PLAN.md
+
+# 工具目录
+.comate/
+.workbuddy/

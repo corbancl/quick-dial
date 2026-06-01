@@ -28,6 +28,7 @@
   import { registerShortcut, focusSearch } from './utils/keyboard';
   import { getToasts, dismissToast } from './utils/toast.svelte';
   import { getContextAdd } from './utils/contextMenu';
+import { t } from './utils/i18n.svelte';
   import type { AppData } from './types';
 
   const VERSION = 'v1.0.3';

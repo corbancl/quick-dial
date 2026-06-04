@@ -229,24 +229,27 @@ import { t } from './utils/i18n.svelte';
 
   <footer class="app-footer">
     <div class="footer-inner">
-      <span>&copy;2026 <a class="footer-domain" href="https://www.cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a> {t('footer.copyright')}</span>
-      <span class="footer-divider"></span>
-      <span class="footer-version">{VERSION}</span>
-      {#if isLoggedIn() && getIsPro()}
-        <span class="footer-pro-badge">PRO</span>
-      {/if}
-      {#if isLoggedIn() && getIsPro() && customFooter}
+      <div class="footer-left">
+        <span>&copy;2026 <a class="footer-domain" href="https://www.cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a> {t('footer.copyright')}</span>
         <span class="footer-divider"></span>
-        <span class="footer-custom">{customFooter}</span>
-      {/if}
-      <span class="footer-divider"></span>
-      <a class="footer-link" href="about.html">关于我们</a>
-      <span class="footer-divider"></span>
-      <a class="footer-link" href="privacy.html">隐私政策</a>
-      <span class="footer-divider"></span>
-      <a class="footer-link" href="copyright.html">版权声明</a>
-      <span class="footer-divider"></span>
-      <a class="footer-link" href="contact.html">联系方式</a>
+        {#if isLoggedIn() && getIsPro() && customFooter}
+          <span class="footer-custom">{customFooter}</span>
+          <span class="footer-divider"></span>
+        {/if}
+        <a class="footer-link" href="about.html">关于我们</a>
+        <span class="footer-divider"></span>
+        <a class="footer-link" href="privacy.html">隐私政策</a>
+        <span class="footer-divider"></span>
+        <a class="footer-link" href="copyright.html">版权声明</a>
+        <span class="footer-divider"></span>
+        <a class="footer-link" href="contact.html">联系方式</a>
+      </div>
+      <div class="footer-right">
+        <span class="footer-version">{VERSION}</span>
+        {#if isLoggedIn() && getIsPro()}
+          <span class="footer-pro-badge">PRO</span>
+        {/if}
+      </div>
     </div>
   </footer>
 </div>
@@ -320,7 +323,8 @@ import { t } from './utils/i18n.svelte';
   }
 
   .footer-inner {
-    display: inline-flex;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 10px;
     padding: 8px 18px;
@@ -344,6 +348,8 @@ import { t } from './utils/i18n.svelte';
   .footer-domain:hover { opacity: 1; }
   .footer-link { color: var(--text2); text-decoration: none; font-size: 11px; opacity: 0.6; transition: opacity 0.2s; }
   .footer-link:hover { opacity: 1; }
+  .footer-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .footer-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
   .footer-custom {
     font-weight: 600;

@@ -17,7 +17,16 @@
     },
     "default_title": "Quick Dial"
   },
-  "permissions": ["storage", "contextMenus"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "quickdial@cilacila.cn",
+      "strict_min_version": "109.0"
+    }
+  },
+  "permissions": [
+    "storage",
+    "contextMenus"
+  ],
   "host_permissions": [
     "https://api.ruseo.cn/*",
     "https://sync.ruseo.cn/*",
@@ -28,7 +37,7 @@
     "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://rescdn.apihz.cn https://images.xxapi.cn https: data:; connect-src 'self' https://api.ruseo.cn https://sync.ruseo.cn https://picsum.photos https://rescdn.apihz.cn https://images.xxapi.cn"
   },
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"]
   },
   "icons": {
     "16": "js.png",

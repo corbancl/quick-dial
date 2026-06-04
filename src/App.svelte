@@ -229,17 +229,15 @@ import { t } from './utils/i18n.svelte';
 
   <footer class="app-footer">
     <div class="footer-inner">
-      <span>&copy;2026 cilacila.cn {t('footer.copyright')}</span>
+      <span>&copy;2026 <a class="footer-domain" href="https://www.cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a> {t('footer.copyright')}</span>
       <span class="footer-divider"></span>
       <span class="footer-version">{VERSION}</span>
       {#if isLoggedIn() && getIsPro()}
         <span class="footer-pro-badge">PRO</span>
       {/if}
-      <span class="footer-divider"></span>
       {#if isLoggedIn() && getIsPro() && customFooter}
+        <span class="footer-divider"></span>
         <span class="footer-custom">{customFooter}</span>
-      {:else}
-        <a class="footer-domain" href="https://www.cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a>
       {/if}
       <span class="footer-divider"></span>
       <a class="footer-link" href="about.html">关于我们</a>

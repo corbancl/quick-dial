@@ -231,6 +231,17 @@ import { t } from './utils/i18n.svelte';
     <div class="footer-inner">
       <span>&copy;2026 cilacila.cn {t('footer.copyright')}</span>
       <span class="footer-divider"></span>
+      <span class="footer-version">{VERSION}</span>
+      {#if isLoggedIn() && getIsPro()}
+        <span class="footer-pro-badge">PRO</span>
+      {/if}
+      <span class="footer-divider"></span>
+      {#if isLoggedIn() && getIsPro() && customFooter}
+        <span class="footer-custom">{customFooter}</span>
+      {:else}
+        <a class="footer-domain" href="https://www.cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a>
+      {/if}
+      <span class="footer-divider"></span>
       <a class="footer-link" href="about.html">关于我们</a>
       <span class="footer-divider"></span>
       <a class="footer-link" href="privacy.html">隐私政策</a>
@@ -238,8 +249,6 @@ import { t } from './utils/i18n.svelte';
       <a class="footer-link" href="copyright.html">版权声明</a>
       <span class="footer-divider"></span>
       <a class="footer-link" href="contact.html">联系方式</a>
-      <span class="footer-divider"></span>
-      <span class="footer-version">{VERSION}</span>
     </div>
   </footer>
 </div>

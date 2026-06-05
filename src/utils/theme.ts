@@ -24,6 +24,9 @@ export function applyTheme(mode: ThemeMode, primaryColor: string): void {
   // 直接设置 body 背景色，确保暗色模式生效
   document.body.style.backgroundColor = bgColor;
   document.body.style.color = textColor;
+
+  // 通知静态页面当前模式
+  localStorage.setItem('quick-dial-is-dark', mode === 'dark' ? '1' : '0');
 }
 
 export function applyWallpaper(wallpaper: WallpaperConfig): void {
@@ -66,6 +69,7 @@ function adaptTextColor(cssValue: string) {
     root.style.setProperty('--hover-bg', 'rgba(255,255,255,0.06)');
     root.style.setProperty('--input-bg', 'rgba(255,255,255,0.06)');
     document.body.style.color = '#e2e8f0';
+    localStorage.setItem('quick-dial-is-dark', '1');
   } else {
     root.setAttribute('data-theme', 'light');
     root.style.setProperty('--text-color', '#1e293b');
@@ -74,6 +78,7 @@ function adaptTextColor(cssValue: string) {
     root.style.setProperty('--hover-bg', 'rgba(0,0,0,0.04)');
     root.style.setProperty('--input-bg', 'rgba(0,0,0,0.02)');
     document.body.style.color = '#1e293b';
+    localStorage.setItem('quick-dial-is-dark', '0');
   }
 }
 

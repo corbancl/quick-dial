@@ -29,8 +29,7 @@ const zh: Dict = {
   'dial.addToGroup': '添加到本组',
   'pro.monthly': '月度会员','pro.yearly': '年度会员','pro.lifetime': '终身会员','pro.expire': '到期：',
   'settings.engine': '默认搜索引擎',
-  'pro.customFooterEg': '例如：我的公司',
-  'cat.common': '常用','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
+  'pro.customFooterEg': '例如：我的公司','pro.customTitle': '自定义标题','pro.customTitleDesc': '替换浏览器标签页标题','pro.customTitleEg': '例如：我的起始页','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
   'pro.cssPlaceholder': '/* 在此输入自定义 CSS */',
   'icon.customUrl': '自定义图标 URL',
   // Default group names (stored in data, translated at render)
@@ -65,6 +64,9 @@ const en: Dict = {
   'pro.monthly': 'Monthly','pro.yearly': 'Yearly','pro.lifetime': 'Lifetime','pro.expire': 'Expires: ',
   'settings.engine': 'Default Engine',
   'pro.customFooterEg': 'e.g. My Company',
+  'pro.customTitle': 'Custom Title',
+  'pro.customTitleDesc': 'Replace browser tab title',
+  'pro.customTitleEg': 'e.g. My Start Page',
   'cat.common': 'Common','cat.social': 'Social','cat.dev': 'Dev','cat.media': 'Media','cat.office': 'Office','cat.study': 'Study','cat.brand': 'Brand',
   'pro.cssPlaceholder': '/* Enter custom CSS here */',
   'icon.customUrl': 'Custom Icon URL',
@@ -89,9 +91,12 @@ export function setLang(lang: Lang) {
   _v++;
   localStorage.setItem('qd-lang', lang);
   document.documentElement.setAttribute('lang', lang);
-  document.title = lang === 'zh-CN'
-    ? '呲啦起始页 - 极简无广告浏览器新标签页'
-    : 'Quick Dial - Clean, Ad-Free Browser New Tab';
+  const ct = localStorage.getItem('quick-dial-custom-title');
+  document.title = ct
+    ? ct
+    : (lang === 'zh-CN'
+      ? '呲啦起始页 - 极简无广告浏览器新标签页'
+      : 'Quick Dial - Clean, Ad-Free Browser New Tab');
 }
 
 // 初始化

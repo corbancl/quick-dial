@@ -95,6 +95,9 @@ function getLocalSnapshot(): AppData {
     theme: getTheme(),
     settings: getSettings(),
     recentSites: getRecentSites().map(s => ({ ...s })),
+    customCss: localStorage.getItem('quick-dial-custom-css') || '',
+    customTitle: localStorage.getItem('quick-dial-custom-title') || '',
+    customFooter: localStorage.getItem('quick-dial-custom-footer') || '',
   };
 }
 

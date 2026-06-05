@@ -235,6 +235,27 @@
         <!-- 自定义底部文案 -->
         <div class="card-section">
           <div class="card-header">
+            <span class="card-icon">🏷️</span>
+            <span class="card-title">{t('pro.customTitle')}</span>
+          </div>
+          <p class="card-desc">{t('pro.customTitleDesc')}</p>
+          <div class="form-group" style="margin:0 0 12px 0">
+            <input class="form-input" id="custom-title" type="text"
+              value={localStorage.getItem('quick-dial-custom-title') || ''}
+              oninput={(e) => {
+                const v = (e.target as HTMLInputElement).value;
+                localStorage.setItem('quick-dial-custom-title', v);
+                document.title = v || '呲啦起始页 - 极简无广告浏览器新标签页';
+              }}
+              placeholder={t('pro.customTitleEg')}
+              maxlength="50"
+            />
+          </div>
+        </div>
+
+        <!-- 自定义底部文案 -->
+        <div class="card-section">
+          <div class="card-header">
             <span class="card-icon">✏️</span>
             <span class="card-title">{t('pro.customFooter')}</span>
           </div>

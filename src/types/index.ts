@@ -81,6 +81,8 @@ export interface AppData {
   settings: AppSettings;
   recentSites: RecentSite[];
   customCss?: string;
+  customTitle?: string;
+  customFooter?: string;
 }
 
 // ====== 预设默认值 ======

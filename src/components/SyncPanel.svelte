@@ -77,7 +77,6 @@ import { t } from '../utils/i18n.svelte';
       // 同步自定义 CSS
       if (result.data.customCss !== undefined) {
         localStorage.setItem('quick-dial-custom-css', result.data.customCss);
-        // 注入到页面
         let styleEl = document.getElementById('qd-custom-css') as HTMLStyleElement | null;
         if (!styleEl) {
           styleEl = document.createElement('style');
@@ -85,6 +84,15 @@ import { t } from '../utils/i18n.svelte';
           document.head.appendChild(styleEl);
         }
         styleEl.textContent = result.data.customCss;
+      }
+      // 同步自定义标题
+      if (result.data.customTitle !== undefined) {
+        localStorage.setItem('quick-dial-custom-title', result.data.customTitle);
+        document.title = result.data.customTitle || '';
+      }
+      // 同步自定义底部
+      if (result.data.customFooter !== undefined) {
+        localStorage.setItem('quick-dial-custom-footer', result.data.customFooter);
       }
       status = t('sync.downloaded');
       statusOk = true;

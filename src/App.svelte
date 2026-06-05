@@ -28,10 +28,11 @@
   import { registerShortcut, focusSearch } from './utils/keyboard';
   import { getToasts, dismissToast } from './utils/toast.svelte';
   import { getContextAdd } from './utils/contextMenu';
-import { t } from './utils/i18n.svelte';
+import { t, getLang } from './utils/i18n.svelte';
   import type { AppData } from './types';
 
   const VERSION = __VERSION__;
+  const pg = $derived(getLang() === 'zh-CN' ? '' : 'en-');
 
   let showWallpaperPicker = $state(false);
   let showImportExport = $state(false);
@@ -239,13 +240,13 @@ import { t } from './utils/i18n.svelte';
           <span class="footer-custom">{customFooter}</span>
           <span class="footer-divider"></span>
         {/if}
-        <a class="footer-link" href="about.html">{t('footer.about')}</a>
+        <a class="footer-link" href="{pg}about.html">{t('footer.about')}</a>
         <span class="footer-divider"></span>
-        <a class="footer-link" href="privacy.html">{t('footer.privacy')}</a>
+        <a class="footer-link" href="{pg}privacy.html">{t('footer.privacy')}</a>
         <span class="footer-divider"></span>
-        <a class="footer-link" href="copyright.html">{t('footer.copyright')}</a>
+        <a class="footer-link" href="{pg}copyright.html">{t('footer.copyright')}</a>
         <span class="footer-divider"></span>
-        <a class="footer-link" href="contact.html">{t('footer.contact')}</a>
+        <a class="footer-link" href="{pg}contact.html">{t('footer.contact')}</a>
       </div>
       <div class="footer-right">
         <span class="footer-version">{VERSION}</span>

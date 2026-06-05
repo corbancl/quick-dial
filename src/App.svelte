@@ -214,6 +214,9 @@ import { t } from './utils/i18n.svelte';
     <button class="btn-icon" onclick={() => showSettings = true} title="设置">
       <i class="fa-solid fa-gear"></i>
     </button>
+    <button class="btn-icon" onclick={() => showHelp = !showHelp} title="快捷键">
+      <i class="fa-solid fa-question"></i>
+    </button>
   </div>
 
   <!-- Toast 通知 -->

@@ -125,9 +125,9 @@ import { t } from './utils/i18n.svelte';
   }
 
   registerShortcut('k', focusSearch, '聚焦搜索', { ctrl: true });
-  registerShortcut(',', () => showSettings = true, '打开设置', { ctrl: true });
-  registerShortcut('b', () => showWallpaperPicker = true, '壁纸设置', { ctrl: true, shift: true });
-  registerShortcut('s', () => showSync = true, '云同步', { ctrl: true, shift: true });
+  registerShortcut(',', () => showSettings = !showSettings, '设置', { ctrl: true });
+  registerShortcut('b', () => showWallpaperPicker = !showWallpaperPicker, '壁纸设置', { ctrl: true, shift: true });
+  registerShortcut('s', () => showSync = !showSync, '云同步', { ctrl: true, shift: true });
   registerShortcut('?', () => showHelp = !showHelp, '快捷键帮助', {});
 
   // 使用 $derived 创建稳定的数据引用，避免无限循环

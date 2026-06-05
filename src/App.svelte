@@ -31,7 +31,7 @@
 import { t } from './utils/i18n.svelte';
   import type { AppData } from './types';
 
-  const VERSION = 'v1.0.4';
+  const VERSION = __VERSION__;
 
   let showWallpaperPicker = $state(false);
   let showImportExport = $state(false);

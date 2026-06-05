@@ -1,3 +1,5 @@
+declare const __VERSION__: string;
+
 // ====== 导航卡片 ======
 export interface DialItem {
   id: string;

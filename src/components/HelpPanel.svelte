@@ -38,11 +38,11 @@ import { t } from '../utils/i18n.svelte';
       {#each shortcuts as s}
         <div class="shortcut-row">
           <kbd class="shortcut-key">{s.key}</kbd>
-          <span class="shortcut-desc">{s.description}</span>
+          <span class="shortcut-desc">{t(s.description)}</span>
         </div>
       {/each}
     </div>
-    <p class="help-tip">按 <kbd>?</kbd> 随时打开此面板</p>
+    <p class="help-tip">{t('help.tip')}</p>
   </div>
 </div>
 

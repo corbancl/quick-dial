@@ -215,7 +215,7 @@ import { t } from '../utils/i18n.svelte';
 
     <!-- 模糊度 -->
     <div class="adjust-section">
-      <span class="adjust-label">模糊度: {wallpaper.blur}px</span>
+      <span class="adjust-label">{t('wallpaper.blur')}: {wallpaper.blur}px</span>
       <input
         class="adjust-slider"
         type="range"
@@ -223,13 +223,13 @@ import { t } from '../utils/i18n.svelte';
         max="20"
         value={wallpaper.blur}
         onchange={handleBlurChange}
-        aria-label="模糊度"
+        aria-label={t('wallpaper.blur')}
       />
     </div>
 
     <!-- 亮度 -->
     <div class="adjust-section">
-      <span class="adjust-label">亮度: {wallpaper.brightness}%</span>
+      <span class="adjust-label">{t('wallpaper.brightness')}: {wallpaper.brightness}%</span>
       <input
         class="adjust-slider"
         type="range"
@@ -237,7 +237,7 @@ import { t } from '../utils/i18n.svelte';
         max="150"
         value={wallpaper.brightness}
         onchange={handleBrightnessChange}
-        aria-label="亮度"
+        aria-label={t('wallpaper.brightness')}
       />
     </div>
 

@@ -124,11 +124,11 @@ import { t } from './utils/i18n.svelte';
     addDialPrefill = { title: '', url: '' };
   }
 
-  registerShortcut('k', focusSearch, '聚焦搜索', { ctrl: true });
-  registerShortcut(',', () => showSettings = !showSettings, '设置', { ctrl: true });
-  registerShortcut('b', () => showWallpaperPicker = !showWallpaperPicker, '壁纸设置', { ctrl: true, shift: true });
-  registerShortcut('s', () => showSync = !showSync, '云同步', { ctrl: true, shift: true });
-  registerShortcut('?', () => showHelp = !showHelp, '快捷键帮助', {});
+  registerShortcut('k', focusSearch, 'shortcut.search', { ctrl: true });
+  registerShortcut(',', () => showSettings = !showSettings, 'shortcut.settings', { ctrl: true });
+  registerShortcut('b', () => showWallpaperPicker = !showWallpaperPicker, 'shortcut.wallpaper', { ctrl: true, shift: true });
+  registerShortcut('s', () => showSync = !showSync, 'shortcut.sync', { ctrl: true, shift: true });
+  registerShortcut('?', () => showHelp = !showHelp, 'shortcut.help', {});
 
   // 使用 $derived 创建稳定的数据引用，避免无限循环
   const appData = $derived((): AppData => {
@@ -233,19 +233,19 @@ import { t } from './utils/i18n.svelte';
   <footer class="app-footer">
     <div class="footer-inner">
       <div class="footer-left">
-        <span>&copy;2026 <a class="footer-domain" href="https://cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a> {t('footer.copyright')}</span>
+        <span>&copy;2026 <a class="footer-domain" href="https://cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a> {t('footer.domain')}</span>
         <span class="footer-divider"></span>
         {#if isLoggedIn() && getIsPro() && customFooter}
           <span class="footer-custom">{customFooter}</span>
           <span class="footer-divider"></span>
         {/if}
-        <a class="footer-link" href="about.html">关于我们</a>
+        <a class="footer-link" href="about.html">{t('footer.about')}</a>
         <span class="footer-divider"></span>
-        <a class="footer-link" href="privacy.html">隐私政策</a>
+        <a class="footer-link" href="privacy.html">{t('footer.privacy')}</a>
         <span class="footer-divider"></span>
-        <a class="footer-link" href="copyright.html">版权声明</a>
+        <a class="footer-link" href="copyright.html">{t('footer.copyright')}</a>
         <span class="footer-divider"></span>
-        <a class="footer-link" href="contact.html">联系方式</a>
+        <a class="footer-link" href="contact.html">{t('footer.contact')}</a>
       </div>
       <div class="footer-right">
         <span class="footer-version">{VERSION}</span>

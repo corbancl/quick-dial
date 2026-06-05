@@ -217,7 +217,6 @@ import { t, getLang } from './utils/i18n.svelte';
     </button>
     <button class="btn-icon" onclick={() => showHelp = !showHelp} title={t('toolbar.help')}>
       <i class="fa-solid fa-question"></i>
-      <i class="fa-solid fa-question"></i>
     </button>
   </div>
 

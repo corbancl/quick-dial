@@ -1,0 +1,1596 @@
+呲啦起始页软件 V1.0  源程序文档（前 30 页）
+============================================================
+
+
+———— 第 1 页 ————
+
+呲啦起始页软件 V1.0  源程序文档
+============================================================
+
+/* 文件: src/main.ts  共 7 行 */
+
+   1 | /// <reference types="svelte" />
+   2 | import App from './App.svelte';
+   3 | import { mount } from 'svelte';
+   4 | 
+   5 | const app = mount(App, { target: document.getElementById('app')! });
+   6 | 
+   7 | export default app;
+
+
+/* 文件: src/types/index.ts  共 139 行 */
+
+   1 | // ====== 导航卡片 ======
+   2 | export interface DialItem {
+   3 |   id: string;
+   4 |   title: string;
+   5 |   url: string;
+   6 |   icon: string;
+   7 |   groupId: string;
+   8 |   sortOrder: number;
+   9 |   createdAt: number;
+  10 | }
+  11 | 
+  12 | // ====== 分组 ======
+  13 | export interface DialGroup {
+  14 |   id: string;
+  15 |   name: string;
+  16 |   sortOrder: number;
+  17 |   isCollapsed: boolean;
+  18 | }
+  19 | 
+  20 | // ====== 搜索引擎 ======
+  21 | export interface SearchEngine {
+  22 |   id: string;
+  23 |   name: string;
+  24 |   url: string;
+  25 |   icon?: string;
+  26 |   isCustom?: boolean;  // Pro 用户自定义引擎
+  27 |   proOnly?: boolean;   // 仅 Pro 可用
+  28 | }
+  29 | 
+  30 | export const FREE_ENGINE_LIMIT = 6;
+  31 | 
+  32 | // ====== 壁纸配置 ======
+  33 | export type WallpaperType = 'solid' | 'gradient' | 'image' | 'builtin';
+  34 | 
+
+———— 第 2 页 ————
+
+  35 | export interface WallpaperConfig {
+  36 |   type: WallpaperType;
+  37 |   value: string;
+  38 |   blur: number;
+  39 |   brightness: number;
+  40 | }
+  41 | 
+  42 | // ====== 主题配置 ======
+  43 | export type ThemeMode = 'light' | 'dark';
+  44 | 
+  45 | export interface ThemeConfig {
+  46 |   mode: ThemeMode;
+  47 |   primaryColor: string;
+  48 |   wallpaper: WallpaperConfig;
+  49 | }
+  50 | 
+  51 | // ====== 时钟样式 ======
+  52 | export type ClockStyle = 'digital' | 'minimal' | 'classic' | 'flip' | 'neon' | 'binary';
+  53 | 
+  54 | // ====== 全局设置 ======
+  55 | export interface AppSettings {
+  56 |   searchEngine: string;
+  57 |   clockStyle: ClockStyle;
+  58 |   showDate: boolean;
+  59 |   showWeekday: boolean;
+  60 |   showRecentSites: boolean;
+  61 |   recentSitesCount: number;
+  62 |   openInNewTab: boolean;
+  63 | }
+  64 | 
+  65 | // ====== 最近访问 ======
+  66 | export interface RecentSite {
+  67 |   url: string;
+  68 |   title: string;
+  69 |   lastVisit: number;
+  70 | }
+  71 | 
+  72 | // ====== 根数据 ======
+  73 | export interface AppData {
+  74 |   version: number;
+  75 |   dials: DialItem[];
+  76 |   groups: DialGroup[];
+  77 |   searchEngines: SearchEngine[];
+  78 |   theme: ThemeConfig;
+  79 |   settings: AppSettings;
+  80 |   recentSites: RecentSite[];
+  81 |   customCss?: string;
+  82 | }
+  83 | 
+  84 | // ====== 预设默认值 ======
+
+———— 第 3 页 ————
+
+  85 | export const DEFAULT_SEARCH_ENGINES: SearchEngine[] = [
+  86 |   { id: 'google', name: 'Google', url: 'https://www.google.com/search?q={keyword}', icon: '' },
+  87 |   { id: 'baidu', name: '百度', url: 'https://www.baidu.com/s?wd={keyword}', icon: '' },
+  88 |   { id: 'bing', name: 'Bing', url: 'https://www.bing.com/search?q={keyword}', icon: '' },
+  89 |   { id: 'sogou', name: '搜狗', url: 'https://www.sogou.com/web?query={keyword}', icon: '' },
+  90 |   { id: 'so', name: '360搜索', url: 'https://www.so.com/s?q={keyword}', icon: '' },
+  91 |   { id: 'zhihu', name: '知乎', url: 'https://www.zhihu.com/search?type=content&q={keyword}', icon: '' },
+  92 |   { id: 'weibo', name: '微博', url: 'https://s.weibo.com/weibo/{keyword}', icon: '', proOnly: true },
+  93 |   { id: 'bilibili', name: '哔哩哔哩', url: 'https://search.bilibili.com/all?keyword={keyword}', icon: '', proOnly: true },
+  94 |   { id: 'github', name: 'GitHub', url: 'https://github.com/search?q={keyword}', icon: '', proOnly: true },
+  95 |   { id: 'duckduckgo', name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q={keyword}', icon: '', proOnly: true },
+  96 |   { id: 'twitter', name: 'X (Twitter)', url: 'https://twitter.com/search?q={keyword}', icon: '', proOnly: true },
+  97 |   { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com/results?search_query={keyword}', icon: '', proOnly: true },
+  98 | ];
+  99 | 
+ 100 | export const DEFAULT_SETTINGS: AppSettings = {
+ 101 |   searchEngine: 'google',
+ 102 |   clockStyle: 'digital',
+ 103 |   showDate: true,
+ 104 |   showWeekday: true,
+ 105 |   showRecentSites: true,
+ 106 |   recentSitesCount: 8,
+ 107 |   openInNewTab: true,
+ 108 | };
+ 109 | 
+ 110 | export const DEFAULT_THEME: ThemeConfig = {
+ 111 |   mode: 'light',
+ 112 |   primaryColor: '#3b82f6',
+ 113 |   wallpaper: { type: 'solid', value: '#f8fafc', blur: 0, brightness: 100 },
+ 114 | };
+ 115 | 
+ 116 | export const DEFAULT_WALLPAPERS: { id: string; name: string; value: string }[] = [
+ 117 |   { id: 'light-blue', name: '淡蓝', value: '#f0f4ff' },
+ 118 |   { id: 'light-green', name: '淡绿', value: '#f0fdf4' },
+ 119 |   { id: 'light-purple', name: '淡紫', value: '#faf5ff' },
+ 120 |   { id: 'light-gray', name: '淡灰', value: '#f8fafc' },
+ 121 |   { id: 'dark-blue', name: '深蓝', value: '#0f172a' },
+ 122 |   { id: 'dark-gray', name: '深灰', value: '#1e293b' },
+ 123 |   { id: 'dark-slate', name: '深岩', value: '#0f0f0f' },
+ 124 |   { id: 'gradient-sunset', name: '日落渐变', value: 'linear-gradient(135deg, #f97316, #ec4899)' },
+ 125 |   { id: 'gradient-ocean', name: '海洋渐变', value: 'linear-gradient(135deg, #06b6d4, #3b82f6)' },
+ 126 |   { id: 'gradient-forest', name: '森林渐变', value: 'linear-gradient(135deg, #22c55e, #06b6d4)' },
+ 127 |   { id: 'gradient-midnight', name: '午夜渐变', value: 'linear-gradient(135deg, #1e293b, #0f172a)' },
+ 128 |   { id: 'gradient-aurora', name: '极光渐变', value: 'linear-gradient(135deg, #3b82f6, #06b6d4)' },
+ 129 | ];
+ 130 | 
+ 131 | export function generateId(): string {
+ 132 |   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+ 133 | }
+ 134 | 
+
+———— 第 4 页 ————
+
+ 135 | // ====== 订阅 ======
+ 136 | export interface SubscriptionState {
+ 137 |   isPro: boolean;
+ 138 |   customEngines: SearchEngine[];
+ 139 | }
+
+
+/* 文件: src/utils/storage.ts  共 118 行 */
+
+   1 | const STORAGE_KEY = 'speed-dial-data';
+   2 | const CHUNK_PREFIX = 'speed-dial-chunk-';
+   3 | const CHUNK_SIZE = 1024 * 1024; // 1MB per chunk
+   4 | 
+   5 | /**
+   6 |  * 加载数据：兼容旧格式（单key）和新格式（分片）
+   7 |  */
+   8 | export function loadData<T>(): T | null {
+   9 |   try {
+  10 |     // 尝试分片格式
+  11 |     const chunkCount = parseInt(localStorage.getItem('speed-dial-chunks') || '0', 10);
+  12 |     if (chunkCount > 0) {
+  13 |       let raw = '';
+  14 |       for (let i = 0; i < chunkCount; i++) {
+  15 |         const chunk = localStorage.getItem(CHUNK_PREFIX + i);
+  16 |         if (chunk === null) {
+  17 |           console.warn('[Storage] 分片缺失:', i);
+  18 |           // 尝试降级到单key格式
+  19 |           return loadLegacy<T>();
+  20 |         }
+  21 |         raw += chunk;
+  22 |       }
+  23 |       return JSON.parse(raw) as T;
+  24 |     }
+  25 |     // 兼容旧格式
+  26 |     return loadLegacy<T>();
+  27 |   } catch (e) {
+  28 |     console.warn('[Storage] 数据解析失败', e);
+  29 |     return null;
+  30 |   }
+  31 | }
+  32 | 
+  33 | function loadLegacy<T>(): T | null {
+  34 |   const raw = localStorage.getItem(STORAGE_KEY);
+  35 |   if (!raw) return null;
+  36 |   return JSON.parse(raw) as T;
+  37 | }
+  38 | 
+  39 | /**
+  40 |  * 保存数据：小数据单key，大数据自动分片
+  41 |  */
+
+———— 第 5 页 ————
+
+  42 | export function saveData<T>(data: T): boolean {
+  43 |   try {
+  44 |     const serialized = JSON.stringify(data);
+  45 |     const totalSize = new Blob([serialized]).size;
+  46 | 
+  47 |     // 清除旧数据
+  48 |     localStorage.removeItem(STORAGE_KEY);
+  49 |     clearChunks();
+  50 | 
+  51 |     if (totalSize <= CHUNK_SIZE) {
+  52 |       // 小数据：单key存储
+  53 |       localStorage.setItem(STORAGE_KEY, serialized);
+  54 |       localStorage.removeItem('speed-dial-chunks');
+  55 |     } else {
+  56 |       // 大数据：分片存储
+  57 |       const chunkCount = Math.ceil(totalSize / CHUNK_SIZE);
+  58 |       for (let i = 0; i < chunkCount; i++) {
+  59 |         const chunk = serialized.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+  60 |         localStorage.setItem(CHUNK_PREFIX + i, chunk);
+  61 |       }
+  62 |       localStorage.setItem('speed-dial-chunks', String(chunkCount));
+  63 |     }
+  64 |     return true;
+  65 |   } catch (e) {
+  66 |     if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+  67 |       alert('存储空间不足！请减少自定义壁纸或清理数据后重试。');
+  68 |     } else {
+  69 |       console.error('[Storage] 保存失败', e);
+  70 |     }
+  71 |     return false;
+  72 |   }
+  73 | }
+  74 | 
+  75 | function clearChunks() {
+  76 |   const count = parseInt(localStorage.getItem('speed-dial-chunks') || '0', 10);
+  77 |   for (let i = 0; i < count; i++) {
+  78 |     localStorage.removeItem(CHUNK_PREFIX + i);
+  79 |   }
+  80 |   localStorage.removeItem('speed-dial-chunks');
+  81 | }
+  82 | 
+  83 | export function removeData(): void {
+  84 |   try {
+  85 |     localStorage.removeItem(STORAGE_KEY);
+  86 |     clearChunks();
+  87 |   } catch (e) {
+  88 |     console.error('[Storage] 清除失败', e);
+  89 |   }
+  90 | }
+  91 | 
+
+———— 第 6 页 ————
+
+  92 | export function checkStorageSupport(): boolean {
+  93 |   try {
+  94 |     const testKey = '__storage_test__';
+  95 |     localStorage.setItem(testKey, '1');
+  96 |     localStorage.removeItem(testKey);
+  97 |     return true;
+  98 |   } catch {
+  99 |     return false;
+ 100 |   }
+ 101 | }
+ 102 | 
+ 103 | export function loadJsonFile<T>(file: File): Promise<T> {
+ 104 |   return new Promise((resolve, reject) => {
+ 105 |     const reader = new FileReader();
+ 106 |     reader.onload = () => {
+ 107 |       try {
+ 108 |         const data = JSON.parse(reader.result as string) as T;
+ 109 |         resolve(data);
+ 110 |       } catch {
+ 111 |         reject(new Error('JSON 格式错误'));
+ 112 |       }
+ 113 |     };
+ 114 |     reader.onerror = () => reject(new Error('文件读取失败'));
+ 115 |     reader.readAsText(file);
+ 116 |   });
+ 117 | }
+ 118 | 
+
+
+/* 文件: src/utils/search.ts  共 51 行 */
+
+   1 | import type { SearchEngine } from '../types';
+   2 | import { DEFAULT_SEARCH_ENGINES, FREE_ENGINE_LIMIT } from '../types';
+   3 | import { getIsPro, getCustomEngines } from '../stores/subscription.svelte';
+   4 | 
+   5 | export function getEngineById(id: string): SearchEngine | undefined {
+   6 |   const all = getAllEngines();
+   7 |   return all.find(e => e.id === id);
+   8 | }
+   9 | 
+  10 | export function buildSearchUrl(engineId: string, keyword: string): string {
+  11 |   const engine = getEngineById(engineId);
+  12 |   if (!engine) {
+  13 |     return `https://www.google.com/search?q=${encodeURIComponent(keyword)}`;
+  14 |   }
+  15 |   return engine.url.replace('{keyword}', encodeURIComponent(keyword));
+  16 | }
+  17 | 
+  18 | /** 可用引擎（免费6种，Pro全部+自定义） */
+  19 | export function getAvailableEngines(): SearchEngine[] {
+
+———— 第 7 页 ————
+
+  20 |   const pro = getIsPro();
+  21 |   const builtin = pro
+  22 |     ? DEFAULT_SEARCH_ENGINES
+  23 |     : DEFAULT_SEARCH_ENGINES.filter(e => !e.proOnly).slice(0, FREE_ENGINE_LIMIT);
+  24 | 
+  25 |   if (pro) {
+  26 |     const custom = getCustomEngines();
+  27 |     if (custom.length > 0) return [...builtin, ...custom];
+  28 |   }
+  29 |   return builtin;
+  30 | }
+  31 | 
+  32 | /** 全部引擎（含 Pro 专属，用于展示锁定状态） */
+  33 | export function getAllEngines(): SearchEngine[] {
+  34 |   const pro = getIsPro();
+  35 |   const builtin = pro
+  36 |     ? DEFAULT_SEARCH_ENGINES
+  37 |     : DEFAULT_SEARCH_ENGINES.filter(e => !e.proOnly);
+  38 | 
+  39 |   if (pro) {
+  40 |     const custom = getCustomEngines();
+  41 |     if (custom.length > 0) return [...builtin, ...custom];
+  42 |   }
+  43 |   return builtin;
+  44 | }
+  45 | 
+  46 | /** 被锁定的引擎列表 */
+  47 | export function getLockedEngines(): SearchEngine[] {
+  48 |   if (getIsPro()) return [];
+  49 |   return DEFAULT_SEARCH_ENGINES.filter(e => e.proOnly);
+  50 | }
+  51 | 
+
+
+/* 文件: src/utils/theme.ts  共 99 行 */
+
+   1 | import type { ThemeMode, WallpaperConfig } from '../types';
+   2 | import { getLang } from './i18n.svelte';
+   3 | 
+   4 | export function applyTheme(mode: ThemeMode, primaryColor: string): void {
+   5 |   const root = document.documentElement;
+   6 |   root.setAttribute('data-theme', mode);
+   7 |   root.style.setProperty('--primary-color', primaryColor);
+   8 | 
+   9 |   const bgColor = mode === 'dark' ? '#0f172a' : '#f8fafc';
+  10 |   const textColor = mode === 'dark' ? '#e2e8f0' : '#1e293b';
+  11 |   const cardBg = mode === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.85)';
+  12 |   const cardBorder = mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  13 |   const hoverBg = mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)';
+  14 |   const inputBg = mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.02)';
+
+———— 第 8 页 ————
+
+  15 | 
+  16 |   root.style.setProperty('--bg-color', bgColor);
+  17 |   root.style.setProperty('--text-color', textColor);
+  18 |   root.style.setProperty('--card-bg', cardBg);
+  19 |   root.style.setProperty('--card-border', cardBorder);
+  20 |   root.style.setProperty('--hover-bg', hoverBg);
+  21 |   root.style.setProperty('--input-bg', inputBg);
+  22 |   root.style.setProperty('--color-scheme', mode === 'dark' ? 'dark' : 'light');
+  23 | 
+  24 |   // 直接设置 body 背景色，确保暗色模式生效
+  25 |   document.body.style.backgroundColor = bgColor;
+  26 |   document.body.style.color = textColor;
+  27 | }
+  28 | 
+  29 | export function applyWallpaper(wallpaper: WallpaperConfig): void {
+  30 |   const root = document.documentElement;
+  31 |   const { type, value, blur, brightness } = wallpaper;
+  32 | 
+  33 |   if (type === 'solid') {
+  34 |     root.style.setProperty('--wallpaper', value);
+  35 |     root.style.setProperty('--wallpaper-filter', 'none');
+  36 |     root.style.setProperty('--bg-color', value);
+  37 |     adaptTextColor(value);
+  38 |   } else if (type === 'gradient' || value.startsWith('linear-gradient') || value.startsWith('radial-gradient')) {
+  39 |     root.style.setProperty('--wallpaper', value);
+  40 |     root.style.setProperty('--wallpaper-filter', 'none');
+  41 |     root.style.setProperty('--bg-color', value);
+  42 |     adaptTextColor(value);
+  43 |   } else if (type === 'image' || type === 'builtin') {
+  44 |     root.style.setProperty('--wallpaper', `url(${value})`);
+  45 |     root.style.setProperty('--wallpaper-filter', `blur(${blur}px) brightness(${brightness}%)`);
+  46 |     root.style.setProperty('--bg-color', 'transparent');
+  47 |   }
+  48 | }
+  49 | 
+  50 | /** 从 CSS 值中提取第一个 hex 颜色，判断亮度并调整全部主题变量 */
+  51 | function adaptTextColor(cssValue: string) {
+  52 |   const match = cssValue.match(/#([0-9a-fA-F]{6})/);
+  53 |   if (!match) return;
+  54 |   const hex = match[1];
+  55 |   const r = parseInt(hex.slice(0, 2), 16);
+  56 |   const g = parseInt(hex.slice(2, 4), 16);
+  57 |   const b = parseInt(hex.slice(4, 6), 16);
+  58 |   const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  59 |   const root = document.documentElement;
+  60 | 
+  61 |   if (lum < 0.5) {
+  62 |     root.setAttribute('data-theme', 'dark');
+  63 |     root.style.setProperty('--text-color', '#e2e8f0');
+  64 |     root.style.setProperty('--card-bg', 'rgba(30, 41, 59, 0.9)');
+
+———— 第 9 页 ————
+
+  65 |     root.style.setProperty('--card-border', 'rgba(255,255,255,0.06)');
+  66 |     root.style.setProperty('--hover-bg', 'rgba(255,255,255,0.06)');
+  67 |     root.style.setProperty('--input-bg', 'rgba(255,255,255,0.06)');
+  68 |     document.body.style.color = '#e2e8f0';
+  69 |   } else {
+  70 |     root.setAttribute('data-theme', 'light');
+  71 |     root.style.setProperty('--text-color', '#1e293b');
+  72 |     root.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.85)');
+  73 |     root.style.setProperty('--card-border', 'rgba(0,0,0,0.06)');
+  74 |     root.style.setProperty('--hover-bg', 'rgba(0,0,0,0.04)');
+  75 |     root.style.setProperty('--input-bg', 'rgba(0,0,0,0.02)');
+  76 |     document.body.style.color = '#1e293b';
+  77 |   }
+  78 | }
+  79 | 
+  80 | export function formatDate(date: Date): string {
+  81 |   const lang = getLang();
+  82 |   if (lang === 'zh-CN') {
+  83 |     const y = date.getFullYear();
+  84 |     const m = String(date.getMonth() + 1).padStart(2, '0');
+  85 |     const d = String(date.getDate()).padStart(2, '0');
+  86 |     return `${y}年${m}月${d}日`;
+  87 |   }
+  88 |   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  89 | }
+  90 | 
+  91 | export function formatWeekday(date: Date): string {
+  92 |   const lang = getLang();
+  93 |   const weekdays: Record<string, string[]> = {
+  94 |     'zh-CN': ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+  95 |     'en': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  96 |   };
+  97 |   return (weekdays[lang] || weekdays['zh-CN'])[date.getDay()];
+  98 | }
+  99 | 
+
+
+/* 文件: src/utils/keyboard.ts  共 83 行 */
+
+   1 | /**
+   2 |  * 键盘快捷键管理器
+   3 |  * 仅在无 input/textarea 聚焦时触发
+   4 |  */
+   5 | type ShortcutHandler = (e: KeyboardEvent) => void;
+   6 | 
+   7 | interface Shortcut {
+   8 |   key: string;
+   9 |   ctrl?: boolean;
+  10 |   shift?: boolean;
+  11 |   alt?: boolean;
+
+———— 第 10 页 ————
+
+  12 |   handler: ShortcutHandler;
+  13 |   description: string;
+  14 | }
+  15 | 
+  16 | const shortcuts: Shortcut[] = [];
+  17 | let registered = false;
+  18 | 
+  19 | function isEditing(): boolean {
+  20 |   const el = document.activeElement;
+  21 |   if (!el) return false;
+  22 |   const tag = el.tagName.toLowerCase();
+  23 |   if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+  24 |   if ((el as HTMLElement).isContentEditable) return true;
+  25 |   return false;
+  26 | }
+  27 | 
+  28 | function handleKeydown(e: KeyboardEvent) {
+  29 |   if (isEditing()) return;
+  30 | 
+  31 |   for (const s of shortcuts) {
+  32 |     const ctrlOk = s.ctrl ? (e.ctrlKey || e.metaKey) : true;
+  33 |     const shiftOk = s.shift ? e.shiftKey : true;
+  34 |     const altOk = s.alt ? e.altKey : true;
+  35 | 
+  36 |     if (e.key === s.key && ctrlOk && shiftOk && altOk) {
+  37 |       e.preventDefault();
+  38 |       s.handler(e);
+  39 |       return;
+  40 |     }
+  41 |   }
+  42 | }
+  43 | 
+  44 | export function registerShortcut(
+  45 |   key: string,
+  46 |   handler: ShortcutHandler,
+  47 |   description: string,
+  48 |   modifiers: { ctrl?: boolean; shift?: boolean; alt?: boolean } = {}
+  49 | ) {
+  50 |   shortcuts.push({ key, handler, description, ...modifiers });
+  51 | 
+  52 |   if (!registered) {
+  53 |     document.addEventListener('keydown', handleKeydown);
+  54 |     registered = true;
+  55 |   }
+  56 | }
+  57 | 
+  58 | /**
+  59 |  * 获取所有快捷键列表（用于帮助面板）
+  60 |  */
+  61 | export function getShortcuts(): { key: string; description: string }[] {
+
+———— 第 11 页 ————
+
+  62 |   return shortcuts.map(s => ({
+  63 |     key: [
+  64 |       s.ctrl ? 'Ctrl+' : '',
+  65 |       s.shift ? 'Shift+' : '',
+  66 |       s.alt ? 'Alt+' : '',
+  67 |       s.key,
+  68 |     ].join(''),
+  69 |     description: s.description,
+  70 |   }));
+  71 | }
+  72 | 
+  73 | /**
+  74 |  * 聚焦搜索框
+  75 |  */
+  76 | export function focusSearch() {
+  77 |   const el = document.querySelector<HTMLInputElement>('.search-input');
+  78 |   if (el) {
+  79 |     el.focus();
+  80 |     el.select();
+  81 |   }
+  82 | }
+  83 | 
+
+
+/* 文件: src/utils/weather.ts  共 267 行 */
+
+   1 | export interface WeatherData {
+   2 |   location: {
+   3 |     city: string;
+   4 |     province: string;
+   5 |   };
+   6 |   current: {
+   7 |     temperature: number;
+   8 |     humidity: number;
+   9 |     weather: string;
+  10 |     windDirection: string;
+  11 |     windScale: string;
+  12 |     icon: string;
+  13 |   };
+  14 |   forecast: Array<{
+  15 |     date: string;
+  16 |     dayWeather: string;
+  17 |     dayTemp: string;
+  18 |     nightTemp: string;
+  19 |     dayWeatherIcon: string;
+  20 |   }>;
+  21 |   updateTime: string;
+  22 | }
+  23 | 
+  24 | interface ApiResponse {
+
+———— 第 12 页 ————
+
+  25 |   code: number;
+  26 |   msg: string;
+  27 |   data: {
+  28 |     data: {
+  29 |       location: {
+  30 |         city: string;
+  31 |         province: string;
+  32 |       };
+  33 |       current: {
+  34 |         temperature: number;
+  35 |         humidity: number;
+  36 |         windDirection: string;
+  37 |         windScale: string;
+  38 |       };
+  39 |       forecast: Array<{
+  40 |         date: string;
+  41 |         dayWeather: string;
+  42 |         dayTemp: string;
+  43 |         nightTemp: string;
+  44 |         dayWeatherIcon: string;
+  45 |       }>;
+  46 |     };
+  47 |   };
+  48 | }
+  49 | 
+  50 | const API_URL = 'https://api.ruseo.cn/api/weather_ip';
+  51 | const API_KEY = 'be4385f8-e5a2-49a4-b3ad-c6f23d1f38a1';
+  52 | const CACHE_KEY = 'speed-dial-weather';
+  53 | const CACHE_DURATION = 15 * 60 * 1000; // 15分钟缓存
+  54 | 
+  55 | export async function fetchRandomWallpaper(): Promise<string | null> {
+  56 |   try {
+  57 |     const response = await fetch(`https://api.ruseo.cn/api/wallpaper?key=${API_KEY}`);
+  58 |     const result = await response.json();
+  59 |     
+  60 |     if (result.code === 0 && result.data?.image_url) {
+  61 |       // 验证图片 URL 可访问，xxapi.cn 可能 HTTP/2 异常
+  62 |       try {
+  63 |         const check = await fetch(result.data.image_url, { method: 'HEAD', mode: 'no-cors' });
+  64 |         if (check.ok || check.type === 'opaque') {
+  65 |           return result.data.image_url;
+  66 |         }
+  67 |       } catch { /* 图片不可访问，使用后备 */ }
+  68 |     }
+  69 |     
+  70 |     // 后备：使用 Picsum 随机壁纸（全球 CDN，可靠）
+  71 |     const seed = Date.now();
+  72 |     return `https://picsum.photos/seed/${seed}/1920/1080`;
+  73 |   } catch {
+  74 |     // API 完全不可用，直接后备
+
+———— 第 13 页 ————
+
+  75 |     const seed = Date.now();
+  76 |     return `https://picsum.photos/seed/${seed}/1920/1080`;
+  77 |   }
+  78 | }
+  79 | 
+  80 | export interface LunarData {
+  81 |   date: string;
+  82 |   weekday: string;
+  83 |   lunar: {
+  84 |     formatted: string;
+  85 |     year_ganzhi: string;
+  86 |     year_shengxiao: string;
+  87 |     day_ganzhi: string;
+  88 |     month_ganzhi: string;
+  89 |   };
+  90 |   zodiac: string;
+  91 |   solar_term: {
+  92 |     current: string | null;
+  93 |     prev: string;
+  94 |     next: string;
+  95 |     next_date: string;
+  96 |   };
+  97 |   holiday: {
+  98 |     today: Array<{ name: string; type?: string }>;
+  99 |   };
+ 100 |   almanac: {
+ 101 |     yi: string[];
+ 102 |     ji: string[];
+ 103 |     xi_shen: string;
+ 104 |     fu_shen: string;
+ 105 |     cai_shen: string;
+ 106 |   };
+ 107 | }
+ 108 | 
+ 109 | const LUNAR_CACHE_KEY = 'speed-dial-lunar';
+ 110 | const LUNAR_CACHE_DURATION = 1 * 60 * 60 * 1000; // 1小时缓存
+ 111 | 
+ 112 | export async function fetchLunar(date?: string): Promise<LunarData | null> {
+ 113 |   try {
+ 114 |     const cacheKey = date ? `${LUNAR_CACHE_KEY}-${date}` : LUNAR_CACHE_KEY;
+ 115 |     
+ 116 |     const cached = getCachedLunar(cacheKey);
+ 117 |     if (cached) {
+ 118 |       return cached;
+ 119 |     }
+ 120 |     
+ 121 |     const url = date 
+ 122 |       ? `https://api.ruseo.cn/api/lunar?key=${API_KEY}&date=${date}&scope=all`
+ 123 |       : `https://api.ruseo.cn/api/lunar?key=${API_KEY}&scope=all`;
+ 124 |     
+
+———— 第 14 页 ————
+
+ 125 |     const response = await fetch(url);
+ 126 |     const result = await response.json();
+ 127 |     
+ 128 |     if (result.code !== 0 || !result.data) {
+ 129 |       console.error('Lunar API error:', result.msg);
+ 130 |       return null;
+ 131 |     }
+ 132 |     
+ 133 |     const data: LunarData = {
+ 134 |       date: result.data.date,
+ 135 |       weekday: result.data.weekday,
+ 136 |       lunar: {
+ 137 |         formatted: result.data.lunar?.formatted || '',
+ 138 |         year_ganzhi: result.data.lunar?.year_ganzhi || '',
+ 139 |         year_shengxiao: result.data.lunar?.year_shengxiao || '',
+ 140 |         day_ganzhi: result.data.lunar?.day_ganzhi || '',
+ 141 |         month_ganzhi: result.data.lunar?.month_ganzhi || '',
+ 142 |       },
+ 143 |       zodiac: result.data.zodiac || '',
+ 144 |       solar_term: {
+ 145 |         current: result.data.solar_term?.current || null,
+ 146 |         prev: result.data.solar_term?.prev || '',
+ 147 |         next: result.data.solar_term?.next || '',
+ 148 |         next_date: result.data.solar_term?.next_date || '',
+ 149 |       },
+ 150 |       holiday: {
+ 151 |         today: result.data.holiday?.today || [],
+ 152 |       },
+ 153 |       almanac: {
+ 154 |         yi: result.data.almanac?.yi || [],
+ 155 |         ji: result.data.almanac?.ji || [],
+ 156 |         xi_shen: result.data.almanac?.xi_shen || '',
+ 157 |         fu_shen: result.data.almanac?.fu_shen || '',
+ 158 |         cai_shen: result.data.almanac?.cai_shen || '',
+ 159 |       },
+ 160 |     };
+ 161 |     
+ 162 |     cacheLunar(cacheKey, data);
+ 163 |     return data;
+ 164 |   } catch (error) {
+ 165 |     console.error('Failed to fetch lunar:', error);
+ 166 |     return null;
+ 167 |   }
+ 168 | }
+ 169 | 
+ 170 | function getCachedLunar(cacheKey: string): LunarData | null {
+ 171 |   try {
+ 172 |     const cached = localStorage.getItem(cacheKey);
+ 173 |     if (!cached) return null;
+ 174 |     
+
+———— 第 15 页 ————
+
+ 175 |     const { data, timestamp } = JSON.parse(cached);
+ 176 |     if (Date.now() - timestamp > LUNAR_CACHE_DURATION) {
+ 177 |       localStorage.removeItem(cacheKey);
+ 178 |       return null;
+ 179 |     }
+ 180 |     
+ 181 |     return data;
+ 182 |   } catch {
+ 183 |     return null;
+ 184 |   }
+ 185 | }
+ 186 | 
+ 187 | function cacheLunar(cacheKey: string, data: LunarData): void {
+ 188 |   try {
+ 189 |     localStorage.setItem(cacheKey, JSON.stringify({
+ 190 |       data,
+ 191 |       timestamp: Date.now(),
+ 192 |     }));
+ 193 |   } catch {
+ 194 |   }
+ 195 | }
+ 196 | 
+ 197 | export async function fetchWeather(): Promise<WeatherData | null> {
+ 198 |   try {
+ 199 |     // 检查缓存
+ 200 |     const cached = getCachedWeather();
+ 201 |     if (cached) {
+ 202 |       return cached;
+ 203 |     }
+ 204 | 
+ 205 |     const response = await fetch(`${API_URL}?key=${API_KEY}&day=3&hourtype=0&suntimetype=0`);
+ 206 |     const result: ApiResponse = await response.json();
+ 207 | 
+ 208 |     if (result.code !== 0 || !result.data?.data) {
+ 209 |       console.error('Weather API error:', result.msg);
+ 210 |       return null;
+ 211 |     }
+ 212 | 
+ 213 |     const apiData = result.data.data;
+ 214 |     const data: WeatherData = {
+ 215 |       location: {
+ 216 |         city: apiData.location.city,
+ 217 |         province: apiData.location.province,
+ 218 |       },
+ 219 |       current: {
+ 220 |         temperature: apiData.current.temperature,
+ 221 |         humidity: apiData.current.humidity,
+ 222 |         weather: apiData.forecast[0]?.dayWeather || '',
+ 223 |         windDirection: apiData.current.windDirection,
+ 224 |         windScale: apiData.current.windScale,
+
+———— 第 16 页 ————
+
+ 225 |         icon: apiData.forecast[0]?.dayWeatherIcon || '',
+ 226 |       },
+ 227 |       forecast: apiData.forecast.slice(0, 3),
+ 228 |       updateTime: new Date().toLocaleString('zh-CN'),
+ 229 |     };
+ 230 | 
+ 231 |     // 缓存结果
+ 232 |     cacheWeather(data);
+ 233 |     return data;
+ 234 |   } catch (error) {
+ 235 |     console.error('Failed to fetch weather:', error);
+ 236 |     return null;
+ 237 |   }
+ 238 | }
+ 239 | 
+ 240 | function getCachedWeather(): WeatherData | null {
+ 241 |   try {
+ 242 |     const cached = localStorage.getItem(CACHE_KEY);
+ 243 |     if (!cached) return null;
+ 244 | 
+ 245 |     const { data, timestamp } = JSON.parse(cached);
+ 246 |     if (Date.now() - timestamp > CACHE_DURATION) {
+ 247 |       localStorage.removeItem(CACHE_KEY);
+ 248 |       return null;
+ 249 |     }
+ 250 | 
+ 251 |     return data;
+ 252 |   } catch {
+ 253 |     return null;
+ 254 |   }
+ 255 | }
+ 256 | 
+ 257 | function cacheWeather(data: WeatherData): void {
+ 258 |   try {
+ 259 |     localStorage.setItem(CACHE_KEY, JSON.stringify({
+ 260 |       data,
+ 261 |       timestamp: Date.now(),
+ 262 |     }));
+ 263 |   } catch {
+ 264 |     // 忽略存储错误
+ 265 |   }
+ 266 | }
+ 267 | 
+
+
+/* 文件: src/utils/bookmark.ts  共 55 行 */
+
+   1 | export interface BookmarkItem {
+   2 |   title: string;
+   3 |   url: string;
+
+———— 第 17 页 ————
+
+   4 | }
+   5 | 
+   6 | export interface BookmarkGroup {
+   7 |   name: string;
+   8 |   items: BookmarkItem[];
+   9 | }
+  10 | 
+  11 | /**
+  12 |  * 解析浏览器导出的书签 HTML，按文件夹分组
+  13 |  */
+  14 | export function parseBookmarkGroups(html: string): BookmarkGroup[] {
+  15 |   const parser = new DOMParser();
+  16 |   const doc = parser.parseFromString(html, 'text/html');
+  17 |   const groups: BookmarkGroup[] = [];
+  18 |   const seen = new Set<string>();
+  19 | 
+  20 |   // 遍历所有 DT 节点
+  21 |   const dtNodes = doc.querySelectorAll('dt');
+  22 |   let currentGroup: BookmarkGroup = { name: '默认收藏', items: [] };
+  23 | 
+  24 |   dtNodes.forEach(dt => {
+  25 |     const h3 = dt.querySelector(':scope > h3');
+  26 |     const a = dt.querySelector(':scope > a[href]');
+  27 | 
+  28 |     if (h3) {
+  29 |       // 新文件夹
+  30 |       const name = h3.textContent?.trim() || '未命名';
+  31 |       // 保存上一个分组（如果有内容）
+  32 |       if (currentGroup.items.length > 0) {
+  33 |         groups.push(currentGroup);
+  34 |       }
+  35 |       currentGroup = { name, items: [] };
+  36 |     } else if (a) {
+  37 |       const url = a.getAttribute('href')?.trim() || '';
+  38 |       const title = a.textContent?.trim() || '';
+  39 |       if (!url || url.startsWith('javascript:') || url.startsWith('about:')) return;
+  40 |       if (!title) return;
+  41 |       const key = url.toLowerCase();
+  42 |       if (seen.has(key)) return;
+  43 |       seen.add(key);
+  44 |       currentGroup.items.push({ title, url });
+  45 |     }
+  46 |   });
+  47 | 
+  48 |   // 最后一个分组
+  49 |   if (currentGroup.items.length > 0) {
+  50 |     groups.push(currentGroup);
+  51 |   }
+  52 | 
+  53 |   return groups;
+
+———— 第 18 页 ————
+
+  54 | }
+  55 | 
+
+
+/* 文件: src/utils/sync.ts  共 168 行 */
+
+   1 | import type { AppData } from '../types';
+   2 | import { getDialsState } from '../stores/dials.svelte';
+   3 | import { getTheme } from '../stores/theme.svelte';
+   4 | import { getSettings } from '../stores/settings.svelte';
+   5 | import { getRecentSites } from '../stores/recentSites.svelte';
+   6 | 
+   7 | const API_BASE = 'https://sync.ruseo.cn/api/sync.php';
+   8 | 
+   9 | function getToken(): string | null {
+  10 |   return localStorage.getItem('quick-dial-token');
+  11 | }
+  12 | 
+  13 | function setToken(token: string) {
+  14 |   localStorage.setItem('quick-dial-token', token);
+  15 | }
+  16 | 
+  17 | function getLocalVersion(): number {
+  18 |   return parseInt(localStorage.getItem('quick-dial-version') || '0', 10);
+  19 | }
+  20 | 
+  21 | function setLocalVersion(v: number) {
+  22 |   localStorage.setItem('quick-dial-version', String(v));
+  23 | }
+  24 | 
+  25 | export function getLastSyncTime(): string | null {
+  26 |   return localStorage.getItem('quick-dial-last-sync');
+  27 | }
+  28 | 
+  29 | function setLastSyncTime() {
+  30 |   localStorage.setItem('quick-dial-last-sync', new Date().toISOString());
+  31 | }
+  32 | 
+  33 | export function isLoggedIn(): boolean {
+  34 |   return !!getToken();
+  35 | }
+  36 | 
+  37 | export function getUsername(): string | null {
+  38 |   return localStorage.getItem('quick-dial-username');
+  39 | }
+  40 | 
+  41 | // ====== 认证 ======
+  42 | 
+  43 | export async function register(username: string, password: string): Promise<{ ok: boolean; msg: string }> {
+  44 |   try {
+
+———— 第 19 页 ————
+
+  45 |     const res = await fetch(`${API_BASE}?action=register`, {
+  46 |       method: 'POST',
+  47 |       headers: { 'Content-Type': 'application/json' },
+  48 |       body: JSON.stringify({ username, password }),
+  49 |     });
+  50 |     const result = await res.json();
+  51 |     if (result.code === 201) {
+  52 |       setToken(result.data.token);
+  53 |       localStorage.setItem('quick-dial-username', result.data.username);
+  54 |       return { ok: true, msg: '注册成功' };
+  55 |     }
+  56 |     return { ok: false, msg: result.msg || '注册失败' };
+  57 |   } catch {
+  58 |     return { ok: false, msg: '网络错误' };
+  59 |   }
+  60 | }
+  61 | 
+  62 | export async function login(username: string, password: string): Promise<{ ok: boolean; msg: string }> {
+  63 |   try {
+  64 |     const res = await fetch(`${API_BASE}?action=login`, {
+  65 |       method: 'POST',
+  66 |       headers: { 'Content-Type': 'application/json' },
+  67 |       body: JSON.stringify({ username, password }),
+  68 |     });
+  69 |     const result = await res.json();
+  70 |     if (result.code === 200) {
+  71 |       setToken(result.data.token);
+  72 |       localStorage.setItem('quick-dial-username', result.data.username);
+  73 |       return { ok: true, msg: '登录成功' };
+  74 |     }
+  75 |     return { ok: false, msg: result.msg || '登录失败' };
+  76 |   } catch {
+  77 |     return { ok: false, msg: '网络错误' };
+  78 |   }
+  79 | }
+  80 | 
+  81 | export function logout() {
+  82 |   localStorage.removeItem('quick-dial-token');
+  83 |   localStorage.removeItem('quick-dial-username');
+  84 | }
+  85 | 
+  86 | // ====== 获取当前本地数据快照 ======
+  87 | 
+  88 | function getLocalSnapshot(): AppData {
+  89 |   const dialsState = getDialsState();
+  90 |   return {
+  91 |     version: 1,
+  92 |     dials: dialsState.items,
+  93 |     groups: dialsState.groups,
+  94 |     searchEngines: [],
+
+———— 第 20 页 ————
+
+  95 |     theme: getTheme(),
+  96 |     settings: getSettings(),
+  97 |     recentSites: getRecentSites().map(s => ({ ...s })),
+  98 |   };
+  99 | }
+ 100 | 
+ 101 | // ====== 上传 ======
+ 102 | 
+ 103 | export async function uploadSync(): Promise<{ ok: boolean; msg: string }> {
+ 104 |   const token = getToken();
+ 105 |   if (!token) return { ok: false, msg: '未登录' };
+ 106 | 
+ 107 |   const data = getLocalSnapshot();
+ 108 |   const localVersion = getLocalVersion();
+ 109 | 
+ 110 |   try {
+ 111 |     const res = await fetch(`${API_BASE}?action=upload`, {
+ 112 |       method: 'POST',
+ 113 |       headers: {
+ 114 |         'Content-Type': 'application/json',
+ 115 |         'Authorization': `Bearer ${token}`,
+ 116 |       },
+ 117 |       body: JSON.stringify({ data, version: localVersion }),
+ 118 |     });
+ 119 |     const result = await res.json();
+ 120 | 
+ 121 |     if (result.code === 200) {
+ 122 |       setLocalVersion(result.data.version);
+ 123 |       setLastSyncTime();
+ 124 |       return { ok: true, msg: '同步成功' };
+ 125 |     }
+ 126 |     if (result.code === 409) {
+ 127 |       // 云端版本更新，自动下载
+ 128 |       const dl = await downloadSync();
+ 129 |       if (dl.ok) {
+ 130 |         setLocalVersion(result.data.server_version);
+ 131 |         setLastSyncTime();
+ 132 |         return { ok: true, msg: '已合并云端数据' };
+ 133 |       }
+ 134 |       return { ok: false, msg: '服务器数据更新，请手动下载后再上传' };
+ 135 |     }
+ 136 |     return { ok: false, msg: result.msg || '上传失败' };
+ 137 |   } catch {
+ 138 |     return { ok: false, msg: '网络错误' };
+ 139 |   }
+ 140 | }
+ 141 | 
+ 142 | // ====== 下载 ======
+ 143 | 
+ 144 | export async function downloadSync(): Promise<{ ok: boolean; msg: string; data?: AppData }> {
+
+———— 第 21 页 ————
+
+ 145 |   const token = getToken();
+ 146 |   if (!token) return { ok: false, msg: '未登录' };
+ 147 | 
+ 148 |   try {
+ 149 |     const res = await fetch(`${API_BASE}?action=download`, {
+ 150 |       method: 'GET',
+ 151 |       headers: { 'Authorization': `Bearer ${token}` },
+ 152 |     });
+ 153 |     const result = await res.json();
+ 154 | 
+ 155 |     if (result.code === 200) {
+ 156 |       setLocalVersion(result.data.version);
+ 157 |       setLastSyncTime();
+ 158 |       return { ok: true, msg: '下载成功', data: result.data.data as AppData };
+ 159 |     }
+ 160 |     if (result.code === 404) {
+ 161 |       return { ok: false, msg: '云端暂无数据，请先上传' };
+ 162 |     }
+ 163 |     return { ok: false, msg: result.msg || '下载失败' };
+ 164 |   } catch {
+ 165 |     return { ok: false, msg: '网络错误' };
+ 166 |   }
+ 167 | }
+ 168 | 
+
+
+/* 文件: src/utils/payment.ts  共 114 行 */
+
+   1 | /**
+   2 |  * Quick Dial 支付 SDK
+   3 |  * 与 sync.ruseo.cn/api/pay.php 通信
+   4 |  */
+   5 | 
+   6 | const PAY_API = 'https://sync.ruseo.cn/api/pay.php';
+   7 | 
+   8 | function getToken(): string | null {
+   9 |   return localStorage.getItem('quick-dial-token');
+  10 | }
+  11 | 
+  12 | export interface PlanInfo {
+  13 |   id: string;
+  14 |   name: string;
+  15 |   amount: number;
+  16 |   days: number | null;
+  17 | }
+  18 | 
+  19 | export const PLANS: PlanInfo[] = [
+  20 |   { id: 'monthly', name: '月度', amount: 9.90, days: 30 },
+  21 |   { id: 'yearly', name: '年度', amount: 68.00, days: 365 },
+  22 |   { id: 'lifetime', name: '终身', amount: 198.00, days: null },
+
+———— 第 22 页 ————
+
+  23 | ];
+  24 | 
+  25 | export interface OrderResult {
+  26 |   ok: boolean;
+  27 |   msg: string;
+  28 |   qrCode?: string;     // 微信扫码链接
+  29 |   payUrl?: string;     // 支付宝跳转链接
+  30 |   orderNo?: string;
+  31 |   plan?: string;
+  32 |   amount?: number;
+  33 |   method?: string;
+  34 | }
+  35 | 
+  36 | export interface SubStatus {
+  37 |   isPro: boolean;
+  38 |   plan: string;
+  39 |   expireAt: string | null;
+  40 | }
+  41 | 
+  42 | /**
+  43 |  * 创建支付订单
+  44 |  */
+  45 | export async function createOrder(
+  46 |   plan: string,
+  47 |   method: 'wechat' | 'alipay'
+  48 | ): Promise<OrderResult> {
+  49 |   const token = getToken();
+  50 |   if (!token) return { ok: false, msg: '请先登录云同步账号' };
+  51 | 
+  52 |   try {
+  53 |     const res = await fetch(`${PAY_API}?action=create_order`, {
+  54 |       method: 'POST',
+  55 |       headers: {
+  56 |         'Content-Type': 'application/json',
+  57 |         'Authorization': `Bearer ${token}`,
+  58 |       },
+  59 |       body: JSON.stringify({ plan, method }),
+  60 |     });
+  61 |     const result = await res.json();
+  62 | 
+  63 |     if (result.code === 200) {
+  64 |       return {
+  65 |         ok: true,
+  66 |         msg: '订单已创建',
+  67 |         qrCode: result.data.qr_code || undefined,
+  68 |         payUrl: result.data.pay_url || undefined,
+  69 |         orderNo: result.data.order_no,
+  70 |         plan: result.data.plan,
+  71 |         amount: result.data.amount,
+  72 |         method: result.data.method,
+
+———— 第 23 页 ————
+
+  73 |       };
+  74 |     }
+  75 |     return { ok: false, msg: result.msg || '创建订单失败' };
+  76 |   } catch {
+  77 |     return { ok: false, msg: '网络错误' };
+  78 |   }
+  79 | }
+  80 | 
+  81 | /**
+  82 |  * 查询订阅状态
+  83 |  */
+  84 | export async function checkSubscription(): Promise<SubStatus> {
+  85 |   const token = getToken();
+  86 |   if (!token) return { isPro: false, plan: 'free', expireAt: null };
+  87 | 
+  88 |   try {
+  89 |     const res = await fetch(`${PAY_API}?action=status`, {
+  90 |       headers: { 'Authorization': `Bearer ${token}` },
+  91 |     });
+  92 |     const result = await res.json();
+  93 | 
+  94 |     if (result.code === 200) {
+  95 |       return {
+  96 |         isPro: result.data.is_pro,
+  97 |         plan: result.data.plan,
+  98 |         expireAt: result.data.expire_at,
+  99 |       };
+ 100 |     }
+ 101 |     return { isPro: false, plan: 'free', expireAt: null };
+ 102 |   } catch {
+ 103 |     return { isPro: false, plan: 'free', expireAt: null };
+ 104 |   }
+ 105 | }
+ 106 | 
+ 107 | /**
+ 108 |  * 生成支付二维码 SVG（用于展示）
+ 109 |  */
+ 110 | export function generateQRCodeSVG(text: string, size: number = 200): string {
+ 111 |   // 使用在线 API 生成二维码
+ 112 |   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}`;
+ 113 | }
+ 114 | 
+
+
+/* 文件: src/utils/i18n.svelte.ts  共 99 行 */
+
+   1 | type Lang = 'zh-CN' | 'en';
+   2 | type Dict = Record<string, string>;
+   3 | 
+   4 | const zh: Dict = {
+
+———— 第 24 页 ————
+
+   5 |   'search.placeholder': '搜索或输入网址','search.go': '搜索','search.engine': '搜索引擎',
+   6 |   'clock.styles': '时钟样式','clock.digital': '数字','clock.minimal': '极简','clock.classic': '经典','clock.flip': '翻页','clock.neon': '霓虹','clock.binary': '二进制','clock.hour': '时','clock.minute': '分','clock.second': '秒',
+   7 |   'settings.title': '设置','settings.theme': '外观主题','settings.themeHint': '壁纸自动适配深浅模式','settings.showDate': '显示日期','settings.showWeekday': '显示星期','settings.showLunar': '显示农历','settings.showWeather': '显示天气','settings.showRecent': '显示最近访问','settings.recentCount': '最近访问数量','settings.newTab': '新标签页打开',
+   8 |   'pro.title': 'Quick Dial Pro','pro.active': '已激活','pro.inactive': '未激活','pro.upgrade': '升级 Quick Dial Pro','pro.renew': '续费 / 升级','pro.feature1': '6 种免费 + 6 种 Pro 引擎 + 自定义','pro.feature2': '云端数据同步','pro.feature3': '自定义上传壁纸','pro.feature4': '自定义 CSS 样式','pro.customCss': '自定义 CSS','pro.customCssDesc': '注入自定义样式，实时生效','pro.customFooter': '自定义底部','pro.customFooterDesc': '替换版权栏中的域名',
+   9 |   'sync.title': '云同步','sync.manual': '数据不会自动同步，点按钮手动上传或下载','sync.upload': '上传到云端','sync.download': '从云端下载','sync.downloaded': '已下载云端数据，3秒后自动刷新...','sync.logout': '退出登录','sync.login': '登录','sync.register': '注册','sync.noAccount': '没有账号？','sync.hasAccount': '已有账号？','sync.goRegister': '立即注册','sync.goLogin': '去登录','sync.user': '用户名','sync.password': '密码','sync.proRequired': '云同步需 Pro，去设置升级','sync.syncTime': '同步时间',
+  10 |   'ie.title': '导入 / 导出','ie.export': '导出备份','ie.import': '导入备份','ie.importBookmarks': '导入浏览器书签','ie.clear': '清空所有数据','ie.close': '关闭','ie.bookmarkHint': '免费版最多 3 个分组，超出的文件夹自动归入"默认收藏"。开通 Pro 可创建无限分组。',
+  11 |   'dial.add': '添加导航','dial.edit': '编辑导航','dial.name': '网站名称','dial.url': '网站链接','dial.urlPlaceholder': '粘贴链接自动识别名称','dial.icon': '图标','dial.group': '分组','dial.save': '保存','dial.cancel': '取消',
+  12 |   'wp.title': '壁纸设置','wp.random': '随机壁纸','wp.upload': '上传图片',
+  13 |   'sub.title': '升级 Quick Dial Pro','sub.pay': '立即支付','sub.creating': '创建订单中...','sub.scanHint': '请使用{method}扫码支付','sub.paidRefresh': '支付完成后，刷新页面即可激活 Pro',
+  14 |   'stats.title': '访问统计','stats.total': '总点击','stats.sites': '站点数','stats.ranking': '点击排行','stats.empty': '暂无访问数据','stats.clear': '清除数据','stats.export': '导出 CSV',
+  15 |   'onboard.skip': '跳过','onboard.next': '下一步','onboard.start': '开始使用','onboard.step1Title': '搜索直达','onboard.step1Desc': '在搜索框输入关键词，按 Enter 或点搜索按钮','onboard.step2Title': '添加导航','onboard.step2Desc': '点右下角 + 按钮，粘贴网址自动识别名称和图标','onboard.step3Title': '自定义壁纸','onboard.step3Desc': '点 🎨 按钮选择 12 种精美渐变，打造专属风格','onboard.step4Title': '账户管理','onboard.step4Desc': '前往官网 www.cilacila.cn 绑定邮箱、找回密码、管理订阅',
+  16 |   'help.title': '键盘快捷键','help.tip': '按 ? 随时打开此面板',
+  17 |   'footer.copyright': '呲啦起始页',
+  18 |   'group.manage': '分组管理','group.default': '默认收藏','group.unnamed': '未命名',
+  19 |   'common.close': '关闭','common.save': '保存','common.cancel': '取消','common.loading': '处理中...',
+  20 |   'weather.humidity': '湿度','weather.wind': '风力','weather.forecast': '天气预报',
+  21 |   'pay.wechat': '微信支付','pay.alipay': '支付宝','pay.monthly': '月度','pay.yearly': '年度','pay.lifetime': '终身',
+  22 |   // Additional UI
+  23 |   'recent.title': '最近访问','recent.empty': '暂无最近访问',
+  24 |   'dial.empty': '点击 + 添加第一个导航',
+  25 |   'group.limit': '{current}/{max} 个分组 · Pro 无限',
+  26 |   'group.add': '添加分组','group.done': '完成','group.addBtn': '添加',
+  27 |   'wp.local': '上传本地图片','wp.url': '输入图片链接','wp.apply': '应用','wp.placeholder': '输入图片链接...',
+  28 |   'sync.never': '从未同步',
+  29 |   'dial.addToGroup': '添加到本组',
+  30 |   'pro.monthly': '月度会员','pro.yearly': '年度会员','pro.lifetime': '终身会员','pro.expire': '到期：',
+  31 |   'settings.engine': '默认搜索引擎',
+  32 |   'pro.customFooterEg': '例如：我的公司',
+  33 |   'cat.common': '常用','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
+  34 |   'pro.cssPlaceholder': '/* 在此输入自定义 CSS */',
+  35 |   'icon.customUrl': '自定义图标 URL',
+  36 |   // Default group names (stored in data, translated at render)
+  37 |   '常用': '常用',
+  38 | };
+  39 | 
+  40 | const en: Dict = {
+  41 |   'search.placeholder': 'Search or enter URL','search.go': 'Search','search.engine': 'Search Engine',
+  42 |   'clock.styles': 'Clock Style','clock.digital': 'Digital','clock.minimal': 'Minimal','clock.classic': 'Classic','clock.flip': 'Flip','clock.neon': 'Neon','clock.binary': 'Binary','clock.hour': 'H','clock.minute': 'M','clock.second': 'S',
+  43 |   'settings.title': 'Settings','settings.theme': 'Appearance','settings.themeHint': 'Adapts to wallpaper','settings.showDate': 'Show Date','settings.showWeekday': 'Show Weekday','settings.showLunar': 'Show Lunar','settings.showWeather': 'Show Weather','settings.showRecent': 'Show Recent Sites','settings.recentCount': 'Recent Sites Count','settings.newTab': 'Open in New Tab',
+  44 |   'pro.title': 'Quick Dial Pro','pro.active': 'Active','pro.inactive': 'Inactive','pro.upgrade': 'Upgrade to Pro','pro.renew': 'Renew','pro.feature1': '6 free + 6 Pro engines + custom','pro.feature2': 'Cloud sync','pro.feature3': 'Custom wallpaper upload','pro.feature4': 'Custom CSS','pro.customCss': 'Custom CSS','pro.customCssDesc': 'Inject custom styles','pro.customFooter': 'Custom Footer','pro.customFooterDesc': 'Replace domain in copyright',
+  45 |   'sync.title': 'Cloud Sync','sync.manual': 'Sync is manual - upload or download on demand','sync.upload': 'Upload','sync.download': 'Download','sync.downloaded': 'Downloaded! Refreshing...','sync.logout': 'Logout','sync.login': 'Login','sync.register': 'Register','sync.noAccount': 'No account?','sync.hasAccount': 'Already have one?','sync.goRegister': 'Sign up','sync.goLogin': 'Sign in','sync.user': 'Username','sync.password': 'Password','sync.proRequired': 'Cloud sync requires Pro','sync.syncTime': 'Last sync',
+  46 |   'ie.title': 'Import / Export','ie.export': 'Export','ie.import': 'Import','ie.importBookmarks': 'Import Bookmarks','ie.clear': 'Clear All','ie.close': 'Close','ie.bookmarkHint': 'Free: up to 3 groups. Extra folders merged into "Default". Pro: unlimited.',
+  47 |   'dial.add': 'Add Dial','dial.edit': 'Edit Dial','dial.name': 'Site Name','dial.url': 'Site URL','dial.urlPlaceholder': 'Paste URL to auto-detect','dial.icon': 'Icon','dial.group': 'Group','dial.save': 'Save','dial.cancel': 'Cancel',
+  48 |   'wp.title': 'Wallpaper','wp.random': 'Random','wp.upload': 'Upload',
+  49 |   'sub.title': 'Upgrade to Pro','sub.pay': 'Pay Now','sub.creating': 'Creating...','sub.scanHint': 'Scan with {method}','sub.paidRefresh': 'Refresh after payment',
+  50 |   'stats.title': 'Statistics','stats.total': 'Total Clicks','stats.sites': 'Sites','stats.ranking': 'Top Sites','stats.empty': 'No data','stats.clear': 'Clear','stats.export': 'Export CSV',
+  51 |   'onboard.skip': 'Skip','onboard.next': 'Next','onboard.start': 'Start','onboard.step1Title': 'Search','onboard.step1Desc': 'Type and press Enter','onboard.step2Title': 'Add Dials','onboard.step2Desc': 'Click + to add sites','onboard.step3Title': 'Wallpapers','onboard.step3Desc': 'Pick from 12 gradients','onboard.step4Title': 'Account','onboard.step4Desc': 'Visit cilacila.cn to bind email',
+  52 |   'help.title': 'Shortcuts','help.tip': 'Press ? anytime',
+  53 |   'footer.copyright': 'Quick Dial',
+  54 |   'group.manage': 'Groups','group.default': 'Default','group.unnamed': 'Unnamed',
+
+———— 第 25 页 ————
+
+  55 |   'common.close': 'Close','common.save': 'Save','common.cancel': 'Cancel','common.loading': 'Loading...',
+  56 |   'weather.humidity': 'Humidity','weather.wind': 'Wind','weather.forecast': 'Forecast',
+  57 |   'pay.wechat': 'WeChat','pay.alipay': 'Alipay','pay.monthly': 'Monthly','pay.yearly': 'Yearly','pay.lifetime': 'Lifetime',
+  58 |   'recent.title': 'Recent Sites','recent.empty': 'No recent sites',
+  59 |   'dial.empty': 'Click + to add your first dial',
+  60 |   'group.limit': '{current}/{max} groups · Pro unlimited',
+  61 |   'group.add': 'Add Group','group.done': 'Done','group.addBtn': 'Add',
+  62 |   'wp.local': 'Upload Image','wp.url': 'Image URL','wp.apply': 'Apply','wp.placeholder': 'Paste image URL...',
+  63 |   'sync.never': 'Never synced',
+  64 |   'dial.addToGroup': 'Add to Group',
+  65 |   'pro.monthly': 'Monthly','pro.yearly': 'Yearly','pro.lifetime': 'Lifetime','pro.expire': 'Expires: ',
+  66 |   'settings.engine': 'Default Engine',
+  67 |   'pro.customFooterEg': 'e.g. My Company',
+  68 |   'cat.common': 'Common','cat.social': 'Social','cat.dev': 'Dev','cat.media': 'Media','cat.office': 'Office','cat.study': 'Study','cat.brand': 'Brand',
+  69 |   'pro.cssPlaceholder': '/* Enter custom CSS here */',
+  70 |   'icon.customUrl': 'Custom Icon URL',
+  71 |   '常用': 'Default',
+  72 | };
+  73 | 
+  74 | let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');
+  75 | let _v = $state(0); // 版本号，强制 Svelte 追踪变化
+  76 | 
+  77 | export function t(key: string): string {
+  78 |   void _v; // 建立响应式依赖
+  79 |   const dict = currentLang === 'zh-CN' ? zh : en;
+  80 |   return dict[key] || key;
+  81 | }
+  82 | 
+  83 | export function getLang(): Lang {
+  84 |   return currentLang;
+  85 | }
+  86 | 
+  87 | export function setLang(lang: Lang) {
+  88 |   currentLang = lang;
+  89 |   _v++;
+  90 |   localStorage.setItem('qd-lang', lang);
+  91 |   document.documentElement.setAttribute('lang', lang);
+  92 |   document.title = lang === 'zh-CN'
+  93 |     ? '呲啦起始页 - 极简无广告浏览器新标签页'
+  94 |     : 'Quick Dial - Clean, Ad-Free Browser New Tab';
+  95 | }
+  96 | 
+  97 | // 初始化
+  98 | setLang(currentLang);
+  99 | 
+
+
+/* 文件: src/utils/contextMenu.ts  共 25 行 */
+
+   1 | /**
+
+———— 第 26 页 ————
+
+   2 |  * 右键菜单集成 — 监听 Chrome context menu 添加的页面
+   3 |  */
+   4 | interface ContextAddData {
+   5 |   title: string;
+   6 |   url: string;
+   7 | }
+   8 | 
+   9 | /**
+  10 |  * 检查并获取右键菜单添加的页面数据（消费后自动清除）
+  11 |  */
+  12 | export async function getContextAdd(): Promise<ContextAddData | null> {
+  13 |   if (typeof chrome === 'undefined' || !chrome.storage) return null;
+  14 |   try {
+  15 |     const result = await chrome.storage.local.get('qd-context-add');
+  16 |     const data = result['qd-context-add'] as ContextAddData | undefined;
+  17 |     if (data?.url) {
+  18 |       // 消费后清除，防止重复添加
+  19 |       await chrome.storage.local.remove('qd-context-add');
+  20 |       return data;
+  21 |     }
+  22 |   } catch { /* 非扩展环境静默 */ }
+  23 |   return null;
+  24 | }
+  25 | 
+
+
+/* 文件: src/utils/toast.svelte.ts  共 30 行 */
+
+   1 | type ToastType = 'success' | 'error' | 'info';
+   2 | 
+   3 | interface ToastItem {
+   4 |   id: number;
+   5 |   message: string;
+   6 |   type: ToastType;
+   7 | }
+   8 | 
+   9 | let toasts = $state<ToastItem[]>([]);
+  10 | let nextId = 0;
+  11 | 
+  12 | export function getToasts(): Readonly<ToastItem[]> {
+  13 |   return toasts;
+  14 | }
+  15 | 
+  16 | export function showToast(message: string, type: ToastType = 'info', duration = 2500) {
+  17 |   const id = nextId++;
+  18 |   toasts = [...toasts, { id, message, type }];
+  19 | 
+  20 |   if (duration > 0) {
+  21 |     setTimeout(() => {
+  22 |       toasts = toasts.filter(t => t.id !== id);
+
+———— 第 27 页 ————
+
+  23 |     }, duration);
+  24 |   }
+  25 | }
+  26 | 
+  27 | export function dismissToast(id: number) {
+  28 |   toasts = toasts.filter(t => t.id !== id);
+  29 | }
+  30 | 
+
+
+/* 文件: src/stores/dials.svelte.ts  共 130 行 */
+
+   1 |   import type { DialItem, DialGroup } from '../types';
+   2 |   import { generateId } from '../types';
+   3 |   import { t } from '../utils/i18n.svelte';
+   4 | import { getIsPro } from './subscription.svelte';
+   5 | 
+   6 | export const FREE_GROUP_LIMIT = 3;
+   7 | 
+   8 | interface DialsState {
+   9 |   items: DialItem[];
+  10 |   groups: DialGroup[];
+  11 | }
+  12 | 
+  13 | let state = $state<DialsState>({ items: [], groups: [] });
+  14 | 
+  15 | export function initDials(data: { dials: DialItem[]; groups: DialGroup[] }): void {
+  16 |   state.items = data.dials || [];
+  17 |   state.groups = data.groups || [];
+  18 | }
+  19 | 
+  20 | /**
+  21 |  * 获取状态快照，防止外部直接修改
+  22 |  */
+  23 | export function getDialsState(): Readonly<DialsState> {
+  24 |   return {
+  25 |     items: state.items.map(item => ({ ...item })),
+  26 |     groups: state.groups.map(group => ({ ...group }))
+  27 |   };
+  28 | }
+  29 | 
+  30 | /**
+  31 |  * 获取内部状态引用（仅限内部使用）
+  32 |  */
+  33 | export function getDialsStateInternal(): DialsState {
+  34 |   return state;
+  35 | }
+  36 | 
+  37 | // ====== 分组操作 ======
+  38 | export function addGroup(name: string): DialGroup | null {
+
+———— 第 28 页 ————
+
+  39 |   if (!getIsPro() && state.groups.length >= FREE_GROUP_LIMIT) {
+  40 |     return null;
+  41 |   }
+  42 |   const newGroup: DialGroup = {
+  43 |     id: generateId(),
+  44 |     name,
+  45 |     sortOrder: state.groups.length,
+  46 |     isCollapsed: false,
+  47 |   };
+  48 |   state.groups = [...state.groups, newGroup];
+  49 |   return newGroup;
+  50 | }
+  51 | 
+  52 | export function updateGroup(id: string, updates: Partial<DialGroup>): void {
+  53 |   state.groups = state.groups.map(g => (g.id === id ? { ...g, ...updates } : g));
+  54 | }
+  55 | 
+  56 | export function removeGroup(id: string): void {
+  57 |   state.groups = state.groups.filter(g => g.id !== id);
+  58 |   // 移除组内所有卡片
+  59 |   state.items = state.items.filter(d => d.groupId !== id);
+  60 | }
+  61 | 
+  62 | export function reorderGroups(groupIds: string[]): void {
+  63 |   state.groups = groupIds.map((id, i) => {
+  64 |     const g = state.groups.find(gg => gg.id === id);
+  65 |     if (!g) {
+  66 |       console.warn(`[reorderGroups] Group not found: ${id}`);
+  67 |       return null;
+  68 |     }
+  69 |     return { ...g, sortOrder: i };
+  70 |   }).filter((g): g is DialGroup => g !== null);
+  71 | }
+  72 | 
+  73 | // ====== 卡片操作 ======
+  74 | export function addDial(dial: Omit<DialItem, 'id' | 'createdAt'>): DialItem {
+  75 |   const newDial: DialItem = {
+  76 |     ...dial,
+  77 |     id: generateId(),
+  78 |     createdAt: Date.now(),
+  79 |   };
+  80 |   state.items = [...state.items, newDial];
+  81 |   return newDial;
+  82 | }
+  83 | 
+  84 | export function updateDial(id: string, updates: Partial<DialItem>): void {
+  85 |   state.items = state.items.map(d => (d.id === id ? { ...d, ...updates } : d));
+  86 | }
+  87 | 
+  88 | export function removeDial(id: string): void {
+
+———— 第 29 页 ————
+
+  89 |   state.items = state.items.filter(d => d.id !== id);
+  90 | }
+  91 | 
+  92 | /**
+  93 |  * 重新排序卡片，同时更新 sortOrder 字段
+  94 |  */
+  95 | export function reorderDials(dialIds: string[]): void {
+  96 |   state.items = dialIds.map((id, i) => {
+  97 |     const d = state.items.find(dd => dd.id === id);
+  98 |     if (!d) {
+  99 |       console.warn(`[reorderDials] Dial not found: ${id}`);
+ 100 |       return null;
+ 101 |     }
+ 102 |     return { ...d, sortOrder: i };
+ 103 |   }).filter((d): d is DialItem => d !== null);
+ 104 | }
+ 105 | 
+ 106 | export function moveDialToGroup(dialId: string, targetGroupId: string): void {
+ 107 |   const dial = state.items.find(d => d.id === dialId);
+ 108 |   if (!dial) return;
+ 109 |   
+ 110 |   // 移动到目标组末尾
+ 111 |   const groupItems = state.items.filter(d => d.groupId === targetGroupId);
+ 112 |   const maxSortOrder = groupItems.length > 0 
+ 113 |     ? Math.max(...groupItems.map(d => d.sortOrder)) 
+ 114 |     : -1;
+ 115 |   
+ 116 |   state.items = state.items.map(d =>
+ 117 |     d.id === dialId ? { ...d, groupId: targetGroupId, sortOrder: maxSortOrder + 1 } : d
+ 118 |   );
+ 119 | }
+ 120 | 
+ 121 | // ====== 默认分组 ======
+ 122 | export function ensureDefaultGroup(): string {
+ 123 |   const defaultName = t('group.default');
+ 124 |   let defaultGroup = state.groups.find(g => g.name === defaultName || g.name === '常用');
+ 125 |   if (!defaultGroup) {
+ 126 |     defaultGroup = addGroup(defaultName);
+ 127 |   }
+ 128 |   return defaultGroup.id;
+ 129 | }
+ 130 | 
+
+
+/* 文件: src/stores/theme.svelte.ts  共 59 行 */
+
+   1 | import type { ThemeConfig, ThemeMode, WallpaperConfig } from '../types';
+   2 | import { DEFAULT_THEME } from '../types';
+   3 | import { applyTheme, applyWallpaper } from '../utils/theme';
+   4 | 
+
+———— 第 30 页 ————
+
+   5 | let theme = $state<ThemeConfig>({ ...DEFAULT_THEME });
+   6 | let userChoseWallpaper = $state(false);
+   7 | 
+   8 | function isDefaultWallpaper(wp: WallpaperConfig): boolean {
+   9 |   const d = DEFAULT_THEME.wallpaper;
+  10 |   return wp.type === d.type && wp.value === d.value;
+  11 | }
+  12 | 
+  13 | export function initTheme(data: ThemeConfig | undefined): void {
+  14 |   theme = { ...DEFAULT_THEME, ...data };
+  15 |   userChoseWallpaper = data?.wallpaper ? !isDefaultWallpaper(data.wallpaper) : false;
+  16 | 
+  17 |   applyTheme(theme.mode, theme.primaryColor);
+  18 |   applyAdaptiveWallpaper(theme.mode);
+  19 | }
+  20 | 
+  21 | export function getTheme(): ThemeConfig {
+  22 |   return {
+  23 |     mode: theme.mode,
+  24 |     primaryColor: theme.primaryColor,
+  25 |     wallpaper: { ...theme.wallpaper }
+  26 |   };
+  27 | }
+  28 | 
+  29 | export function setThemeMode(mode: ThemeMode): void {
+  30 |   theme.mode = mode;
+  31 |   applyTheme(mode, theme.primaryColor);
+  32 |   applyAdaptiveWallpaper(mode);
+  33 | }
+  34 | 
+  35 | /** 自适应壁纸：默认壁纸跟随暗/亮模式，用户自选壁纸不干预 */
+  36 | function applyAdaptiveWallpaper(mode: ThemeMode) {
+  37 |   if (!userChoseWallpaper && theme.wallpaper.type === 'solid') {
+  38 |     const v = mode === 'dark' ? '#0f172a' : '#f8fafc';
+  39 |     applyWallpaper({ type: 'solid', value: v, blur: 0, brightness: 100 });
+  40 |   } else {
+  41 |     applyWallpaper(theme.wallpaper);
+  42 |   }
+  43 | }
+  44 | 
+  45 | export function setPrimaryColor(color: string): void {
+  46 |   theme.primaryColor = color;
+  47 |   applyTheme(theme.mode, color);
+  48 | }
+  49 | 
+  50 | export function setWallpaper(wallpaper: WallpaperConfig): void {
+  51 |   theme.wallpaper = { ...wallpaper };
+  52 |   userChoseWallpaper = true;
+  53 |   applyWallpaper(wallpaper);
+  54 | }
+
+
+===== 前 30 页结束，共 30 页 =====

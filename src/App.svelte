@@ -58,7 +58,8 @@ import { t, getLang } from './utils/i18n.svelte';
     return () => clearInterval(interval);
   });
 
-  // Pro 过期提醒（每24小时检查一次）
+  // Pro 过期提醒
+  let proDaysLeft = $state(parseInt(localStorage.getItem('quick-dial-pro-days') || '0'));
   let proExpiryChecked = $state(false);
   $effect(() => {
     if (proExpiryChecked || !getIsPro() || !isLoggedIn()) return;
@@ -67,8 +68,11 @@ import { t, getLang } from './utils/i18n.svelte';
         proExpiryChecked = true;
         if (!s.expireAt) return; // 终身
         const daysLeft = Math.ceil((new Date(s.expireAt).getTime() - Date.now()) / 86400000);
-        if (daysLeft <= 7 && daysLeft > 0) {
-          showToast(`Pro 将于 ${daysLeft} 天后到期，请及时续费`, daysLeft <= 3 ? 'error' : 'info', 5000);
+        if (daysLeft < 0) return; // 已过期
+        if (daysLeft <= 7) {
+          proDaysLeft = daysLeft;
+          localStorage.setItem('quick-dial-pro-days', String(daysLeft));
+          showToast(t('pro.expireTip', { days: String(daysLeft) }), daysLeft <= 3 ? 'error' : 'info', 6000);
         }
       });
     }
@@ -251,7 +255,13 @@ import { t, getLang } from './utils/i18n.svelte';
       <div class="footer-right">
         <span class="footer-version">{VERSION}</span>
         {#if isLoggedIn() && getIsPro()}
-          <span class="footer-pro-badge">PRO</span>
+          {#if proDaysLeft > 0}
+            <span class="footer-pro-badge expiring" title={t('pro.expireTip', { days: String(proDaysLeft) })}>
+              PRO · {proDaysLeft}{t('pro.days')}
+            </span>
+          {:else}
+            <span class="footer-pro-badge">PRO</span>
+          {/if}
         {/if}
       </div>
     </div>
@@ -376,6 +386,14 @@ import { t, getLang } from './utils/i18n.svelte';
     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     color: white;
     letter-spacing: 0.5px;
+  }
+  .footer-pro-badge.expiring {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    animation: pulse-badge 2s ease-in-out infinite;
+  }
+  @keyframes pulse-badge {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
   }
 
   @media (max-width: 640px) {

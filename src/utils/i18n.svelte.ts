@@ -31,7 +31,7 @@ const zh: Dict = {
   'sync.never': '从未同步','sync.fillRequired': '请填写用户名和密码','sync.loginOk': '登录成功','sync.registerOk': '注册成功','sync.syncing': '同步中...','sync.plUser': '至少2个字符','sync.plPwd': '至少6位','sync.processing': '处理中...','sync.proReq': '云同步需 Pro，去设置升级',
   'ie.success': '操作成功','ie.exportOk': '导出成功','ie.importOk': '导入成功','ie.importedN': '成功导入 {count} 个书签至 {groups} 个分组','ie.extraMerged': '，超出 {extra} 个文件夹自动归入默认收藏','ie.cleared': '已清空数据','ie.invalidFile': '无效的备份文件格式','ie.invalidUrl': 'URL 格式不正确','ie.noBookmark': '未找到有效的书签','ie.allExist': '书签已全部存在','ie.failed': '操作失败',
   'dial.addToGroup': '添加到本组',
-  'pro.monthly': '月度会员','pro.yearly': '年度会员','pro.lifetime': '终身会员','pro.expire': '到期：',
+  'pro.monthly': '月度会员','pro.yearly': '年度会员','pro.lifetime': '终身会员','pro.expire': '到期：','pro.expireTip': 'Pro 将于 {days} 天后到期，请及时续费','pro.days': '天',
   'settings.engine': '默认搜索引擎',
   'pro.customFooterEg': '例如：我的公司','pro.customTitle': '自定义标题','pro.customTitleDesc': '替换浏览器标签页标题','pro.customTitleEg': '例如：我的起始页','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
   'pro.cssPlaceholder': '/* 在此输入自定义 CSS */',
@@ -81,7 +81,7 @@ const en: Dict = {
   'wp.local': 'Upload Image','wp.url': 'Image URL','wp.apply': 'Apply','wp.placeholder': 'Paste image URL...',
   'sync.never': 'Never synced','sync.fillRequired': 'Fill username and password','sync.loginOk': 'Login OK','sync.registerOk': 'Registered','sync.syncing': 'Syncing...','sync.plUser': 'Min 2 chars','sync.plPwd': 'Min 6 chars','sync.processing': 'Processing...','sync.proReq': 'Cloud sync requires Pro',
   'dial.addToGroup': 'Add to Group',
-  'pro.monthly': 'Monthly','pro.yearly': 'Yearly','pro.lifetime': 'Lifetime','pro.expire': 'Expires: ',
+  'pro.monthly': 'Monthly','pro.yearly': 'Yearly','pro.lifetime': 'Lifetime','pro.expire': 'Expires: ','pro.expireTip': 'Pro expires in {days} days, please renew','pro.days': 'd',
   'settings.engine': 'Default Engine',
   'pro.customFooterEg': 'e.g. My Company',
   'pro.customTitle': 'Custom Title',
@@ -112,10 +112,16 @@ const en: Dict = {
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');
 let _v = $state(0); // 版本号，强制 Svelte 追踪变化
 
-export function t(key: string): string {
-  void _v; // 建立响应式依赖
+export function t(key: string, params?: Record<string, string>): string {
+  void _v;
   const dict = currentLang === 'zh-CN' ? zh : en;
-  return dict[key] || key;
+  let val = dict[key] || key;
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      val = val.replace(`{${k}}`, v);
+    }
+  }
+  return val;
 }
 
 export function getLang(): Lang {

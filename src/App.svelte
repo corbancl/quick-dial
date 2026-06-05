@@ -195,27 +195,28 @@ import { t, getLang } from './utils/i18n.svelte';
 
   <!-- 底部工具栏 -->
   <div class="toolbar">
-    <button class="btn-icon" onclick={() => showWallpaperPicker = true} title="壁纸">
+    <button class="btn-icon" onclick={() => showWallpaperPicker = true} title={t('toolbar.wallpaper')}>
       <i class="fa-solid fa-image"></i>
     </button>
-    <button class="btn-icon" onclick={() => showImportExport = true} title="导入/导出">
+    <button class="btn-icon" onclick={() => showImportExport = true} title={t('toolbar.ie')}>
       <i class="fa-solid fa-folder-open"></i>
     </button>
-    <button class="btn-icon" onclick={() => showStats = true} title="访问统计">
+    <button class="btn-icon" onclick={() => showStats = true} title={t('toolbar.stats')}>
       <i class="fa-solid fa-chart-simple"></i>
     </button>
-    <button class="btn-icon" onclick={() => showSync = true} title="云同步">
+    <button class="btn-icon" onclick={() => showSync = true} title={t('toolbar.sync')}>
       <i class="fa-solid fa-cloud-arrow-up"></i>
     </button>
     {#if !getIsPro()}
-      <button class="btn-icon btn-upgrade" onclick={() => showSubscribe = true} title="升级 Pro">
+      <button class="btn-icon btn-upgrade" onclick={() => showSubscribe = true} title={t('toolbar.upgrade')}>
         <i class="fa-solid fa-crown"></i>
       </button>
     {/if}
-    <button class="btn-icon" onclick={() => showSettings = true} title="设置">
+    <button class="btn-icon" onclick={() => showSettings = true} title={t('toolbar.settings')}>
       <i class="fa-solid fa-gear"></i>
     </button>
-    <button class="btn-icon" onclick={() => showHelp = !showHelp} title="快捷键">
+    <button class="btn-icon" onclick={() => showHelp = !showHelp} title={t('toolbar.help')}>
+      <i class="fa-solid fa-question"></i>
       <i class="fa-solid fa-question"></i>
     </button>
   </div>

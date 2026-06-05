@@ -41,7 +41,7 @@ import { t } from '../utils/i18n.svelte';
 
   async function handleAuth() {
     if (!username.trim() || !password.trim()) {
-      status = '请填写' + t('sync.user') + '和' + t('sync.password');
+      status = t('sync.fillRequired');
       statusOk = false;
       return;
     }
@@ -50,7 +50,7 @@ import { t } from '../utils/i18n.svelte';
     const result = isLogin ? await login(username.trim(), password) : await register(username.trim(), password);
     if (result.ok) {
       syncProStatus();
-      showToast(isLogin ? t('sync.login') + '成功' : t('sync.register') + '成功', 'success');
+      showToast(isLogin ? t('sync.loginOk') : t('sync.registerOk'), 'success');
       onclose();
       return;
     }
@@ -134,14 +134,14 @@ import { t } from '../utils/i18n.svelte';
       {#if getIsPro()}
         <div class="sync-actions">
           <button class="btn btn-primary" onclick={handleUpload} disabled={loading}>
-            {loading ? '同步中...' : '📤 ' + t('sync.upload')}
+            {loading ? t('sync.syncing') : '📤 ' + t('sync.upload')}
           </button>
           <button class="btn btn-secondary" onclick={handleDownload} disabled={loading}>
             {'📥 ' + t('sync.download')}
           </button>
         </div>
       {:else}
-        <p class="sync-pro-only">⚠️ 云同步需 Pro，<span class="pro-link">去设置升级</span></p>
+        <p class="sync-pro-only">⚠️ {t('sync.proReq')}</p>
       {/if}
 
       <div class="form-actions">
@@ -152,25 +152,25 @@ import { t } from '../utils/i18n.svelte';
       <!-- {t('sync.login')}/{t('sync.register')} -->
       <div class="form-group">
         <label class="form-label" for="sync-username">{t('sync.user')}</label>
-        <input id="sync-username" class="form-input" type="text" bind:value={username} placeholder="至少2个字符" />
+        <input id="sync-username" class="form-input" type="text" bind:value={username} placeholder={t('sync.plUser')} />
       </div>
       <div class="form-group">
         <label class="form-label" for="sync-password">{t('sync.password')}</label>
-        <input id="sync-password" class="form-input" type="password" bind:value={password} placeholder="至少6位" onkeydown={(e) => e.key === 'Enter' && handleAuth()} />
+        <input id="sync-password" class="form-input" type="password" bind:value={password} placeholder={t('sync.plPwd')} onkeydown={(e) => e.key === 'Enter' && handleAuth()} />
       </div>
 
       <div class="form-actions">
         <button class="btn btn-primary" onclick={handleAuth} disabled={loading}>
-          {loading ? '处理中...' : (isLogin ? t('sync.login') : t('sync.register'))}
+          {loading ? t('sync.processing') : (isLogin ? t('sync.login') : t('sync.register'))}
         </button>
         <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
       </div>
 
       <p class="auth-switch">
         {#if isLogin}
-          没有账号？<button class="link-btn" onclick={() => { isLogin = false; status = ''; }}>立即{t('sync.register')}</button>
+          {t('sync.noAccount')}<button class="link-btn" onclick={() => { isLogin = false; status = ''; }}>{t('sync.goRegister')}</button>
         {:else}
-          已有账号？<button class="link-btn" onclick={() => { isLogin = true; status = ''; }}>去{t('sync.login')}</button>
+          {t('sync.hasAccount')}<button class="link-btn" onclick={() => { isLogin = true; status = ''; }}>{t('sync.goLogin')}</button>
         {/if}
       </p>
     {/if}

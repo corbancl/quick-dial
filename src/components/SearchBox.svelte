@@ -77,7 +77,7 @@
     <button
       class="engine-btn"
       onclick={() => showEnginePicker = !showEnginePicker}
-      title="切换搜索引擎"
+      title={t('search.switchEngine')}
     >
       {currentEngine().name}
       {#if !getIsPro() && currentEngine().proOnly}
@@ -95,7 +95,7 @@
       class="search-input"
     />
 
-    <button class="go-btn" onclick={handleSearch} title="搜索">
+    <button class="go-btn" onclick={handleSearch} title={t('search.go')}>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/>
         <path d="m21 21-4.35-4.35"/>
@@ -113,16 +113,16 @@
         >
           {engine.name}
           {#if engine.isCustom}
-            <span class="custom-tag">自定义</span>
+            <span class="custom-tag">{t('search.customTag')}</span>
             <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-            <span class="delete-custom" role="button" tabindex="0" onclick={(e) => { e.stopPropagation(); removeCustomEngine(engine.id); }} title="删除">×</span>
+            <span class="delete-custom" role="button" tabindex="0" onclick={(e) => { e.stopPropagation(); removeCustomEngine(engine.id); }} title={t('common.delete')}>×</span>
           {/if}
         </button>
       {/each}
 
       {#if getLockedEngines().length > 0}
         <div class="engine-divider">
-          <span class="divider-label">🔒 Pro 解锁</span>
+          <span class="divider-label">🔒 {t('search.locked')}</span>
         </div>
         {#each getLockedEngines() as engine}
           <button class="engine-option locked" disabled>
@@ -139,22 +139,22 @@
               type="text"
               class="custom-input"
               bind:value={customName}
-              placeholder="引擎名称"
+              placeholder={t('search.engineName')}
             />
             <input
               type="text"
               class="custom-input"
               bind:value={customUrl}
-              placeholder="搜索URL（用{keyword}占位）"
+              placeholder={t('search.engineUrl')}
             />
             <div class="custom-actions">
               <button class="btn-custom-cancel" onclick={() => showCustomForm = false}>{t('dial.cancel')}</button>
-              <button class="btn-custom-save" onclick={handleAddCustom}>添加</button>
+              <button class="btn-custom-save" onclick={handleAddCustom}>{t('common.add')}</button>
             </div>
           </div>
         {:else}
           <button class="engine-option add-custom" onclick={() => showCustomForm = true}>
-            + 添加自定义引擎
+            {t('search.addEngine')}
           </button>
         {/if}
       {/if}

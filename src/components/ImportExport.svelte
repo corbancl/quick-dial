@@ -39,6 +39,7 @@
 
   let isProcessing = $state(false);
   let message = $state('');
+  let isError = $state(false);
 
   function exportData() {
     const data: AppData = {
@@ -61,7 +62,7 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    message = '导出成功！';
+    message = t('ie.exportOk');
     setTimeout(() => { message = ''; }, 2000);
   }
 
@@ -92,10 +93,11 @@
         initSettings(data.settings);
         initRecentSites(data.recentSites || []);
 
-        message = '导入成功！';
+        message = t('ie.importOk');
         setTimeout(onclose, 1200);
       } catch (err) {
-        message = err instanceof Error ? err.message : '导入失败';
+        isError = true;
+        message = err instanceof Error ? err.message : t('ie.failed');
       } finally {
         isProcessing = false;
       }
@@ -119,7 +121,7 @@
       try {
         const html = await file.text();
         const groups = parseBookmarkGroups(html);
-        if (groups.length === 0) throw new Error('未找到有效的书签');
+        if (groups.length === 0) throw new Error(t('ie.noBookmark'));
 
         const state = getDialsState();
         const existingUrls = new Set(state.items.map(d => d.url.toLowerCase()));
@@ -167,7 +169,7 @@
           totalImported += newItems.length;
         }
 
-        if (totalImported === 0) throw new Error('书签已全部存在');
+        if (totalImported === 0) { isError = true; throw new Error(t('ie.allExist')); }
 
         initDials({ dials: state.items, groups: state.groups });
 
@@ -178,7 +180,8 @@
         message += '！';
         setTimeout(() => { message = ''; }, 5000);
       } catch (err) {
-        message = err instanceof Error ? err.message : '导入失败';
+        isError = true;
+        message = err instanceof Error ? err.message : t('ie.failed');
       } finally {
         isProcessing = false;
       }
@@ -188,11 +191,11 @@
   }
 
   function clearData() {
-    if (!confirm(t('ie.clear') + '？此操作不可恢复！')) return;
+    if (!confirm(t('ie.clear') + '？')) return;
     initDials({ dials: [], groups: [] });
     initRecentSites([]);
     localStorage.removeItem('speed-dial-data');
-    message = '已清空数据';
+    message = t('ie.cleared');
     setTimeout(() => { message = ''; }, 2000);
   }
 </script>
@@ -211,11 +214,11 @@
       <button class="btn btn-secondary" onclick={importBookmarks} disabled={isProcessing}>
         <i class="fa-solid fa-bookmark"></i> {t('ie.importBookmarks')}
       </button>
-      <p class="ie-hint">免费版最多 3 个分组，超出的文件夹自动归入"默认收藏"。<br/>开通 Pro 可创建无限分组。</p>
+      <p class="ie-hint">{t('ie.bookmarkHint')}</p>
     </div>
 
     {#if message}
-      <div class="ie-message" class:error={message.includes('失败') || message.includes('错误')} role="alert">
+      <div class="ie-message" class:error={isError} role="alert">
         {message}
       </div>
     {/if}

@@ -9,10 +9,10 @@ import { t } from '../utils/i18n.svelte';
   }
 
   const steps: Step[] = [
-    { title: t('onboard.step1Title'), desc: '在搜索框输入关键词，按 Enter 或点搜索按钮', icon: '🔍' },
-    { title: t('onboard.step2Title'), desc: '点右下角 + 按钮，粘贴网址自动识别名称和图标', icon: '📌' },
-    { title: t('onboard.step3Title'), desc: '点 🎨 按钮选择 12 种精美渐变，打造专属风格', icon: '🎨' },
-    { title: t('onboard.step4Title'), desc: '前往官网 www.cilacila.cn 绑定邮箱、找回密码、管理订阅', icon: '🌐' },
+    { title: t('onboard.step1Title'), desc: t('onboard.step1Desc'), icon: '🔍' },
+    { title: t('onboard.step2Title'), desc: t('onboard.step2Desc'), icon: '📌' },
+    { title: t('onboard.step3Title'), desc: t('onboard.step3Desc'), icon: '🎨' },
+    { title: t('onboard.step4Title'), desc: t('onboard.step4Desc'), icon: '🌐' },
   ];
 
   let show = $state(false);

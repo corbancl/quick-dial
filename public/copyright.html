@@ -22,6 +22,16 @@
 </style>
 </head>
 <body>
+  <script>
+  (function(){
+    try {
+      var d=JSON.parse(localStorage.getItem("speed-dial-data")||"{}");
+      var m=(d.theme||{}).mode||"auto";
+      var isDark=m==="dark"||(m==="auto"&&window.matchMedia("(prefers-color-scheme:dark)").matches);
+      if(isDark){document.documentElement.style.setProperty("--bg","#0f172a");document.documentElement.style.setProperty("--card","#1e293b");document.documentElement.style.setProperty("--border","#334155");document.documentElement.style.setProperty("--text","#f1f5f9");document.documentElement.style.setProperty("--text2","#94a3b8");}
+    }catch(e){}
+  })();
+  </script>
 <div class="container">
   <div class="card">
     <h1>版权声明</h1>

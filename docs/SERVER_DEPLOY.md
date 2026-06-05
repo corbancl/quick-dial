@@ -131,105 +131,23 @@ return 301 https://www.cilacila.cn$request_uri;
 
 ---
 
-## 四、部署三：后端 API → sync.ruseo.cn/api/
-
-### 4.1 确认站点已存在
-
-宝塔 → 网站 → 检查 `sync.ruseo.cn` 是否已创建。如未创建：
-
-1. 添加站点，域名填 `sync.ruseo.cn`
-2. 根目录：`/www/wwwroot/sync.ruseo.cn`
-3. PHP 版本：**8.0+**
-4. 提交
-
-### 4.2 上传 API 文件
-
-```bash
-cd M:\new
-tar -czf api.tar.gz api/
-
-scp M:\new\api.tar.gz root@你的服务器IP:/tmp/
-
-ssh root@你的服务器IP
-cd /www/wwwroot/sync.ruseo.cn
-mkdir -p api
-cd api
-tar -xzf /tmp/api.tar.gz --strip-components=1
-chown -R www:www /www/wwwroot/sync.ruseo.cn
-chmod -R 755 /www/wwwroot/sync.ruseo.cn
-```
-
-### 4.3 导入数据库
-
-```bash
-# 在服务器上
-mysql -u root -p 你的数据库名 < /www/wwwroot/sync.ruseo.cn/api/sync.sql
-mysql -u root -p 你的数据库名 < /www/wwwroot/sync.ruseo.cn/api/account.sql
-mysql -u root -p 你的数据库名 < /www/wwwroot/sync.ruseo.cn/api/admin.sql
-mysql -u root -p 你的数据库名 < /www/wwwroot/sync.ruseo.cn/api/pay.sql
-```
-
-或通过 phpMyAdmin：登录 → 选择数据库 → 导入 → 选择 .sql 文件 → 执行。
-
-### 4.4 修改数据库连接
-
-编辑每个 `.php` 文件的数据库配置（通常在文件顶部）：
-
-```php
-$db_host = 'localhost';
-$db_user = '你的数据库用户名';
-$db_pass = '你的数据库密码';
-$db_name = '你的数据库名';
-```
-
-### 4.5 Nginx 配置（允许跨域 + URL 重写）
-
-宝塔 → 网站 → sync.ruseo.cn → 配置文件，在 server{} 块内：
-
-```nginx
-# 跨域头
-add_header Access-Control-Allow-Origin *;
-add_header Access-Control-Allow-Headers "Content-Type, Authorization";
-add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
-
-# API 路由（确保 .php 扩展名处理正确）
-location /api/ {
-    try_files $uri $uri/ /api/index.php?$query_string;
-}
-
-# PHP 处理
-location ~ \.php$ {
-    fastcgi_pass unix:/tmp/php-cgi-80.sock;
-    fastcgi_index index.php;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    include fastcgi_params;
-}
-```
-
-### 4.6 配置 HTTPS + 验证
-
-1. SSL → Let's Encrypt → 申请
-2. 浏览器访问 `https://sync.ruseo.cn/api/sync.php` → 应返回 JSON
-
 ---
 
-## 五、部署四：管理后台 → bot.chenliang.xyz（你原有）
+## 四、后端 API（已部署 → sync.ruseo.cn/api/）
 
-如果 `bot.chenliang.xyz` 就是管理后台，确认：
-- 站点是否存在，根目录是否包含 `admin.php`
-- 数据库连接配置是否正确
-- SSL 证书是否有效
+后端已在 `sync.ruseo.cn` 运行中，PHP + MySQL。如需要更新：
 
-如需要从此项目部署 admin：
 ```bash
-# 上传 admin.php 和 admin.sql 到对应站点
-scp M:\new\api\admin.php root@IP:/www/wwwroot/bot.chenliang.xyz/
-scp M:\new\api\admin.sql root@IP:/tmp/
+# 更新 API 文件
+scp M:\new\api/*.php root@IP:/www/wwwroot/sync.ruseo.cn/api/
+
+# 更新数据库（如有新增 .sql）
+mysql -u root -p 库名 < M:\new\api/xxx.sql
 ```
 
 ---
 
-## 六、DNS 配置汇总
+## 五、DNS 配置汇总
 
 | 子域名 | 记录类型 | 值 | 用途 |
 |--------|----------|-----|------|
@@ -239,7 +157,7 @@ scp M:\new\api\admin.sql root@IP:/tmp/
 
 ---
 
-## 七、部署后检查清单
+## 六、部署后检查清单
 
 - [ ] `https://www.cilacila.cn` 可访问，显示中文首页
 - [ ] `https://www.cilacila.cn/en.html` 可访问，显示英文首页
@@ -253,7 +171,7 @@ scp M:\new\api\admin.sql root@IP:/tmp/
 
 ---
 
-## 八、日常更新流程
+## 七、日常更新流程
 
 ```bash
 # === 更新官网 ===

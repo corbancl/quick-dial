@@ -90,28 +90,26 @@ import { t, getLang } from './utils/i18n.svelte';
     initSettings(saved.settings);
     initRecentSites(saved.recentSites || []);
   } else {
-    // 首次使用，创建默认分组和示例数据
+    // 首次使用，创建默认分组和示例导航
     const defaultGroupId = ensureDefaultGroup();
-    addDial({
-      title: 'Rusuo API',
-      url: 'https://api.ruseo.cn/',
-      icon: '🔧',
-      groupId: defaultGroupId,
-      sortOrder: 0
-    });
-    addDial({
-      title: 'Rusuo',
-      url: 'https://ruseo.cn/',
-      icon: '🏠',
-      groupId: defaultGroupId,
-      sortOrder: 1
-    });
-    addDial({
-      title: 'JS Hub',
-      url: 'https://js.ruseo.cn/',
-      icon: '📦',
-      groupId: defaultGroupId,
-      sortOrder: 2
+
+    // 常用分组 - 热门网站
+    const commonItems: Array<{ title: string; url: string; icon: string }> = [
+      { title: '百度', url: 'https://www.baidu.com/', icon: '🔍' },
+      { title: '哔哩哔哩', url: 'https://www.bilibili.com/', icon: '🎬' },
+      { title: 'GitHub', url: 'https://github.com/', icon: '🐱' },
+      { title: '淘宝', url: 'https://www.taobao.com/', icon: '🛒' },
+      { title: '京东', url: 'https://www.jd.com/', icon: '📦' },
+      { title: '微博', url: 'https://weibo.com/', icon: '💬' },
+      { title: '知乎', url: 'https://www.zhihu.com/', icon: '💡' },
+      { title: 'QQ邮箱', url: 'https://mail.qq.com/', icon: '📧' },
+      { title: '百度地图', url: 'https://map.baidu.com/', icon: '🗺️' },
+      { title: '网易云音乐', url: 'https://music.163.com/', icon: '🎵' },
+      { title: 'Rusuo API', url: 'https://api.ruseo.cn/', icon: '🔧' },
+      { title: 'JS Hub', url: 'https://js.ruseo.cn/', icon: '📦' },
+    ];
+    commonItems.forEach((item, i) => {
+      addDial({ title: item.title, url: item.url, icon: item.icon, groupId: defaultGroupId, sortOrder: i });
     });
   }
 

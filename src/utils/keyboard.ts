@@ -33,7 +33,7 @@ function handleKeydown(e: KeyboardEvent) {
     const shiftOk = s.shift ? e.shiftKey : true;
     const altOk = s.alt ? e.altKey : true;
 
-    if (e.key === s.key && ctrlOk && shiftOk && altOk) {
+    if (e.key.toUpperCase() === s.key.toUpperCase() && ctrlOk && shiftOk && altOk) {
       e.preventDefault();
       s.handler(e);
       return;

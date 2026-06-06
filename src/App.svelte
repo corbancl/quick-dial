@@ -102,7 +102,7 @@ import { t, getLang } from './utils/i18n.svelte';
       { title: '百度', url: 'https://www.baidu.com/', icon: fav('baidu.com') },
       { title: '哔哩哔哩', url: 'https://www.bilibili.com/', icon: fav('bilibili.com') },
       { title: 'GitHub', url: 'https://github.com/', icon: fav('github.com') },
-      { title: '淘宝', url: 'https://www.taobao.com/', icon: fav('taobao.com') },
+      { title: '淘宝', url: 'https://www.taobao.com/', icon: 'https://img.alicdn.com/tps/i3/T1OjaVFl4dXXa.JOZB-114-114.png' },
       { title: '京东', url: 'https://www.jd.com/', icon: fav('jd.com') },
       { title: '微博', url: 'https://weibo.com/', icon: fav('weibo.com') },
       { title: '知乎', url: 'https://www.zhihu.com/', icon: fav('zhihu.com') },

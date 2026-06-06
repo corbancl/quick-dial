@@ -227,6 +227,7 @@
       <button class="btn btn-danger" onclick={clearData} disabled={isProcessing}>
         <i class="fa-solid fa-trash-can"></i> {t('ie.clear')}
       </button>
+      <p class="ie-hint">{t('ie.clearHint')}</p>
     </div>
 
     <div class="form-actions">

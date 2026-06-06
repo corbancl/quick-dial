@@ -93,20 +93,30 @@ import { t, getLang } from './utils/i18n.svelte';
     // 首次使用，创建默认分组和示例导航
     const defaultGroupId = ensureDefaultGroup();
 
-    // 常用分组 - 热门网站
+    // 常用分组 - 21个热门网站
+    const fav = (domain: string) => `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
     const commonItems: Array<{ title: string; url: string; icon: string }> = [
-      { title: '百度', url: 'https://www.baidu.com/', icon: '🔍' },
-      { title: '哔哩哔哩', url: 'https://www.bilibili.com/', icon: '🎬' },
-      { title: 'GitHub', url: 'https://github.com/', icon: '🐱' },
-      { title: '淘宝', url: 'https://www.taobao.com/', icon: '🛒' },
-      { title: '京东', url: 'https://www.jd.com/', icon: '📦' },
-      { title: '微博', url: 'https://weibo.com/', icon: '💬' },
-      { title: '知乎', url: 'https://www.zhihu.com/', icon: '💡' },
-      { title: 'QQ邮箱', url: 'https://mail.qq.com/', icon: '📧' },
-      { title: '百度地图', url: 'https://map.baidu.com/', icon: '🗺️' },
-      { title: '网易云音乐', url: 'https://music.163.com/', icon: '🎵' },
-      { title: 'Rusuo API', url: 'https://api.ruseo.cn/', icon: '🔧' },
-      { title: 'JS Hub', url: 'https://js.ruseo.cn/', icon: '📦' },
+      { title: '百度', url: 'https://www.baidu.com/', icon: fav('baidu.com') },
+      { title: '哔哩哔哩', url: 'https://www.bilibili.com/', icon: fav('bilibili.com') },
+      { title: 'GitHub', url: 'https://github.com/', icon: fav('github.com') },
+      { title: '淘宝', url: 'https://www.taobao.com/', icon: fav('taobao.com') },
+      { title: '京东', url: 'https://www.jd.com/', icon: fav('jd.com') },
+      { title: '微博', url: 'https://weibo.com/', icon: fav('weibo.com') },
+      { title: '知乎', url: 'https://www.zhihu.com/', icon: fav('zhihu.com') },
+      { title: 'QQ邮箱', url: 'https://mail.qq.com/', icon: fav('mail.qq.com') },
+      { title: '百度地图', url: 'https://map.baidu.com/', icon: fav('map.baidu.com') },
+      { title: '网易云音乐', url: 'https://music.163.com/', icon: fav('music.163.com') },
+      { title: '抖音', url: 'https://www.douyin.com/', icon: fav('douyin.com') },
+      { title: '腾讯视频', url: 'https://v.qq.com/', icon: fav('v.qq.com') },
+      { title: '豆瓣', url: 'https://www.douban.com/', icon: fav('douban.com') },
+      { title: '微信公众平台', url: 'https://mp.weixin.qq.com/', icon: fav('mp.weixin.qq.com') },
+      { title: 'Gitee', url: 'https://gitee.com/', icon: fav('gitee.com') },
+      { title: '掘金', url: 'https://juejin.cn/', icon: fav('juejin.cn') },
+      { title: '腾讯文档', url: 'https://docs.qq.com/', icon: fav('docs.qq.com') },
+      { title: '爱奇艺', url: 'https://www.iqiyi.com/', icon: fav('iqiyi.com') },
+      { title: 'CSDN', url: 'https://www.csdn.net/', icon: fav('csdn.net') },
+      { title: '百度翻译', url: 'https://fanyi.baidu.com/', icon: fav('fanyi.baidu.com') },
+      { title: '搜狗', url: 'https://www.sogou.com/', icon: fav('sogou.com') },
     ];
     commonItems.forEach((item, i) => {
       addDial({ title: item.title, url: item.url, icon: item.icon, groupId: defaultGroupId, sortOrder: i });

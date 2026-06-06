@@ -1,6 +1,8 @@
 <script lang="ts">
 import { t, setLang, getLang } from '../utils/i18n.svelte';
 
+  let { oncomplete }: { oncomplete?: () => void } = $props();
+
   interface Step {
     title: string;
     desc: string;
@@ -35,7 +37,7 @@ import { t, setLang, getLang } from '../utils/i18n.svelte';
     show = false;
     dismissed = true;
     localStorage.setItem('qd-onboarded', '1');
-    localStorage.setItem('qd-first-settings', '1');
+    oncomplete?.();
   }
 
   function dotClick(i: number) {

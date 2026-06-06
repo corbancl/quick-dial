@@ -129,12 +129,6 @@ import { t, getLang } from './utils/i18n.svelte';
     });
   }
 
-  // 首次使用后自动弹出设置
-  if (localStorage.getItem('qd-first-settings') === '1') {
-    setTimeout(() => showSettings = true, 800);
-    localStorage.removeItem('qd-first-settings');
-  }
-
   // 键盘快捷键
   // 保存右键菜单添加的导航
   function handleDialSave(data: { title: string; url: string; icon: string; groupId: string }) {
@@ -200,7 +194,7 @@ import { t, getLang } from './utils/i18n.svelte';
   });
 </script>
 
-<OnboardingGuide />
+<OnboardingGuide oncomplete={() => setTimeout(() => showSettings = true, 800)} />
 
 <div class="app-container">
   <div class="app-header">

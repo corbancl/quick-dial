@@ -94,7 +94,7 @@ import { t, getLang } from './utils/i18n.svelte';
     const defaultGroupId = ensureDefaultGroup();
 
     // 常用分组 - 21个热门网站
-    const fav = (domain: string) => `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+    const fav = (domain: string) => `https://sync.ruseo.cn/api/favicon.php?domain=${domain}`;
     const commonItems: Array<{ title: string; url: string; icon: string }> = [
       { title: '百度', url: 'https://www.baidu.com/', icon: fav('baidu.com') },
       { title: '哔哩哔哩', url: 'https://www.bilibili.com/', icon: fav('bilibili.com') },

@@ -14,3 +14,8 @@ BUSINESS_PLAN.md
 .comate/
 .workbuddy/
 *.zip
+*.crx
+*.xpi
+
+# 构建输出（仅提交源码）
+build/

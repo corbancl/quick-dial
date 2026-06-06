@@ -1,5 +1,5 @@
 <script lang="ts">
-import { t, setLang } from '../utils/i18n.svelte';
+import { t, setLang, getLang } from '../utils/i18n.svelte';
 
   interface Step {
     title: string;
@@ -77,8 +77,8 @@ import { t, setLang } from '../utils/i18n.svelte';
 
       <!-- Language switcher at bottom -->
       <div class="onboard-lang">
-        <button class:active={typeof window !== 'undefined' && localStorage.getItem('qd-lang') !== 'en'} onclick={() => pickLang('zh-CN')}>中文</button>
-        <button class:active={typeof window !== 'undefined' && localStorage.getItem('qd-lang') === 'en'} onclick={() => pickLang('en')}>English</button>
+        <button class:active={getLang() === 'zh-CN'} onclick={() => pickLang('zh-CN')}>中文</button>
+        <button class:active={getLang() === 'en'} onclick={() => pickLang('en')}>English</button>
       </div>
     </div>
   </div>

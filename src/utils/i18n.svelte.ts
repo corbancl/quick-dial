@@ -51,7 +51,7 @@ const zh: Dict = {
   'toolbar.expand': '展开','toolbar.collapse': '折叠','toolbar.expandGroup': '展开分组','toolbar.collapseGroup': '折叠分组',
   'search.switchEngine': '切换搜索引擎',
   // Default group names (stored in data, translated at render)
-  '常用': '常用',
+  '常用': '常用','默认收藏': '默认收藏',
 };
 
 const en: Dict = {
@@ -106,7 +106,7 @@ const en: Dict = {
   'toolbar.wallpaper': 'Wallpaper','toolbar.ie': 'Import/Export','toolbar.stats': 'Stats','toolbar.sync': 'Cloud Sync','toolbar.upgrade': 'Upgrade','toolbar.settings': 'Settings','toolbar.help': 'Shortcuts',
   'toolbar.expand': 'Expand','toolbar.collapse': 'Collapse','toolbar.expandGroup': 'Expand','toolbar.collapseGroup': 'Collapse',
   'search.switchEngine': 'Switch Engine',
-  '常用': 'Default',
+  '常用': 'Default','默认收藏': 'Default',
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');

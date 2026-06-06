@@ -25,7 +25,7 @@ import { t } from '../utils/i18n.svelte';
         <span class="recent-name">{site.title}</span>
       </button>
     {:else}
-      <p class="recent-empty">{t('recent.empty')}记录</p>
+      <p class="recent-empty">{t('recent.empty')}</p>
     {/each}
   </div>
 </div>

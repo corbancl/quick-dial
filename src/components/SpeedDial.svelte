@@ -86,7 +86,7 @@ import { t } from '../utils/i18n.svelte';
     });
   }
 
-  function handleSaveDial(data: { title: string; url: string; icon: string; groupId: string }) {
+  function handleSaveDial(data: { title: string; url: string; icon: string; groupId: string; bgColor?: string }) {
     if (editingDialId) {
       updateDial(editingDialId, data);
     } else {
@@ -96,6 +96,7 @@ import { t } from '../utils/i18n.svelte';
         title: data.title,
         url: data.url,
         icon: data.icon,
+        bgColor: data.bgColor,
         groupId: gid,
         sortOrder: state.items.length,
       });

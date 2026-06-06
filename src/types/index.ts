@@ -6,6 +6,7 @@ export interface DialItem {
   title: string;
   url: string;
   icon: string;
+  bgColor?: string;
   groupId: string;
   sortOrder: number;
   createdAt: number;

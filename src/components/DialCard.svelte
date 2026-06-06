@@ -55,6 +55,7 @@
 
 <div
   class="dial-card"
+  style={dial.bgColor ? `--dial-bg: ${dial.bgColor}` : ''}
   draggable="true"
   ondragstart={handleDragStart}
   ondragover={ondragover}
@@ -94,7 +95,7 @@
     align-items: center;
     gap: 8px;
     padding: 16px 12px 12px;
-    background: var(--card-bg, rgba(255,255,255,0.85));
+    background: var(--dial-bg, var(--card-bg, rgba(255,255,255,0.85)));
     border: 1px solid var(--card-border, rgba(0,0,0,0.06));
     border-radius: 16px;
     cursor: pointer;

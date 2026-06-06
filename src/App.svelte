@@ -21,7 +21,7 @@
   import { initTheme, getTheme } from './stores/theme.svelte';
   import { initSettings, getSettings, setSearchEngine } from './stores/settings.svelte';
   import { initRecentSites, getRecentSites } from './stores/recentSites.svelte';
-  import { initTodos } from './stores/todos.svelte';
+  import { initTodos, getTodos } from './stores/todos.svelte';
   import { getIsPro } from './stores/subscription.svelte';
   import { isLoggedIn } from './utils/sync';
   import { checkSubscription } from './utils/payment';

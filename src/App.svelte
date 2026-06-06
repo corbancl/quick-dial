@@ -213,7 +213,9 @@ import { t, getLang } from './utils/i18n.svelte';
 
   <SearchBox />
 
-  <TodoWidget />
+  {#if getSettings().showTodo}
+    <TodoWidget />
+  {/if}
 
   <SpeedDial />
 

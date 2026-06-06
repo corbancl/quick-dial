@@ -34,6 +34,10 @@ export function setShowRecentSites(show: boolean): void {
   settings.showRecentSites = show;
 }
 
+export function setShowTodo(show: boolean): void {
+  settings.showTodo = show;
+}
+
 export function setRecentSitesCount(count: number): void {
   settings.recentSitesCount = count;
 }

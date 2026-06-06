@@ -61,6 +61,7 @@ export interface AppSettings {
   showDate: boolean;
   showWeekday: boolean;
   showRecentSites: boolean;
+  showTodo: boolean;
   recentSitesCount: number;
   openInNewTab: boolean;
 }
@@ -117,6 +118,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   showDate: true,
   showWeekday: true,
   showRecentSites: true,
+  showTodo: true,
   recentSitesCount: 8,
   openInNewTab: true,
 };

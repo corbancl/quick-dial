@@ -18,7 +18,7 @@
 
   import { initDials, getDialsState, ensureDefaultGroup, addDial } from './stores/dials.svelte';
   import { initTheme, getTheme } from './stores/theme.svelte';
-  import { initSettings, getSettings } from './stores/settings.svelte';
+  import { initSettings, getSettings, setSearchEngine } from './stores/settings.svelte';
   import { initRecentSites, getRecentSites } from './stores/recentSites.svelte';
   import { getIsPro } from './stores/subscription.svelte';
   import { isLoggedIn } from './utils/sync';
@@ -90,6 +90,9 @@ import { t, getLang } from './utils/i18n.svelte';
     initSettings(saved.settings);
     initRecentSites(saved.recentSites || []);
   } else {
+    // 首次使用，根据语言设置默认搜索引擎
+    setSearchEngine(getLang() === 'zh-CN' ? 'baidu' : 'google');
+
     // 首次使用，创建默认分组和示例导航
     const defaultGroupId = ensureDefaultGroup();
 

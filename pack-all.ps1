@@ -26,7 +26,7 @@ function Pack-Extension {
   Copy-Item "$dist\$ManifestName" -Destination "$tmp\manifest.json" -Force
   
   # 打包 ZIP
-  $zipPath = "$out\quick-dial-$Browser-v1.0.4.zip"
+  $zipPath = "$out\quick-dial-$Browser-v1.0.5.zip"
   Compress-Archive -Path "$tmp\*" -DestinationPath $zipPath -Force
   
   $size = [math]::Round((Get-Item $zipPath).Length / 1KB, 1)

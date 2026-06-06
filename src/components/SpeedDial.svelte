@@ -82,6 +82,7 @@ import { t } from '../utils/i18n.svelte';
         url: dial.url,
         icon: dial.icon,
         groupId: dial.groupId,
+        bgColor: dial.bgColor,
       });
     });
   }

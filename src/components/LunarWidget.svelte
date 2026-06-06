@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { fetchLunar, type LunarData } from '../utils/weather';
 
   let { expanded = false, ontoggle = () => {} }: { expanded?: boolean; ontoggle?: () => void } = $props();
@@ -7,9 +6,11 @@
   let lunar = $state<LunarData | null>(null);
   let loading = $state(true);
 
-  onMount(async () => {
-    lunar = await fetchLunar();
-    loading = false;
+  $effect(() => {
+    fetchLunar().then(data => {
+      lunar = data;
+      loading = false;
+    });
   });
 
   function getHolidayName(): string {

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { fetchWeather, type WeatherData } from '../utils/weather';
 
   let { expanded = false, ontoggle = () => {} }: { expanded?: boolean; ontoggle?: () => void } = $props();
@@ -7,9 +6,11 @@
   let weather = $state<WeatherData | null>(null);
   let loading = $state(true);
 
-  onMount(async () => {
-    weather = await fetchWeather();
-    loading = false;
+  $effect(() => {
+    fetchWeather().then(data => {
+      weather = data;
+      loading = false;
+    });
   });
 
   function formatDate(dateStr: string): string {

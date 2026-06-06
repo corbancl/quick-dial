@@ -7,18 +7,18 @@ import { t, setLang } from '../utils/i18n.svelte';
     icon: string;
   }
 
-  const steps: Step[] = [
+  const steps = $derived([
     { title: t('onboard.step1Title'), desc: t('onboard.step1Desc'), icon: '🔍' },
     { title: t('onboard.step2Title'), desc: t('onboard.step2Desc'), icon: '📌' },
     { title: t('onboard.step3Title'), desc: t('onboard.step3Desc'), icon: '🎨' },
     { title: t('onboard.step4Title'), desc: t('onboard.step4Desc'), icon: '🌐' },
-  ];
+  ]);
 
   let show = $state(false);
   let current = $state(0);
   let dismissed = $state(false);
 
-  onMount(() => {
+  $effect(() => {
     if (localStorage.getItem('qd-onboarded')) return;
     setTimeout(() => show = true, 300);
   });

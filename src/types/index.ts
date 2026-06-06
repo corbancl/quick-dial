@@ -72,6 +72,14 @@ export interface RecentSite {
   lastVisit: number;
 }
 
+// ====== 待办事项 ======
+export interface TodoItem {
+  id: string;
+  text: string;
+  done: boolean;
+  createdAt: number;
+}
+
 // ====== 根数据 ======
 export interface AppData {
   version: number;
@@ -81,6 +89,7 @@ export interface AppData {
   theme: ThemeConfig;
   settings: AppSettings;
   recentSites: RecentSite[];
+  todos?: TodoItem[];
   customCss?: string;
   customTitle?: string;
   customFooter?: string;

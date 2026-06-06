@@ -194,7 +194,6 @@ import { t, getLang } from './utils/i18n.svelte';
 <OnboardingGuide oncomplete={() => {
   // 引导页完成后，根据用户选择的语言设置默认搜索引擎
   setSearchEngine(getLang() === 'zh-CN' ? 'baidu' : 'google');
-  setTimeout(() => showSettings = true, 800);
 }} />
 
 <div class="app-container">

@@ -19,3 +19,7 @@ BUSINESS_PLAN.md
 
 # 构建输出（仅提交源码）
 build/
+
+# 签名密钥（存独立私仓）
+dist.pem
+*.pem

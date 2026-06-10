@@ -14,6 +14,8 @@ export interface AIProvider {
   models: AIModelOption[];
   defaultModel: string;
   needKey: boolean;
+  /** 无用户 API Key 时的代理地址（同源路径或完整 URL），Key 由服务端持有不泄露 */
+  proxyUrl?: string;
 }
 
 export const CUSTOM_MODEL_VALUE = '__custom__';
@@ -21,6 +23,7 @@ export const CUSTOM_MODEL_LABEL = '自定义 / Custom';
 
 export const BUILTIN_PROVIDERS: AIProvider[] = [
   {
+    id: 'deepseek', name: 'DeepSeek', nameEn: 'DeepSeek',
     baseUrl: 'https://api.deepseek.com/chat/completions',
     models: [
       { label: 'DeepSeek V3 (最新)', value: 'deepseek-chat' },
@@ -29,6 +32,7 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
     ],
     defaultModel: 'deepseek-chat',
     needKey: true,
+    proxyUrl: '/api/ai-proxy',
   },
   {
     id: 'openai', name: 'OpenAI', nameEn: 'OpenAI',
@@ -98,6 +102,100 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
     needKey: true,
   },
   {
+    id: 'anthropic', name: 'Anthropic Claude', nameEn: 'Anthropic',
+    baseUrl: 'https://api.anthropic.com/v1/messages',
+    models: [
+      { label: 'Claude 4 Sonnet (最新)', value: 'claude-sonnet-4-20250514' },
+      { label: 'Claude 3.5 Sonnet', value: 'claude-3-5-sonnet-20241022' },
+      { label: 'Claude 3 Opus', value: 'claude-3-opus-20240229' },
+      { label: 'Claude 3 Haiku', value: 'claude-3-haiku-20240307' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
+    ],
+    defaultModel: 'claude-sonnet-4-20250514',
+    needKey: true,
+  },
+  {
+    id: 'mistral', name: 'Mistral AI', nameEn: 'Mistral AI',
+    baseUrl: 'https://api.mistral.ai/v1/chat/completions',
+    models: [
+      { label: 'Mistral Large (最新)', value: 'mistral-large-latest' },
+      { label: 'Mistral Small', value: 'mistral-small-latest' },
+      { label: 'Pixtral Large', value: 'pixtral-large-latest' },
+      { label: 'Codestral', value: 'codestral-latest' },
+      { label: 'Open Mistral Nemo', value: 'open-mistral-nemo' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
+    ],
+    defaultModel: 'mistral-large-latest',
+    needKey: true,
+  },
+  {
+    id: 'groq', name: 'Groq', nameEn: 'Groq',
+    baseUrl: 'https://api.groq.com/openai/v1/chat/completions',
+    models: [
+      { label: 'Llama 3.3 70B (最新)', value: 'llama-3.3-70b-versatile' },
+      { label: 'Llama 3.1 8B', value: 'llama-3.1-8b-instant' },
+      { label: 'Mixtral 8x7B', value: 'mixtral-8x7b-32768' },
+      { label: 'Gemma 2 9B', value: 'gemma2-9b-it' },
+      { label: 'Qwen QwQ 32B', value: 'qwen-qwq-32b' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
+    ],
+    defaultModel: 'llama-3.3-70b-versatile',
+    needKey: true,
+  },
+  {
+    id: 'hunyuan', name: '腾讯混元', nameEn: 'Hunyuan',
+    baseUrl: 'https://api.hunyuan.cloud.tencent.com/v1/chat/completions',
+    models: [
+      { label: 'Hunyuan-Turbos (最新)', value: 'hunyuan-turbos-latest' },
+      { label: 'Hunyuan-Lite', value: 'hunyuan-lite' },
+      { label: 'Hunyuan-Standard', value: 'hunyuan-standard-256k' },
+      { label: 'Hunyuan-Pro', value: 'hunyuan-pro' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
+    ],
+    defaultModel: 'hunyuan-turbos-latest',
+    needKey: true,
+  },
+  {
+    id: 'volc', name: '火山引擎(豆包)', nameEn: 'Volcengine / Doubao',
+    baseUrl: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
+    models: [
+      { label: 'Doubao-1.5-Pro (最新)', value: 'doubao-1-5-pro-256k' },
+      { label: 'Doubao-1.5-Lite', value: 'doubao-1-5-lite-32k' },
+      { label: 'DeepSeek-R1 (火山)', value: 'deepseek-r1-250120' },
+      { label: 'DeepSeek-V3 (火山)', value: 'deepseek-v3-241226' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
+    ],
+    defaultModel: 'doubao-1-5-pro-256k',
+    needKey: true,
+  },
+  {
+    id: 'siliconflow', name: '硅基流动', nameEn: 'SiliconFlow',
+    baseUrl: 'https://api.siliconflow.cn/v1/chat/completions',
+    models: [
+      { label: 'DeepSeek-V3 (最新)', value: 'deepseek-ai/DeepSeek-V3' },
+      { label: 'DeepSeek-R1', value: 'deepseek-ai/DeepSeek-R1' },
+      { label: 'Qwen2.5-72B', value: 'Qwen/Qwen2.5-72B-Instruct' },
+      { label: 'Qwen2.5-32B', value: 'Qwen/Qwen2.5-32B-Instruct' },
+      { label: 'Llama-3.3-70B', value: 'meta-llama/Llama-3.3-70B-Instruct' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
+    ],
+    defaultModel: 'deepseek-ai/DeepSeek-V3',
+    needKey: true,
+  },
+  {
+    id: 'together', name: 'Together AI', nameEn: 'Together AI',
+    baseUrl: 'https://api.together.xyz/v1/chat/completions',
+    models: [
+      { label: 'Llama 3.3 70B (最新)', value: 'meta-llama/Llama-3.3-70B-Instruct-Turbo' },
+      { label: 'DeepSeek-V3', value: 'deepseek-ai/DeepSeek-V3' },
+      { label: 'Qwen2.5-72B', value: 'Qwen/Qwen2.5-72B-Instruct-Turbo' },
+      { label: 'Mixtral 8x7B', value: 'mistralai/Mixtral-8x7B-Instruct-v0.1' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
+    ],
+    defaultModel: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+    needKey: true,
+  },
+  {
     id: 'ollama', name: 'Ollama 本地', nameEn: 'Ollama (Local)',
     baseUrl: 'http://localhost:11434/api/chat',
     models: [
@@ -133,6 +231,31 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
 
   const model = config.model || provider.defaultModel;
 
+  // Anthropic uses Messages API (different format)
+  if (config.provider === 'anthropic') {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'x-api-key': config.apiKey,
+      'anthropic-version': '2023-06-01',
+    };
+    const body = {
+      model,
+      max_tokens: 8192,
+      messages: messages.map(m => ({ role: m.role, content: m.text })),
+    };
+    const res = await fetch(provider.baseUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.text().catch(() => '');
+      throw new Error(`Anthropic error ${res.status}: ${err.slice(0, 200)}`);
+    }
+    const data = await res.json();
+    return data.content?.[0]?.text || '';
+  }
+
   if (config.provider === 'ollama') {
     const res = await fetch(provider.baseUrl, {
       method: 'POST',
@@ -149,6 +272,9 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
   }
 
   // OpenAI-compatible (DeepSeek, Qwen, Kimi, GLM, etc.)
+  // 无用户 Key 但有代理地址 → 路由到代理（Key 由服务端持有，不泄露）
+  const hasProxy = !config.apiKey && provider.proxyUrl;
+  const apiUrl = hasProxy ? provider.proxyUrl! : provider.baseUrl;
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (config.apiKey) headers['Authorization'] = `Bearer ${config.apiKey}`;
 
@@ -158,7 +284,7 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
     stream: false,
   };
 
-  const res = await fetch(provider.baseUrl, {
+  const res = await fetch(apiUrl, {
     method: 'POST',
     headers,
     body: JSON.stringify(body),

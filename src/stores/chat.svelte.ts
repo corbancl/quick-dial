@@ -5,7 +5,7 @@ let messages = $state<ChatMessage[]>([]);
 let loading = $state(false);
 let config = $state<AIConfig>({
   provider: 'deepseek',
-  apiKey: 'sk-f4650a5f17dc4678bd1ab61d05a881fe',
+  apiKey: '',
   model: 'deepseek-chat',
 });
 

@@ -65,7 +65,7 @@
     <div class="ai-header-left" style="color:var(--text-color,#1e293b);">
       <span class="ai-icon">{t('ai.icon') || '🤖'}</span>
       <span style="font-weight:600;font-size:15px;color:var(--text-color,#1e293b);">{t('ai.title')}</span>
-      <span style="background:#2563eb;color:#ffffff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px;display:inline-block;line-height:1.4;">{provider.name}</span>
+      <span class="ai-badge">{provider.name}</span>
     </div>
     <div class="ai-header-actions">
       {#if messages.length > 0}
@@ -205,7 +205,7 @@
   .ai-header-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .ai-icon { font-size: 20px; line-height: 1; }
   .ai-title { font-weight: 600; font-size: 15px; }
-  .ai-badge { font-size: 11px; padding: 3px 10px; border-radius: 6px; font-weight: 600; background: #2563eb; color: #fff; }
+  .ai-badge { font-size: 12px; padding: 2px 8px; border-radius: 6px; font-weight: 600; background: #1d4ed8; color: #fff; }
   .ai-header-actions { display: flex; gap: 4px; }
   .ai-btn-icon {
     background: none; border: none; font-size: 15px;
@@ -301,10 +301,10 @@
   .ai-config-row { display: flex; flex-direction: column; gap: 4px; }
   .ai-config-label { font-size: 11px; font-weight: 500; opacity: 0.6; }
   .ai-input, .ai-select {
-    width: 100%; padding: 6px 10px; border-radius: 6px;
-    border: 1px solid var(--card-border, rgba(0,0,0,0.06));
-    background: var(--input-bg, rgba(0,0,0,0.02));
-    color: var(--text-color, #1e293b); font-size: 12px;
+    width: 100%; padding: 8px 12px; border-radius: 6px;
+    border: 1px solid var(--card-border, rgba(0,0,0,0.1));
+    background: var(--input-bg, rgba(0,0,0,0.04));
+    color: var(--text-color, #1e293b); font-size: 13px;
     outline: none; box-sizing: border-box;
   }
   .ai-select { cursor: pointer; }

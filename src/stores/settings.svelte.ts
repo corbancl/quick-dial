@@ -38,6 +38,10 @@ export function setShowTodo(show: boolean): void {
   settings.showTodo = show;
 }
 
+export function setShowNotes(show: boolean): void {
+  settings.showNotes = show;
+}
+
 export function setRecentSitesCount(count: number): void {
   settings.recentSitesCount = count;
 }

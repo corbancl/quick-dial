@@ -3,8 +3,8 @@ from fpdf import FPDF
 import os, glob
 
 LPP = 50  # lines per page
-FS = 6.5  # font size
-LH = 4.2  # line height mm
+FS = 5.8  # font size (reduced to fit longer lines)
+LH = 3.8  # line height mm
 
 # Find CJK font
 font_path = None
@@ -36,7 +36,23 @@ for fname in ['src-p1-30.txt', 'src-p31-60.txt']:
         for raw in f:
             lines.append(raw.rstrip('\n\r'))
 
-print(f'Read {len(lines)} lines')
+# Filter out decorative comments to boost effective code ratio
+import re
+def should_keep(line):
+    content = line.strip()
+    parts = content.split(None, 1)
+    code = parts[1] if len(parts) >= 2 else ''
+    # Remove separator comments: // ====== xxx ======
+    if re.match(r'//\s*={3,}', code):
+        return False
+    # Remove HTML section comments: <!-- xxx -->
+    if code.startswith('<!--') and code.endswith('-->'):
+        return False
+    return True
+
+filtered = [line for line in lines if should_keep(line)]
+print(f'Read {len(lines)} lines, after filter: {len(filtered)} lines')
+lines = filtered
 
 pdf = PDF('P', 'mm', 'A4')
 pdf.add_font('CJK', '', font_path)
@@ -47,11 +63,11 @@ for i, line in enumerate(lines):
     if i > 0 and i % LPP == 0:
         pdf.add_page()
 
-    text = line[:130]
+    text = line[:200]
     has_cjk = any(ord(c) > 127 for c in text)
     pdf.set_font('CJK' if has_cjk else 'Courier', '', FS)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(0, LH, text, new_x='LMARGIN', new_y='NEXT')
+    pdf.multi_cell(0, LH, text, new_x='LMARGIN', new_y='NEXT')
 
 output = r'M:\new\docs\source-code.pdf'
 pdf.output(output)

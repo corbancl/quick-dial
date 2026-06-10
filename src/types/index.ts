@@ -62,6 +62,7 @@ export interface AppSettings {
   showWeekday: boolean;
   showRecentSites: boolean;
   showTodo: boolean;
+  showNotes: boolean;
   recentSitesCount: number;
   openInNewTab: boolean;
 }
@@ -81,6 +82,13 @@ export interface TodoItem {
   createdAt: number;
 }
 
+// ====== 便签/笔记 ======
+export interface NoteItem {
+  id: string;
+  text: string;
+  createdAt: number;
+}
+
 // ====== 根数据 ======
 export interface AppData {
   version: number;
@@ -91,6 +99,7 @@ export interface AppData {
   settings: AppSettings;
   recentSites: RecentSite[];
   todos?: TodoItem[];
+  notes?: NoteItem[];
   customCss?: string;
   customTitle?: string;
   customFooter?: string;
@@ -119,6 +128,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   showWeekday: true,
   showRecentSites: true,
   showTodo: true,
+  showNotes: true,
   recentSitesCount: 8,
   openInNewTab: true,
 };

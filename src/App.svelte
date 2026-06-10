@@ -16,12 +16,14 @@
   import HelpPanel from './components/HelpPanel.svelte';
   import OnboardingGuide from './components/OnboardingGuide.svelte';
   import TodoWidget from './components/TodoWidget.svelte';
+  import NotesWidget from './components/NotesWidget.svelte';
 
   import { initDials, getDialsState, ensureDefaultGroup, addDial } from './stores/dials.svelte';
   import { initTheme, getTheme } from './stores/theme.svelte';
   import { initSettings, getSettings, setSearchEngine } from './stores/settings.svelte';
   import { initRecentSites, getRecentSites } from './stores/recentSites.svelte';
   import { initTodos, getTodos } from './stores/todos.svelte';
+  import { initNotes, getNotes } from './stores/notes.svelte';
   import { getIsPro } from './stores/subscription.svelte';
   import { isLoggedIn } from './utils/sync';
   import { checkSubscription } from './utils/payment';
@@ -92,6 +94,7 @@ import { t, getLang } from './utils/i18n.svelte';
     initSettings(saved.settings);
     initRecentSites(saved.recentSites || []);
     initTodos(saved.todos || []);
+    initNotes(saved.notes || []);
   } else {
     // 首次使用，创建默认分组和示例导航
     const defaultGroupId = ensureDefaultGroup();
@@ -153,6 +156,7 @@ import { t, getLang } from './utils/i18n.svelte';
     const settings = getSettings();
     const recentSites = getRecentSites();
     const todos = getTodos();
+    const notes = getNotes();
     
     return {
       version: 1,
@@ -167,6 +171,7 @@ import { t, getLang } from './utils/i18n.svelte';
       settings: settings,
       recentSites: recentSites,
       todos: todos,
+      notes: notes,
       customCss: localStorage.getItem('quick-dial-custom-css') || '',
     };
   });
@@ -209,6 +214,10 @@ import { t, getLang } from './utils/i18n.svelte';
 
   {#if getSettings().showTodo}
     <TodoWidget />
+  {/if}
+
+  {#if getSettings().showNotes}
+    <NotesWidget />
   {/if}
 
   <SpeedDial />

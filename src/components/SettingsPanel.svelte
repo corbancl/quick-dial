@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setRecentSitesCount, setOpenInNewTab } from '../stores/settings.svelte';
+  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setShowNotes, setRecentSitesCount, setOpenInNewTab } from '../stores/settings.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
   import { checkSubscription } from '../utils/payment';
   import { t, getLang, setLang } from '../utils/i18n.svelte';
@@ -168,6 +168,15 @@
         <label class="setting-label" for="show-todo">{t('settings.showTodo')}</label>
         <label class="toggle">
           <input id="show-todo" type="checkbox" checked={getSettings().showTodo} onchange={(e) => setShowTodo((e.target as HTMLInputElement).checked)} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- 显示便签 -->
+      <div class="setting-item">
+        <label class="setting-label" for="show-notes">{t('settings.showNotes')}</label>
+        <label class="toggle">
+          <input id="show-notes" type="checkbox" checked={getSettings().showNotes} onchange={(e) => setShowNotes((e.target as HTMLInputElement).checked)} />
           <span class="toggle-slider"></span>
         </label>
       </div>

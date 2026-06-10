@@ -52,14 +52,24 @@
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   }
 
-  // 哪个消息刚被复制
-  let copiedMsgTime = $state(0);
+  // toast 提示
+  let toastText = $state('');
+  let toastTimer = $state<ReturnType<typeof setTimeout> | null>(null);
 
-  async function copyToNotes(text: string, msgTime: number) {
+  function showToast(key: string) {
+    if (toastTimer) clearTimeout(toastTimer);
+    toastText = t(key) || key;
+    toastTimer = setTimeout(() => { toastText = ''; }, 2000);
+  }
+
+  async function copyToClipboard(text: string) {
+    try { await navigator.clipboard.writeText(text); showToast('ai.copied'); }
+    catch { /* noop */ }
+  }
+
+  function saveToNotes(text: string) {
     addNote(text);
-    try { await navigator.clipboard.writeText(text); } catch { /* noop */ }
-    copiedMsgTime = msgTime;
-    setTimeout(() => { copiedMsgTime = 0; }, 1500);
+    showToast('ai.noteSaved');
   }
 
   const messages = $derived(getChatMessages());
@@ -110,9 +120,8 @@
             <div class="ai-bubble-foot">
               <span class="ai-time">{new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               {#if msg.role === 'assistant' && msg.text && msg.text !== t('ai.thinking')}
-                <button class="ai-save-btn" onclick={() => copyToNotes(msg.text, msg.time)} title={t('ai.copy')}>
-                  {copiedMsgTime === msg.time ? '✓' : '📋'}
-                </button>
+                <button class="ai-bubble-btn" onclick={() => copyToClipboard(msg.text)} title={t('ai.copy')}>📋</button>
+                <button class="ai-bubble-btn" onclick={() => saveToNotes(msg.text)} title={t('ai.saveToNotes')}>📝</button>
               {/if}
             </div>
           </div>
@@ -172,6 +181,11 @@
         <button class="ai-config-btn ai-config-cancel" onclick={() => showConfig = false}>{t('common.cancel')}</button>
       </div>
     </div>
+  {/if}
+
+  <!-- toast 提示 -->
+  {#if toastText}
+    <div class="ai-toast">{toastText}</div>
   {/if}
 
   <!-- 输入区 -->
@@ -265,13 +279,33 @@
   .ai-thinking { opacity: 0.5; }
   .ai-bubble-foot { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
   .ai-time { font-size: 10px; color: var(--text-color, #1e293b); opacity: 0.3; }
-  .ai-save-btn {
+  .ai-bubble-btn {
     background: none; border: none; font-size: 13px;
     cursor: pointer; padding: 0; line-height: 1;
     opacity: 0; transition: opacity 0.15s;
   }
-  .ai-bubble:hover .ai-save-btn { opacity: 0.5; }
-  .ai-save-btn:hover { opacity: 0.9 !important; }
+  .ai-bubble:hover .ai-bubble-btn { opacity: 0.5; }
+  .ai-bubble-btn:hover { opacity: 0.9 !important; }
+
+  /* toast */
+  .ai-toast {
+    position: absolute;
+    bottom: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 16px;
+    border-radius: 16px;
+    pointer-events: none;
+    z-index: 10;
+    animation: ai-toast-in 0.2s ease-out;
+  }
+  @keyframes ai-toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
 
   .ai-input-area {
     padding: 10px 16px 14px;

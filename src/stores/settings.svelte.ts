@@ -49,3 +49,7 @@ export function setRecentSitesCount(count: number): void {
 export function setOpenInNewTab(open: boolean): void {
   settings.openInNewTab = open;
 }
+
+export function setShowAI(show: boolean): void {
+  settings.showAI = show;
+}

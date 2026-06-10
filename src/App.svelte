@@ -258,9 +258,11 @@ import { t, getLang } from './utils/i18n.svelte';
     <button class="btn-icon" onclick={() => showHelp = !showHelp} title={t('toolbar.help')}>
       <i class="fa-solid fa-question"></i>
     </button>
-    <button class="btn-icon btn-ai" onclick={() => showAI = !showAI} title={t('ai.title')}>
-      <i class="fa-solid fa-robot"></i>
-    </button>
+    {#if getSettings().showAI}
+      <button class="btn-icon btn-ai" onclick={() => showAI = !showAI} title={t('ai.title')}>
+        <i class="fa-solid fa-robot"></i>
+      </button>
+    {/if}
   </div>
 
   <!-- Toast 通知 -->
@@ -276,34 +278,45 @@ import { t, getLang } from './utils/i18n.svelte';
 
   <footer class="app-footer">
     <div class="footer-inner">
-      <div class="footer-left">
-        <span>&copy;2026 <a class="footer-domain" href="https://cilacila.cn" target="_blank" rel="noopener">cilacila.cn</a> {t('footer.domain')}</span>
-        <span class="footer-divider"></span>
-        {#if isLoggedIn() && getIsPro() && customFooter}
-          <span class="footer-custom">{customFooter}</span>
-          <span class="footer-divider"></span>
-        {/if}
-        <a class="footer-link" href="{pg}about.html">{t('footer.about')}</a>
-        <span class="footer-divider"></span>
-        <a class="footer-link" href="{pg}privacy.html">{t('footer.privacy')}</a>
-        <span class="footer-divider"></span>
-        <a class="footer-link" href="{pg}copyright.html">{t('footer.copyright')}</a>
-        <span class="footer-divider"></span>
-        <a class="footer-link" href="{pg}contact.html">{t('footer.contact')}</a>
-        <span class="footer-divider"></span>
-        <a class="footer-link" href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
-      </div>
-      <div class="footer-right">
-        <span class="footer-version">{VERSION}</span>
-        {#if isLoggedIn() && getIsPro()}
-          {#if proDaysLeft > 0}
-            <span class="footer-pro-badge expiring" title={t('pro.expireTip', { days: String(proDaysLeft) })}>
-              PRO · {proDaysLeft}{t('pro.days')}
-            </span>
-          {:else}
-            <span class="footer-pro-badge">PRO</span>
+      <!-- 第一行：版权 + 品牌 + 版本 -->
+      <div class="footer-row footer-row-brand">
+        <div class="footer-brand">
+          <span class="footer-logo">⚡</span>
+          <span class="footer-name">{t('footer.domain')}</span>
+          {#if isLoggedIn() && getIsPro() && customFooter}
+            <span class="footer-custom">{customFooter}</span>
           {/if}
-        {/if}
+        </div>
+        <div class="footer-meta">
+          <span class="footer-version">v{VERSION}</span>
+          {#if isLoggedIn() && getIsPro()}
+            {#if proDaysLeft > 0}
+              <span class="footer-pro-badge expiring" title={t('pro.expireTip', { days: String(proDaysLeft) })}>
+                PRO · {proDaysLeft}{t('pro.days')}
+              </span>
+            {:else}
+              <span class="footer-pro-badge">PRO</span>
+            {/if}
+          {/if}
+        </div>
+      </div>
+      <!-- 第二行：备案号 -->
+      <div class="footer-row footer-row-beian">
+        <a class="footer-link" href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
+        <span class="footer-divider"></span>
+        <span class="footer-link footer-psb-placeholder" title={t('footer.psbPending')}>
+          <i class="fa-solid fa-shield-halved"></i> {t('footer.psbNumber')}
+        </span>
+      </div>
+      <!-- 第三行：站内链接 -->
+      <div class="footer-row footer-row-links">
+        <a class="footer-link" href="{pg}about.html">{t('footer.about')}</a>
+        <span class="footer-dot">·</span>
+        <a class="footer-link" href="{pg}privacy.html">{t('footer.privacy')}</a>
+        <span class="footer-dot">·</span>
+        <a class="footer-link" href="{pg}copyright.html">{t('footer.copyright')}</a>
+        <span class="footer-dot">·</span>
+        <a class="footer-link" href="{pg}contact.html">{t('footer.contact')}</a>
       </div>
     </div>
   </footer>
@@ -379,44 +392,53 @@ import { t, getLang } from './utils/i18n.svelte';
   }
 
   .app-footer {
-    text-align: center;
-    padding: 20px 0 12px;
     user-select: none;
+    width: 100%;
+    max-width: 800px;
+    padding: 40px 0 24px;
   }
 
   .footer-inner {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     gap: 10px;
-    padding: 8px 18px;
-    border-radius: 20px;
     font-size: 12px;
     color: var(--text-color, #1e293b);
-    opacity: 0.4;
+    opacity: 0.45;
     transition: opacity 0.3s;
   }
 
   .footer-inner:hover { opacity: 0.7; }
 
-  .footer-version { font-family: monospace; font-size: 11px; opacity: 0.7; }
-
-  .footer-domain {
-    color: var(--text-color, #1e293b);
-    text-decoration: none;
-    opacity: 0.7;
-    transition: opacity 0.2s;
+  .footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
   }
-  .footer-domain:hover { opacity: 1; }
-  .footer-link { color: var(--text2); text-decoration: none; font-size: 11px; opacity: 0.6; transition: opacity 0.2s; }
-  .footer-link:hover { opacity: 1; }
-  .footer-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .footer-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+  .footer-row-brand { gap: 16px; }
+  .footer-brand { display: flex; align-items: center; gap: 6px; }
+  .footer-logo { font-size: 14px; }
+  .footer-name { font-weight: 600; font-size: 13px; }
+  .footer-meta { display: flex; align-items: center; gap: 8px; }
+  .footer-version { font-family: monospace; font-size: 10px; opacity: 0.6; }
 
   .footer-custom {
     font-weight: 600;
     opacity: 0.8;
+    padding-left: 8px;
+    border-left: 1px solid var(--text-color, #1e293b);
+    margin-left: 4px;
   }
+
+  .footer-link { color: var(--text-color, #1e293b); text-decoration: none; font-size: 11px; opacity: 0.5; transition: opacity 0.2s; }
+  .footer-link:hover { opacity: 1; }
+  .footer-row-beian .footer-link { font-size: 11px; }
+  .footer-psb-placeholder { opacity: 0.3; cursor: default; font-style: italic; }
+  .footer-psb-placeholder i { font-size: 10px; margin-right: 2px; }
 
   .footer-divider {
     width: 1px;
@@ -424,6 +446,12 @@ import { t, getLang } from './utils/i18n.svelte';
     background: var(--text-color, #1e293b);
     opacity: 0.15;
     border-radius: 1px;
+    flex-shrink: 0;
+  }
+
+  .footer-dot {
+    opacity: 0.2;
+    font-size: 10px;
   }
 
   .footer-pro-badge {
@@ -453,6 +481,11 @@ import { t, getLang } from './utils/i18n.svelte';
     .header-widgets {
       gap: 8px;
     }
+
+    .app-footer { padding: 32px 12px 20px; }
+    .footer-row-brand { flex-direction: column; gap: 6px; }
+    .footer-row-links { gap: 4px; }
+    .footer-link { font-size: 11px; }
   }
 
   .ai-overlay {

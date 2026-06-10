@@ -4,10 +4,13 @@
   import { chatCompletion, BUILTIN_PROVIDERS, getProvider, CUSTOM_MODEL_VALUE } from '../utils/ai';
   import { addNote } from '../stores/notes.svelte';
 
+  import { tick } from 'svelte';
+
   let { onclose }: { onclose?: () => void } = $props();
 
   let inputText = $state('');
   let showConfig = $state(false);
+  let messagesEl = $state<HTMLDivElement | null>(null);
   let configKey = $state('');
   let configProvider = $state('deepseek');
   let configModel = $state('deepseek-chat');
@@ -36,11 +39,13 @@
     showConfig = false;
   }
 
-  function handleSend() {
+  async function handleSend() {
     const text = inputText.trim();
     if (!text || isChatLoading()) return;
     inputText = '';
-    sendMessage(text, chatCompletion);
+    await sendMessage(text, chatCompletion);
+    await tick();
+    if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
   function handleKeydown(e: KeyboardEvent) {
@@ -77,7 +82,7 @@
   </div>
 
   <!-- 消息列表 -->
-  <div class="ai-messages">
+  <div class="ai-messages" bind:this={messagesEl}>
     {#if messages.length === 0}
       <div class="ai-welcome">
         <p class="ai-welcome-text">{t('ai.welcome')}</p>

@@ -33,7 +33,7 @@ function _decryptKey(): string {
 
 export const BUILTIN_PROVIDERS: AIProvider[] = [
   {
-    id: 'deepseek', name: 'DeepSeek', nameEn: 'DeepSeek',
+    id: 'deepseek', name: 'DeepSeek (默认)', nameEn: 'DeepSeek (Default)',
     baseUrl: 'https://api.deepseek.com/chat/completions',
     models: [
       { label: 'DeepSeek V3 (最新)', value: 'deepseek-chat' },
@@ -42,6 +42,17 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
     ],
     defaultModel: 'deepseek-chat',
     needKey: false,
+  },
+  {
+    id: 'deepseek-self', name: 'DeepSeek', nameEn: 'DeepSeek',
+    baseUrl: 'https://api.deepseek.com/chat/completions',
+    models: [
+      { label: 'DeepSeek V3 (最新)', value: 'deepseek-chat' },
+      { label: 'DeepSeek R1', value: 'deepseek-reasoner' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
+    ],
+    defaultModel: 'deepseek-chat',
+    needKey: true,
   },
   {
     id: 'openai', name: 'OpenAI', nameEn: 'OpenAI',

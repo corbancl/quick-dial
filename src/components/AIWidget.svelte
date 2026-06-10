@@ -1,7 +1,7 @@
 <script lang="ts">
   import { t } from '../utils/i18n.svelte';
   import { getChatMessages, getChatConfig, isChatLoading, sendMessage, clearChat, setAIConfig, getCurrentProvider } from '../stores/chat.svelte';
-  import { chatCompletion, BUILTIN_PROVIDERS } from '../utils/ai';
+  import { chatCompletion, BUILTIN_PROVIDERS, getProvider } from '../utils/ai';
   import { addNote } from '../stores/notes.svelte';
 
   let { onclose }: { onclose?: () => void } = $props();
@@ -114,8 +114,8 @@
       <div class="ai-config-row">
         <label class="ai-config-label">{t('ai.provider')}</label>
         <select class="ai-select" bind:value={configProvider} onchange={(e) => {
-          const p = BUILTIN_PROVIDERS.find(x => x.id === e.target.value);
-          if (p) configModel = p.model;
+          const p = getProvider(e.target.value);
+          if (p) { configModel = p.defaultModel; if (p.id === 'ollama') configKey = ''; }
         }}>
           {#each BUILTIN_PROVIDERS as p}
             <option value={p.id}>{p.name}</option>
@@ -130,7 +130,11 @@
       {/if}
       <div class="ai-config-row">
         <label class="ai-config-label">{t('ai.model')}</label>
-        <input class="ai-input" type="text" bind:value={configModel} placeholder="e.g. deepseek-chat" />
+        <select class="ai-select" bind:value={configModel}>
+          {#each (getProvider(configProvider)?.models || []) as m}
+            <option value={m.value}>{m.label}</option>
+          {/each}
+        </select>
       </div>
       <div class="ai-config-actions">
         <button class="ai-config-btn" onclick={saveConfig}>{t('common.confirm')}</button>

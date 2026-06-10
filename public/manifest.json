@@ -25,7 +25,7 @@
     "https://api.qrserver.com/*"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self' https://hm.baidu.com; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://rescdn.apihz.cn https://images.xxapi.cn https: data:; connect-src 'self' https://api.ruseo.cn https://sync.ruseo.cn https://picsum.photos https://rescdn.apihz.cn https://images.xxapi.cn https://hm.baidu.com https://api.deepseek.com https://dashscope.aliyuncs.com https://api.moonshot.cn https://open.bigmodel.cn https://aip.baidubce.com https://api.openai.com"
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://rescdn.apihz.cn https://images.xxapi.cn https: data:; connect-src 'self' https://api.ruseo.cn https://sync.ruseo.cn https://picsum.photos https://rescdn.apihz.cn https://images.xxapi.cn https://hm.baidu.com https://api.deepseek.com https://dashscope.aliyuncs.com https://api.moonshot.cn https://open.bigmodel.cn https://aip.baidubce.com https://api.openai.com"
   },
   "background": {
     "service_worker": "background.js"

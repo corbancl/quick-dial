@@ -15,6 +15,7 @@ export default defineConfig({
       name: 'copy-background',
       closeBundle() {
         copyFileSync('public/background.js', 'dist/background.js');
+        copyFileSync('public/analytics.js', 'dist/analytics.js');
       }
     }
   ],

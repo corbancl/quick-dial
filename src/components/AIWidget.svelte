@@ -53,10 +53,7 @@
   }
 
   function copyToNotes(text: string) {
-    // Import notes store dynamically
-    import('../stores/notes.svelte').then(mod => {
-      mod.addNote(text);
-    });
+    addNote(text);
   }
 
   const messages = $derived(getChatMessages());

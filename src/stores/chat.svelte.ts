@@ -11,10 +11,17 @@ let config = $state<AIConfig>({
 
 let _initDone = false;
 
+const COMPROMISED_KEYS = ['sk-f4650a5f17dc4678bd1ab61d05a881fe'];
+
 export function initChat(data: { messages?: ChatMessage[]; config?: AIConfig } | undefined): void {
   if (!data || _initDone) return;
   if (data.messages) messages = data.messages;
-  if (data.config) config = { ...config, ...data.config };
+  if (data.config) {
+    const c = { ...data.config };
+    // 过滤已泄露的 key，旧版本可能将硬编码 key 持久化到了 localStorage
+    if (c.apiKey && COMPROMISED_KEYS.includes(c.apiKey)) c.apiKey = '';
+    config = { ...config, ...c };
+  }
   _initDone = true;
 }
 

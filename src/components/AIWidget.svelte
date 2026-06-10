@@ -126,7 +126,7 @@
         <label class="ai-config-label">{t('ai.provider')}</label>
         <select class="ai-select" bind:value={configProvider} onchange={(e) => {
           const p = getProvider(e.target.value);
-          if (p) { configModel = p.defaultModel; if (p.id === 'ollama') configKey = ''; }
+          if (p) { configModel = p.defaultModel; configKey = ''; }
         }}>
           {#each BUILTIN_PROVIDERS as p}
             <option value={p.id}>{p.name}</option>

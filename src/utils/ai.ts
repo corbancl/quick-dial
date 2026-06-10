@@ -285,7 +285,14 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
   // OpenAI-compatible (DeepSeek, Qwen, Kimi, GLM, etc.)
   // needKey=false + proxyUrl → 强制走代理（Key 由服务端持有，不泄露）
   const hasProxy = provider.proxyUrl && (!config.apiKey || !provider.needKey);
-  const apiUrl = hasProxy ? provider.proxyUrl! : provider.baseUrl;
+  // 扩展/本地环境下相对路径无法访问，自动解析为 http://localhost:7788
+  let apiUrl = hasProxy ? provider.proxyUrl! : provider.baseUrl;
+  if (hasProxy && !/^https?:\/\//.test(apiUrl)) {
+    const origin = typeof location !== 'undefined' ? location.protocol : '';
+    if (origin.startsWith('chrome-extension:') || origin.startsWith('file:') || origin.startsWith('moz-extension:')) {
+      apiUrl = `http://localhost:7788${apiUrl}`;
+    }
+  }
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (config.apiKey) headers['Authorization'] = `Bearer ${config.apiKey}`;
 

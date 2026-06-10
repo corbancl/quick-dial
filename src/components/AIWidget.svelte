@@ -203,10 +203,10 @@
     border-bottom: 1px solid var(--card-border, rgba(0,0,0,0.06));
     flex-shrink: 0;
   }
-  .ai-header-left { display: flex; align-items: center; gap: 8px; }
-  .ai-icon { font-size: 18px; line-height: 1; }
-  .ai-title { font-weight: 600; font-size: 14px; }
-  .ai-badge { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 500; background: #3b82f6; color: #fff; }
+  .ai-header-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .ai-icon { font-size: 20px; line-height: 1; }
+  .ai-title { font-weight: 600; font-size: 15px; }
+  .ai-badge { font-size: 11px; padding: 3px 10px; border-radius: 6px; font-weight: 600; background: #2563eb; color: #fff; }
   .ai-header-actions { display: flex; gap: 4px; }
   .ai-btn-icon {
     background: none; border: none; font-size: 15px;

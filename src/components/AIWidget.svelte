@@ -206,7 +206,7 @@
   .ai-header-left { display: flex; align-items: center; gap: 8px; }
   .ai-icon { font-size: 18px; line-height: 1; }
   .ai-title { font-weight: 600; font-size: 14px; }
-  .ai-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--hover-bg, rgba(0,0,0,0.04)); }
+  .ai-badge { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 500; background: #3b82f6; color: #fff; }
   .ai-header-actions { display: flex; gap: 4px; }
   .ai-btn-icon {
     background: none; border: none; font-size: 15px;

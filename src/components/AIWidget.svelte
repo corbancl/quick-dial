@@ -62,10 +62,10 @@
 <div class="ai-sidebar">
   <!-- 头部 -->
   <div class="ai-header">
-    <div class="ai-header-left">
+    <div class="ai-header-left" style="color:var(--text-color,#1e293b);">
       <span class="ai-icon">{t('ai.icon') || '🤖'}</span>
-      <span class="ai-title">{t('ai.title')}</span>
-      <span class="ai-badge">{provider.name}</span>
+      <span style="font-weight:600;font-size:15px;color:var(--text-color,#1e293b);">{t('ai.title')}</span>
+      <span style="background:#2563eb;color:#ffffff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px;display:inline-block;line-height:1.4;">{provider.name}</span>
     </div>
     <div class="ai-header-actions">
       {#if messages.length > 0}
@@ -192,7 +192,6 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     font-size: 13px;
-    color: var(--text-color, #1e293b);
   }
 
   .ai-header {

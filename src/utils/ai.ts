@@ -23,7 +23,19 @@ export const CUSTOM_MODEL_LABEL = '自定义 / Custom';
 
 export const BUILTIN_PROVIDERS: AIProvider[] = [
   {
-    id: 'deepseek', name: 'DeepSeek', nameEn: 'DeepSeek',
+    id: 'deepseek', name: 'DeepSeek (默认)', nameEn: 'DeepSeek (Default)',
+    baseUrl: 'https://api.deepseek.com/chat/completions',
+    models: [
+      { label: 'DeepSeek V3 (最新)', value: 'deepseek-chat' },
+      { label: 'DeepSeek R1', value: 'deepseek-reasoner' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
+    ],
+    defaultModel: 'deepseek-chat',
+    needKey: false,
+    proxyUrl: '/api/ai-proxy',
+  },
+  {
+    id: 'deepseek-custom', name: 'DeepSeek (自填Key)', nameEn: 'DeepSeek (BYOK)',
     baseUrl: 'https://api.deepseek.com/chat/completions',
     models: [
       { label: 'DeepSeek V3 (最新)', value: 'deepseek-chat' },
@@ -32,7 +44,6 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
     ],
     defaultModel: 'deepseek-chat',
     needKey: true,
-    proxyUrl: '/api/ai-proxy',
   },
   {
     id: 'openai', name: 'OpenAI', nameEn: 'OpenAI',
@@ -272,8 +283,8 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
   }
 
   // OpenAI-compatible (DeepSeek, Qwen, Kimi, GLM, etc.)
-  // 无用户 Key 但有代理地址 → 路由到代理（Key 由服务端持有，不泄露）
-  const hasProxy = !config.apiKey && provider.proxyUrl;
+  // needKey=false + proxyUrl → 强制走代理（Key 由服务端持有，不泄露）
+  const hasProxy = provider.proxyUrl && (!config.apiKey || !provider.needKey);
   const apiUrl = hasProxy ? provider.proxyUrl! : provider.baseUrl;
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (config.apiKey) headers['Authorization'] = `Bearer ${config.apiKey}`;

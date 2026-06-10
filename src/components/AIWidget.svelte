@@ -133,7 +133,7 @@
           {/each}
         </select>
       </div>
-      {#if configProvider !== 'ollama'}
+      {#if getProvider(configProvider)?.needKey !== false}
         <div class="ai-config-row">
           <label class="ai-config-label">{t('ai.apiKey')}</label>
           <input class="ai-input" type="password" bind:value={configKey} placeholder={t('ai.apiKeyHint')} />

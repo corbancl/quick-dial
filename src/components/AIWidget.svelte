@@ -1,7 +1,7 @@
 <script lang="ts">
   import { t } from '../utils/i18n.svelte';
   import { getChatMessages, getChatConfig, isChatLoading, sendMessage, clearChat, setAIConfig, getCurrentProvider } from '../stores/chat.svelte';
-  import { chatCompletion, BUILTIN_PROVIDERS, getProvider } from '../utils/ai';
+  import { chatCompletion, BUILTIN_PROVIDERS, getProvider, CUSTOM_MODEL_VALUE } from '../utils/ai';
   import { addNote } from '../stores/notes.svelte';
 
   let { onclose }: { onclose?: () => void } = $props();
@@ -11,17 +11,28 @@
   let configKey = $state('');
   let configProvider = $state('deepseek');
   let configModel = $state('deepseek-chat');
+  let configCustomModel = $state('');
+
+  function isCustom(val: string): boolean { return val === CUSTOM_MODEL_VALUE; }
+
+  function getEffectiveModel(): string {
+    return isCustom(configModel) ? configCustomModel : configModel;
+  }
 
   function openConfig() {
     const c = getChatConfig();
     configProvider = c.provider;
     configKey = c.apiKey;
-    configModel = c.model;
+    // Check if current model is a built-in one or custom
+    const p = getProvider(c.provider);
+    const isBuiltin = p?.models.some(m => m.value === c.model);
+    configModel = isBuiltin ? c.model : CUSTOM_MODEL_VALUE;
+    configCustomModel = isBuiltin ? '' : c.model;
     showConfig = true;
   }
 
   function saveConfig() {
-    setAIConfig({ provider: configProvider, apiKey: configKey, model: configModel });
+    setAIConfig({ provider: configProvider, apiKey: configKey, model: getEffectiveModel() });
     showConfig = false;
   }
 
@@ -130,12 +141,22 @@
       {/if}
       <div class="ai-config-row">
         <label class="ai-config-label">{t('ai.model')}</label>
-        <select class="ai-select" bind:value={configModel}>
+        <select class="ai-select" bind:value={configModel} onchange={(e) => {
+          if (isCustom(e.target.value) && !configCustomModel) {
+            configCustomModel = 'custom-model-name';
+          }
+        }}>
           {#each (getProvider(configProvider)?.models || []) as m}
             <option value={m.value}>{m.label}</option>
           {/each}
         </select>
       </div>
+      {#if isCustom(configModel)}
+        <div class="ai-config-row">
+          <label class="ai-config-label">{t('ai.customModel')}</label>
+          <input class="ai-input" type="text" bind:value={configCustomModel} placeholder="e.g. my-custom-model" autofocus />
+        </div>
+      {/if}
       <div class="ai-config-actions">
         <button class="ai-config-btn" onclick={saveConfig}>{t('common.confirm')}</button>
         <button class="ai-config-btn ai-config-cancel" onclick={() => showConfig = false}>{t('common.cancel')}</button>

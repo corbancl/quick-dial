@@ -1,6 +1,6 @@
 {
   "name": "quick-dial",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Quick Dial - 极简无广告浏览器新标签页",
   "type": "module",
   "scripts": {

@@ -16,13 +16,16 @@ export interface AIProvider {
   needKey: boolean;
 }
 
+export const CUSTOM_MODEL_VALUE = '__custom__';
+export const CUSTOM_MODEL_LABEL = '自定义 / Custom';
+
 export const BUILTIN_PROVIDERS: AIProvider[] = [
   {
-    id: 'deepseek', name: 'DeepSeek', nameEn: 'DeepSeek',
     baseUrl: 'https://api.deepseek.com/chat/completions',
     models: [
       { label: 'DeepSeek V3 (最新)', value: 'deepseek-chat' },
       { label: 'DeepSeek R1', value: 'deepseek-reasoner' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
     ],
     defaultModel: 'deepseek-chat',
     needKey: true,
@@ -38,6 +41,7 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
       { label: 'GPT-4.1', value: 'gpt-4.1' },
       { label: 'GPT-4.1 Mini', value: 'gpt-4.1-mini' },
       { label: 'GPT-4.1 Nano', value: 'gpt-4.1-nano' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
     ],
     defaultModel: 'gpt-4o-mini',
     needKey: true,
@@ -52,6 +56,7 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
       { label: 'Qwen-Long', value: 'qwen-long' },
       { label: 'Qwen2.5-72B', value: 'qwen2.5-72b-instruct' },
       { label: 'Qwen2.5-7B', value: 'qwen2.5-7b-instruct' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
     ],
     defaultModel: 'qwen-turbo',
     needKey: true,
@@ -63,6 +68,7 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
       { label: 'Kimi K2 (最新)', value: 'kimi-k2' },
       { label: 'Kimi K2 32K', value: 'moonshot-v1-32k' },
       { label: 'Kimi K2 128K', value: 'moonshot-v1-128k' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
     ],
     defaultModel: 'kimi-k2',
     needKey: true,
@@ -74,6 +80,7 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
       { label: 'GLM-4-Plus (最新)', value: 'glm-4-plus' },
       { label: 'GLM-4-Flash', value: 'glm-4-flash' },
       { label: 'GLM-4-Air', value: 'glm-4-air' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
     ],
     defaultModel: 'glm-4-plus',
     needKey: true,
@@ -85,6 +92,7 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
       { label: 'ERNIE 4.0 (最新)', value: 'completions_pro' },
       { label: 'ERNIE 3.5', value: 'completions' },
       { label: 'ERNIE Speed', value: 'ernie_speed' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
     ],
     defaultModel: 'completions_pro',
     needKey: true,
@@ -101,7 +109,7 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
       { label: 'Mistral', value: 'mistral' },
       { label: 'Phi-4', value: 'phi4' },
       { label: 'Phi-3', value: 'phi3' },
-      { label: '自定义', value: 'custom' },
+      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
     ],
     defaultModel: 'llama3.2',
     needKey: false,

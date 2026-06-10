@@ -52,8 +52,14 @@
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   }
 
-  function copyToNotes(text: string) {
+  // 哪个消息刚被复制
+  let copiedMsgTime = $state(0);
+
+  async function copyToNotes(text: string, msgTime: number) {
     addNote(text);
+    try { await navigator.clipboard.writeText(text); } catch { /* noop */ }
+    copiedMsgTime = msgTime;
+    setTimeout(() => { copiedMsgTime = 0; }, 1500);
   }
 
   const messages = $derived(getChatMessages());
@@ -104,7 +110,9 @@
             <div class="ai-bubble-foot">
               <span class="ai-time">{new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               {#if msg.role === 'assistant' && msg.text && msg.text !== t('ai.thinking')}
-                <button class="ai-save-btn" onclick={() => copyToNotes(msg.text)} title={t('ai.saveToNotes')}>📝</button>
+                <button class="ai-save-btn" onclick={() => copyToNotes(msg.text, msg.time)} title={t('ai.copy')}>
+                  {copiedMsgTime === msg.time ? '✓' : '📋'}
+                </button>
               {/if}
             </div>
           </div>

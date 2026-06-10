@@ -271,6 +271,8 @@ import { t, getLang } from './utils/i18n.svelte';
         <a class="footer-link" href="{pg}copyright.html">{t('footer.copyright')}</a>
         <span class="footer-divider"></span>
         <a class="footer-link" href="{pg}contact.html">{t('footer.contact')}</a>
+        <span class="footer-divider"></span>
+        <a class="footer-link" href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
       </div>
       <div class="footer-right">
         <span class="footer-version">{VERSION}</span>

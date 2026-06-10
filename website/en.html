@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Quick Dial — A clean, ad-free browser new tab page. Quick navigation, multi-engine search, weather & lunar calendar, dark theme — everything just right.">
+<meta name="keywords" content="new tab page,browser extension,Quick Dial,start page,navigation,Chrome new tab">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>Quick Dial — Clean, Ad-Free Browser New Tab</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text2: #64748b;
+    --accent: #3b82f6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Nav */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(248,250,252,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto; padding: 0 24px;
+    display: flex; justify-content: space-between; align-items: center; height: 56px;
+  }
+  .nav-logo { font-size: 11px; font-weight: 600; letter-spacing: 0px; text-decoration: none; color: var(--text2); line-height: 1.15; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  .nav-logo-img { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
+  .nav-logo-txt { line-height: 1.15; }
+  .nav-logo .sub { display: block; font-size: 17px; font-weight: 800; color: var(--accent); letter-spacing: 0px; }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: var(--accent); color: white; }
+  .nav-btn:hover { opacity: 0.9; }
+  .nav-lang { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 16px; cursor: pointer; color: var(--text2); transition: all 0.2s; }
+  .nav-lang:hover { color: var(--text); background: rgba(0,0,0,0.05); }
+
+  /* Sections */
+  section { padding: 100px 24px; }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* Hero */
+  .hero { text-align: center; padding-top: 160px; }
+  .hero-tag {
+    display: inline-block; font-size: 12px; font-weight: 700; padding: 4px 14px;
+    border-radius: 20px; background: rgba(59,130,246,0.12); color: var(--accent);
+    margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .hero h1 { font-size: 56px; font-weight: 900; letter-spacing: -2px; line-height: 1.1; margin-bottom: 20px; }
+  .hero h1 span { background: linear-gradient(135deg, var(--accent), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero p { font-size: 18px; color: var(--text2); max-width: 520px; margin: 0 auto 40px; line-height: 1.8; }
+  .hero-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; border: none; text-decoration: none; transition: all 0.2s; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), #2563eb); color: white; box-shadow: 0 4px 20px rgba(59,130,246,0.3); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(59,130,246,0.4); }
+  .btn-outline { background: none; border: 1px solid rgba(0,0,0,0.1); color: var(--text); }
+  .btn-outline:hover { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.15); }
+  .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 8px; }
+
+  /* Features */
+  .section-title { text-align: center; margin-bottom: 56px; }
+  .section-title h2 { font-size: 34px; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
+  .section-title p { color: var(--text2); font-size: 16px; }
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feature-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 32px 28px; transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature-card:hover { border-color: rgba(59,130,246,0.2); transform: translateY(-4px); }
+  .feature-icon { font-size: 36px; margin-bottom: 16px; }
+  .feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+  /* Pricing */
+  .pricing-cards { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .price-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 36px 28px; text-align: center; flex: 1; min-width: 200px; max-width: 280px;
+    transition: border-color 0.2s;
+  }
+  .price-card.featured { border-color: var(--accent); background: rgba(59,130,246,0.04); }
+  .price-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; background: var(--accent); color: white; display: inline-block; margin-bottom: 12px; }
+  .price-name { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .price-amount { font-size: 42px; font-weight: 900; letter-spacing: -1px; }
+  .price-amount small { font-size: 16px; font-weight: 600; color: var(--text2); }
+  .price-desc { font-size: 13px; color: var(--text2); margin: 12px 0 20px; }
+  .price-features { text-align: left; font-size: 13px; color: var(--text2); margin-bottom: 24px; }
+  .price-features div { padding: 4px 0; }
+  .price-features div::before { content: '✓ '; color: var(--green); font-weight: 700; }
+
+  /* Download */
+  .download-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .download-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 28px 24px; text-align: center; text-decoration: none; color: var(--text);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .download-card:hover { border-color: rgba(59,130,246,0.2); transform: translateY(-4px); }
+  .download-icon { font-size: 40px; margin-bottom: 12px; }
+  .download-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .download-card p { font-size: 12px; color: var(--text2); }
+
+  /* FAQ */
+  .faq-list { max-width: 700px; margin: 0 auto; }
+  .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
+  .faq-q { font-size: 16px; font-weight: 600; margin-bottom: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q::after { content: '+'; font-size: 20px; color: var(--text2); }
+  .faq-a { font-size: 14px; color: var(--text2); line-height: 1.7; display: none; padding-top: 8px; }
+  .faq-item.open .faq-a { display: block; }
+  .faq-item.open .faq-q::after { content: '−'; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 40px 24px; font-size: 13px; color: var(--text2); border-top: 1px solid var(--border); }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  /* Toast */
+  #toast {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 9999;
+    padding: 14px 28px; border-radius: 12px; font-size: 14px; font-weight: 600; color: white;
+    pointer-events: none; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 36px; }
+    .features { grid-template-columns: 1fr; }
+    .download-cards { grid-template-columns: 1fr; }
+    .nav-links a { display: none; }
+    section { padding: 64px 16px; }
+    .hero { padding-top: 120px; }
+  }
+
+  /* Back to top */
+  .btt {
+    position: fixed; bottom: 32px; right: 32px; z-index: 99;
+    width: 44px; height: 44px; border-radius: 12px;
+    background: rgba(0,0,0,0.04); border: 1px solid var(--border);
+    color: var(--text2); font-size: 18px; cursor: pointer;
+    opacity: 0; transform: translateY(12px); pointer-events: none;
+    transition: all 0.3s; backdrop-filter: blur(8px);
+  }
+  .btt.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .btt:hover { background: rgba(0,0,0,0.08); color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="en.html" class="nav-logo"><img src="favicon.png" class="nav-logo-img" alt="" /><span class="nav-logo-txt">Quick Dial<span class="sub">Quick Dial</span></span></a>
+    <div class="nav-links">
+      <a href="en.html#features">Features</a>
+      <a href="en.html#pricing">Pricing</a>
+      <a href="en.html#download">Download</a>
+      <a href="en.html#faq">FAQ</a>
+      <a href="en-guide.html">Guide</a>
+      <a href="en-about.html">About</a>
+      <button class="nav-btn" onclick="window.location.href='en-account.html'">Sign In</button>
+      <button class="nav-lang" onclick="qdToggleLang()" title="切换到中文">🌐</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">v1.0.4</div>
+    <h1>A fresh start,<br>every time <span>you open a tab.</span></h1>
+    <p>Replace your browser's default new tab and cluttered navigation sites. Minimal design, lightning fast, completely ad-free.</p>
+    <div class="hero-btns">
+    <a href="#download" class="btn btn-primary">⬇ Install Extension</a>
+    <a href="https://cilacila.cn" target="_blank" class="btn btn-outline">Try Online</a>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="container">
+    <div class="section-title">
+      <h2>Why you need it</h2>
+      <p>Replace Chrome's default new tab, goodbye cluttered navigation</p>
+    </div>
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Lightning Search</h3>
+        <p>Google, Baidu, Bing, Zhihu, Bilibili, GitHub… 12 engines. Ctrl+K to focus, type to search.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📌</div>
+        <h3>Quick Dials</h3>
+        <p>Drag & drop, groups, 70+ icon library. Paste URL to auto-detect name and icon.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>12 Beautiful Wallpapers</h3>
+        <p>Deep ocean, aurora, sunset, cherry blossom… Each wallpaper auto-adapts, never harsh.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌤️</div>
+        <h3>Weather & Lunar</h3>
+        <p>Live weather, temperature, solar terms, lunar dates. Dropdown for full weather details.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">☁️</div>
+        <h3>Cloud Sync (Pro)</h3>
+        <p>Sync dials across devices seamlessly. No reconfiguration needed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Privacy First</h3>
+        <p>All data stored locally in your browser. No upload, no tracking, no ads.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-title">
+      <h2>Simple pricing</h2>
+      <p>Free is enough, Pro is powerful</p>
+    </div>
+    <div class="pricing-cards">
+      <div class="price-card">
+        <div class="price-name">Free</div>
+        <div class="price-amount">$0</div>
+        <div class="price-desc">Lifetime free</div>
+        <div class="price-features">
+          <div>6 Search Engines</div>
+          <div>3 Dial Groups</div>
+          <div>12 Preset Wallpapers</div>
+          <div>Random Wallpapers</div>
+          <div>Weather & Lunar</div>
+          <div>Analytics</div>
+          <div>Local Storage</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Pro Monthly</div>
+        <div class="price-amount">$9.9<small>/mo</small></div>
+        <div class="price-desc">Monthly subscription</div>
+        <div class="price-features">
+          <div>All Pro Features</div>
+          <div>Unlimited Groups</div>
+          <div>Cloud Sync</div>
+          <div>Custom Wallpaper Upload</div>
+        </div>
+        <a href="#download" class="btn btn-outline btn-sm" style="width:100%">Activate after install</a>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Best Value</div>
+        <div class="price-name">Pro Yearly</div>
+        <div class="price-amount">$68<small>/yr</small></div>
+        <div class="price-desc">≈ $5.7/mo, save 43%</div>
+        <div class="price-features">
+          <div>All Free Features</div>
+          <div>12 Engines + Custom</div>
+          <div>Unlimited Groups</div>
+          <div>Custom Wallpaper Upload</div>
+          <div>Cloud Sync</div>
+          <div>Custom CSS</div>
+        </div>
+        <a href="#download" class="btn btn-primary btn-sm" style="width:100%">Activate after install</a>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Pro Forever</div>
+        <div class="price-amount">$198</div>
+        <div class="price-desc">Pay once, forever</div>
+        <div class="price-features">
+          <div>All Pro Features</div>
+          <div>Forever access</div>
+          <div>No renewal needed</div>
+          <div>All future updates</div>
+        </div>
+        <a href="#download" class="btn btn-outline btn-sm" style="width:100%">Activate after install</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Download -->
+<section id="download">
+  <div class="container">
+    <div class="section-title">
+      <h2>Download</h2>
+      <p>Works on all major browsers, 30 sec install</p>
+    </div>
+    <div class="download-cards">
+      <a class="download-card" href="#" onclick="alert('Coming soon to Chrome Web Store')">
+        <div class="download-icon">🌐</div>
+        <h3>Chrome / Edge</h3>
+        <p>One-click install from store</p>
+      </a>
+      <a class="download-card" href="https://gitee.com/corbancc/quick-dial" target="_blank">
+        <div class="download-icon">📦</div>
+        <h3>GitHub / Gitee</h3>
+        <p>Open source + Manual install</p>
+      </a>
+      <a class="download-card" href="https://cilacila.cn">
+        <div class="download-icon">👀</div>
+        <h3>Try Online</h3>
+        <p>Go to cilacila.cn to start</p>
+      </a>
+    </div>
+    <div style="max-width:500px;margin:32px auto 0;font-size:13px;color:var(--text2);text-align:center;line-height:1.8;">
+      <strong>Chrome manual install:</strong> Download → chrome://extensions → Developer mode → Load unpacked<br>
+      Open a new tab to start using it
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-title">
+      <h2>FAQ</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Is the free version enough?</div>
+        <div class="faq-a">Absolutely. 6 engines, 3 groups, all wallpapers, and weather for free. Pro adds cloud sync, more engines, unlimited groups — ideal for multi-device users.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Do you collect my data?</div>
+        <div class="faq-a">No. All data is stored locally in your browser's LocalStorage. Cloud sync is manually triggered, data is encrypted in transit, and we cannot read your dials.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Forgot password?</div>
+        <div class="faq-a">Bind your email after logging in, then reset your password on the website. <a href="en-account.html" style="color:var(--accent)">Go to Account →</a></div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Works on mobile?</div>
+        <div class="faq-a">Yes. The web version works on mobile and can be set as your browser homepage. Chrome mobile doesn't support extensions yet.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Can I get a refund?</div>
+        <div class="faq-a">Within 7 days of purchase, contact support for an unconditional refund.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<div class="footer">
+  &copy;2026 cilacila.cn Quick Dial All Rights Reserved | <a href="en-about.html">About</a> | <a href="en-privacy.html">Privacy</a> | <a href="en-copyright.html">Copyright</a> | <a href="en-contact.html">Contact</a><br>
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
+</div>
+
+<!-- Back to top -->
+<button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">&#8593;</button>
+
+<script>
+// Scroll to show/hide back-to-top button
+window.addEventListener('scroll', () => {
+  document.getElementById('btt').classList.toggle('show', window.scrollY > 400);
+});
+</script>
+<script src="lang.js"></script>
+</body>
+</html>

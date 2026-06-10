@@ -288,7 +288,7 @@ import { t, getLang } from './utils/i18n.svelte';
           {/if}
         </div>
         <div class="footer-meta">
-          <span class="footer-version">v{VERSION}</span>
+          <span class="footer-version">{VERSION}</span>
           {#if isLoggedIn() && getIsPro()}
             {#if proDaysLeft > 0}
               <span class="footer-pro-badge expiring" title={t('pro.expireTip', { days: String(proDaysLeft) })}>

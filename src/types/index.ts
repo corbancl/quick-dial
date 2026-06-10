@@ -89,6 +89,19 @@ export interface NoteItem {
   createdAt: number;
 }
 
+// ====== AI 聊天 ======
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  text: string;
+  time: number;
+}
+
+export interface AIConfig {
+  provider: string;
+  apiKey: string;
+  model: string;
+}
+
 // ====== 根数据 ======
 export interface AppData {
   version: number;
@@ -100,6 +113,8 @@ export interface AppData {
   recentSites: RecentSite[];
   todos?: TodoItem[];
   notes?: NoteItem[];
+  chatMessages?: ChatMessage[];
+  chatConfig?: AIConfig;
   customCss?: string;
   customTitle?: string;
   customFooter?: string;

@@ -17,6 +17,7 @@
   import OnboardingGuide from './components/OnboardingGuide.svelte';
   import TodoWidget from './components/TodoWidget.svelte';
   import NotesWidget from './components/NotesWidget.svelte';
+  import AIWidget from './components/AIWidget.svelte';
 
   import { initDials, getDialsState, ensureDefaultGroup, addDial } from './stores/dials.svelte';
   import { initTheme, getTheme } from './stores/theme.svelte';
@@ -24,6 +25,7 @@
   import { initRecentSites, getRecentSites } from './stores/recentSites.svelte';
   import { initTodos, getTodos } from './stores/todos.svelte';
   import { initNotes, getNotes } from './stores/notes.svelte';
+  import { initChat, getChatMessages, getChatConfig } from './stores/chat.svelte';
   import { getIsPro } from './stores/subscription.svelte';
   import { isLoggedIn } from './utils/sync';
   import { checkSubscription } from './utils/payment';
@@ -45,6 +47,7 @@ import { t, getLang } from './utils/i18n.svelte';
   let showSync = $state(false);
   let showSubscribe = $state(false);
   let showHelp = $state(false);
+  let showAI = $state(false);
   let showAddDial = $state(false);
   let addDialPrefill = $state({ title: '', url: '' });
   let customFooter = $state(localStorage.getItem('quick-dial-custom-footer') || '');
@@ -95,6 +98,7 @@ import { t, getLang } from './utils/i18n.svelte';
     initRecentSites(saved.recentSites || []);
     initTodos(saved.todos || []);
     initNotes(saved.notes || []);
+    initChat({ messages: saved.chatMessages, config: saved.chatConfig });
   } else {
     // 首次使用，创建默认分组和示例导航
     const defaultGroupId = ensureDefaultGroup();
@@ -157,6 +161,8 @@ import { t, getLang } from './utils/i18n.svelte';
     const recentSites = getRecentSites();
     const todos = getTodos();
     const notes = getNotes();
+    const chatMessages = getChatMessages();
+    const chatConfig = getChatConfig();
     
     return {
       version: 1,
@@ -172,6 +178,8 @@ import { t, getLang } from './utils/i18n.svelte';
       recentSites: recentSites,
       todos: todos,
       notes: notes,
+      chatMessages: chatMessages,
+      chatConfig: chatConfig,
       customCss: localStorage.getItem('quick-dial-custom-css') || '',
     };
   });
@@ -250,6 +258,9 @@ import { t, getLang } from './utils/i18n.svelte';
     <button class="btn-icon" onclick={() => showHelp = !showHelp} title={t('toolbar.help')}>
       <i class="fa-solid fa-question"></i>
     </button>
+    <button class="btn-icon btn-ai" onclick={() => showAI = !showAI} title={t('ai.title')}>
+      <i class="fa-solid fa-robot"></i>
+    </button>
   </div>
 
   <!-- Toast 通知 -->
@@ -324,6 +335,13 @@ import { t, getLang } from './utils/i18n.svelte';
 
 {#if showHelp}
   <HelpPanel onclose={() => showHelp = false} />
+{/if}
+
+{#if showAI}
+  <div class="ai-overlay">
+    <div class="ai-close-area" onclick={() => showAI = false}></div>
+    <AIWidget onclose={() => showAI = false} />
+  </div>
 {/if}
 
 {#if showAddDial}
@@ -436,4 +454,10 @@ import { t, getLang } from './utils/i18n.svelte';
       gap: 8px;
     }
   }
+
+  .ai-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    display: flex; justify-content: flex-end;
+  }
+  .ai-close-area { flex: 1; }
 </style>

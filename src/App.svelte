@@ -207,6 +207,9 @@ import { t, getLang } from './utils/i18n.svelte';
     <div class="header-widgets">
       <WeatherWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
       <LunarWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
+      {#if getSettings().showNotes}
+        <NotesWidget />
+      {/if}
     </div>
   </div>
 
@@ -214,10 +217,6 @@ import { t, getLang } from './utils/i18n.svelte';
 
   {#if getSettings().showTodo}
     <TodoWidget />
-  {/if}
-
-  {#if getSettings().showNotes}
-    <NotesWidget />
   {/if}
 
   <SpeedDial />

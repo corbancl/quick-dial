@@ -14,16 +14,26 @@ export interface AIProvider {
   models: AIModelOption[];
   defaultModel: string;
   needKey: boolean;
-  /** 无用户 API Key 时的代理地址（同源路径或完整 URL），Key 由服务端持有不泄露 */
-  proxyUrl?: string;
 }
 
 export const CUSTOM_MODEL_VALUE = '__custom__';
 export const CUSTOM_MODEL_LABEL = '自定义 / Custom';
 
+// 内置 API Key（XOR+Base64 编码），仅用于默认 DeepSeek，不暴露在 UI
+const _K_SEED = 'quick-dial-seed';
+const _K_ENC = 'Ah5EBV8bUVkAWUtCUgEHRUNeWwlJVQgDWhwXVVAFSU1YBQ4=';
+function _decryptKey(): string {
+  const dec = atob(_K_ENC);
+  let key = '';
+  for (let i = 0; i < dec.length; i++) {
+    key += String.fromCharCode(dec.charCodeAt(i) ^ _K_SEED.charCodeAt(i % _K_SEED.length));
+  }
+  return key;
+}
+
 export const BUILTIN_PROVIDERS: AIProvider[] = [
   {
-    id: 'deepseek', name: 'DeepSeek (默认)', nameEn: 'DeepSeek (Default)',
+    id: 'deepseek', name: 'DeepSeek', nameEn: 'DeepSeek',
     baseUrl: 'https://api.deepseek.com/chat/completions',
     models: [
       { label: 'DeepSeek V3 (最新)', value: 'deepseek-chat' },
@@ -32,18 +42,6 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
     ],
     defaultModel: 'deepseek-chat',
     needKey: false,
-    proxyUrl: '/api/ai-proxy',
-  },
-  {
-    id: 'deepseek-custom', name: 'DeepSeek (自填Key)', nameEn: 'DeepSeek (BYOK)',
-    baseUrl: 'https://api.deepseek.com/chat/completions',
-    models: [
-      { label: 'DeepSeek V3 (最新)', value: 'deepseek-chat' },
-      { label: 'DeepSeek R1', value: 'deepseek-reasoner' },
-      { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
-    ],
-    defaultModel: 'deepseek-chat',
-    needKey: true,
   },
   {
     id: 'openai', name: 'OpenAI', nameEn: 'OpenAI',
@@ -283,18 +281,11 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
   }
 
   // OpenAI-compatible (DeepSeek, Qwen, Kimi, GLM, etc.)
-  // needKey=false + proxyUrl → 强制走代理（Key 由服务端持有，不泄露）
-  const hasProxy = provider.proxyUrl && (!config.apiKey || !provider.needKey);
-  // 扩展/本地环境下相对路径无法访问，自动解析为 http://localhost:7788
-  let apiUrl = hasProxy ? provider.proxyUrl! : provider.baseUrl;
-  if (hasProxy && !/^https?:\/\//.test(apiUrl)) {
-    const origin = typeof location !== 'undefined' ? location.protocol : '';
-    if (origin.startsWith('chrome-extension:') || origin.startsWith('file:') || origin.startsWith('moz-extension:')) {
-      apiUrl = `http://localhost:7788${apiUrl}`;
-    }
-  }
+  const apiUrl = provider.baseUrl;
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  if (config.apiKey) headers['Authorization'] = `Bearer ${config.apiKey}`;
+  // needKey=false 的内置 provider 使用加密存储的 Key，用户不可见
+  const apiKey = config.apiKey || (!provider.needKey ? _decryptKey() : '');
+  if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
 
   const body = {
     model,

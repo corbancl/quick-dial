@@ -9,11 +9,6 @@ export default defineConfig({
   define: {
     __VERSION__: JSON.stringify('v' + pkg.version)
   },
-  server: {
-    proxy: {
-      '/api/ai-proxy': 'http://localhost:7788'
-    }
-  },
   plugins: [
     svelte(),
     {

@@ -304,8 +304,9 @@ import { t, getLang } from './utils/i18n.svelte';
       <div class="footer-row footer-row-beian">
         <a class="footer-link" href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
         <span class="footer-divider"></span>
-        <span class="footer-link footer-psb-placeholder" title={t('footer.psbPending')}>
-          <i class="fa-solid fa-shield-halved"></i> {t('footer.psbNumber')}
+        <span class="footer-psb">
+          <img class="footer-psb-icon" src="/psb-icon.png" alt="备案图标" width="14" height="14" />
+          <span class="footer-link footer-psb-placeholder" title={t('footer.psbPending')}>{t('footer.psbNumber')}</span>
         </span>
       </div>
       <!-- 第三行：站内链接 -->
@@ -437,8 +438,9 @@ import { t, getLang } from './utils/i18n.svelte';
   .footer-link { color: var(--text-color, #1e293b); text-decoration: none; font-size: 11px; opacity: 0.5; transition: opacity 0.2s; }
   .footer-link:hover { opacity: 1; }
   .footer-row-beian .footer-link { font-size: 11px; }
+  .footer-psb { display: inline-flex; align-items: center; gap: 4px; }
+  .footer-psb-icon { width: 14px; height: 14px; flex-shrink: 0; vertical-align: middle; }
   .footer-psb-placeholder { opacity: 0.3; cursor: default; font-style: italic; }
-  .footer-psb-placeholder i { font-size: 10px; margin-right: 2px; }
 
   .footer-divider {
     width: 1px;

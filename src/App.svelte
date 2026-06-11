@@ -353,7 +353,7 @@ import { t, getLang } from './utils/i18n.svelte';
 
 {#if showAI}
   <div class="ai-overlay">
-    <div class="ai-close-area" onclick={() => showAI = false}></div>
+    <div class="ai-close-area" role="button" tabindex="0" onclick={() => showAI = false} onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') showAI = false; }}></div>
     <AIWidget onclose={() => showAI = false} />
   </div>
 {/if}
@@ -494,5 +494,5 @@ import { t, getLang } from './utils/i18n.svelte';
     position: fixed; inset: 0; z-index: 200;
     display: flex; justify-content: flex-end;
   }
-  .ai-close-area { flex: 1; }
+  .ai-close-area { flex: 1; cursor: pointer; }
 </style>

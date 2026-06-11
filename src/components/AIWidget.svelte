@@ -142,8 +142,8 @@
   {#if showConfig}
     <div class="ai-config">
       <div class="ai-config-row">
-        <label class="ai-config-label">{t('ai.provider')}</label>
-        <select class="ai-select" bind:value={configProvider} onchange={(e) => {
+        <label class="ai-config-label" for="ai-provider">{t('ai.provider')}</label>
+        <select id="ai-provider" class="ai-select" bind:value={configProvider} onchange={(e) => {
           const p = getProvider(e.target.value);
           if (p) { configModel = p.defaultModel; configKey = ''; }
         }}>
@@ -154,13 +154,13 @@
       </div>
       {#if getProvider(configProvider)?.needKey !== false}
         <div class="ai-config-row">
-          <label class="ai-config-label">{t('ai.apiKey')}</label>
-          <input class="ai-input" type="password" bind:value={configKey} placeholder={t('ai.apiKeyHint')} />
+          <label class="ai-config-label" for="ai-apikey">{t('ai.apiKey')}</label>
+          <input id="ai-apikey" class="ai-input" type="password" bind:value={configKey} placeholder={t('ai.apiKeyHint')} />
         </div>
       {/if}
       <div class="ai-config-row">
-        <label class="ai-config-label">{t('ai.model')}</label>
-        <select class="ai-select" bind:value={configModel} onchange={(e) => {
+        <label class="ai-config-label" for="ai-model">{t('ai.model')}</label>
+        <select id="ai-model" class="ai-select" bind:value={configModel} onchange={(e) => {
           if (isCustom(e.target.value) && !configCustomModel) {
             configCustomModel = 'custom-model-name';
           }
@@ -172,8 +172,9 @@
       </div>
       {#if isCustom(configModel)}
         <div class="ai-config-row">
-          <label class="ai-config-label">{t('ai.customModel')}</label>
-          <input class="ai-input" type="text" bind:value={configCustomModel} placeholder="e.g. my-custom-model" autofocus />
+          <label class="ai-config-label" for="ai-custom-model">{t('ai.customModel')}</label>
+          <!-- svelte-ignore a11y_autofocus -->
+          <input id="ai-custom-model" class="ai-input" type="text" bind:value={configCustomModel} placeholder="e.g. my-custom-model" autofocus />
         </div>
       {/if}
       <div class="ai-config-actions">
@@ -228,7 +229,7 @@
   }
   .ai-header-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .ai-icon { font-size: 20px; line-height: 1; }
-  .ai-title { font-weight: 600; font-size: 15px; }
+  /* .ai-title 已移除，由 ai-badge 替代 */
   .ai-badge { font-size: 12px; padding: 2px 8px; border-radius: 6px; font-weight: 600; background: #1d4ed8; color: #fff; }
   .ai-header-actions { display: flex; gap: 4px; }
   .ai-btn-icon {

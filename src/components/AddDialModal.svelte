@@ -105,9 +105,9 @@ import { t } from '../utils/i18n.svelte';
         <IconPicker value={icon} onselect={(v) => icon = v} />
       </div>
       <div class="form-group">
-        <label class="form-label">{t('dial.bgColor')}</label>
+        <label class="form-label" for="dial-bgcolor">{t('dial.bgColor')}</label>
         <div class="color-picker-row">
-          <input class="color-input" type="color" bind:value={bgColor} />
+          <input id="dial-bgcolor" class="color-input" type="color" bind:value={bgColor} />
           <input class="form-input color-text" type="text" bind:value={bgColor} placeholder="#RRGGBB" maxlength="7" />
           {#if bgColor}
             <button type="button" class="color-clear" onclick={() => bgColor = ''}>✕</button>

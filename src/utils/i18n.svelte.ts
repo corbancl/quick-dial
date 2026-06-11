@@ -147,5 +147,5 @@ export function setLang(lang: Lang) {
       : 'Quick Dial - Clean, Ad-Free Browser New Tab');
 }
 
-// 初始化
-setLang(currentLang);
+// 初始化 - read from localStorage directly to avoid state_referenced_locally warning
+setLang((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');

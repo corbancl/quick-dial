@@ -58,7 +58,7 @@
   {#if open}
     <!-- 点击外部关闭 -->
     <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <div class="notes-backdrop" onclick={toggle}></div>
+    <div class="notes-backdrop" role="button" tabindex="-1" onclick={toggle}></div>
 
     <div class="notes-panel">
       <div class="notes-panel-header">
@@ -73,9 +73,13 @@
 
       <div class="notes-cards">
         {#each notes as item (item.id)}
+          <!-- svelte-ignore a11y_no_static_element_interactions -->
           <div class="note-card" class:editing={editingId === item.id}
-            onclick={() => !editingId && startEdit(item.id, item.text)}>
+            role="button" tabindex="0"
+            onclick={() => !editingId && startEdit(item.id, item.text)}
+            onkeydown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !editingId) { e.preventDefault(); startEdit(item.id, item.text); } }}>
             {#if editingId === item.id}
+              <!-- svelte-ignore a11y_autofocus -->
               <input class="note-edit-input" type="text" bind:value={newText}
                 onblur={() => saveEdit(item.id)}
                 onkeydown={(e) => { if (e.key === 'Enter') saveEdit(item.id); handleKeydown(e); }}

@@ -321,8 +321,8 @@ import { t, getLang } from './utils/i18n.svelte';
         <a class="footer-link" href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
         <span class="footer-divider"></span>
         <span class="footer-psb">
-          <img class="footer-psb-icon" src="/psb-icon.png" alt="备案图标" width="14" height="14" />
-          <span class="footer-link footer-psb-placeholder" title={t('footer.psbPending')}>{t('footer.psbNumber')}</span>
+          <img class="footer-psb-icon" src="/psb-icon.png" alt="网安备案图标" width="14" height="14" />
+          <a class="footer-link" href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">{t('footer.psbNumber')}</a>
         </span>
       </div>
       <!-- 第三行：站内链接 -->
@@ -456,7 +456,6 @@ import { t, getLang } from './utils/i18n.svelte';
   .footer-row-beian .footer-link { font-size: 11px; }
   .footer-psb { display: inline-flex; align-items: center; gap: 4px; }
   .footer-psb-icon { width: 14px; height: 14px; flex-shrink: 0; vertical-align: middle; }
-  .footer-psb-placeholder { opacity: 0.3; cursor: default; font-style: italic; }
 
   .footer-divider {
     width: 1px;

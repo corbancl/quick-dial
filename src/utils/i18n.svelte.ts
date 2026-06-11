@@ -58,6 +58,7 @@ const zh: Dict = {
   'search.switchEngine': '切换搜索引擎',
   // 汇率换算
   'currency.title': '汇率换算','currency.amount': '金额','currency.base': '基准货币','currency.refresh': '刷新','currency.updated': '更新时间','settings.showCurrency': '显示汇率换算',
+  'top': '返回顶部',
   // 每日一言
   'quote.title': '每日一言','quote.empty': '点击刷新获取一言','quote.loading': '加载中...','quote.error': '加载失败','quote.refresh': '换一句','quote.settings': '显示每日一言','quote.type': '一言类型','quote.hitokoto': '随机一言','quote.qinggan': '情感一言',
   // Tab 导航
@@ -129,6 +130,8 @@ const en: Dict = {
   'search.switchEngine': 'Switch Engine',
   // 汇率换算
   'currency.title': 'Currency','currency.amount': 'Amount','currency.base': 'Base','currency.refresh': 'Refresh','currency.updated': 'Updated','settings.showCurrency': 'Show Currency',
+  'top': 'Back to Top',
+  'bottom': 'Go to Bottom',
   // 每日一言
   'quote.title': 'Daily Quote','quote.empty': 'Click refresh for a quote','quote.loading': 'Loading...','quote.error': 'Load failed','quote.refresh': 'New quote','quote.settings': 'Show Daily Quote','quote.type': 'Quote Type','quote.hitokoto': 'Random','quote.qinggan': 'Love Quotes',
   // Tab 导航

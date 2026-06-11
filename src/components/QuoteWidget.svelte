@@ -54,7 +54,7 @@
     color: var(--text-color, #e2e8f0);
     opacity: 0.5;
     max-width: 580px;
-    margin: 4px auto 0;
+    margin: 0 auto;
     overflow: hidden;
     user-select: none;
   }

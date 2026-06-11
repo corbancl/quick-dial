@@ -63,6 +63,14 @@ import { t, getLang } from './utils/i18n.svelte';
   let cardExpanded = $state(false);
   let activeTab = $state('dials');
 
+  function scrollToTop() {
+    document.getElementById('app')?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function scrollToBottom() {
+    const app = document.getElementById('app');
+    if (app) app.scrollTo({ top: app.scrollHeight, behavior: 'smooth' });
+  }
+
   // 轮询右键菜单添加（扩展环境）
   $effect(() => {
     const interval = setInterval(async () => {
@@ -406,6 +414,19 @@ import { t, getLang } from './utils/i18n.svelte';
   </footer>
 </div>
 
+<div class="side-nav">
+  <button class="side-nav-btn" onclick={(e) => { e.stopPropagation(); scrollToTop(); }} title={t('top')}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none">
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  </button>
+  <button class="side-nav-btn" onclick={(e) => { e.stopPropagation(); scrollToBottom(); }} title={t('bottom')}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  </button>
+</div>
+
 {#if showWallpaperPicker}
   <WallpaperPicker onclose={() => showWallpaperPicker = false} />
 {/if}
@@ -471,7 +492,7 @@ import { t, getLang } from './utils/i18n.svelte';
     display: flex;
     justify-content: center;
     gap: 4px;
-    margin: 12px auto 0;
+    margin: 4px auto 0;
     max-width: 800px;
     padding: 4px;
     border-radius: 10px;
@@ -513,6 +534,41 @@ import { t, getLang } from './utils/i18n.svelte';
     display: flex;
     gap: 8px;
     z-index: 100;
+  }
+
+  .side-nav {
+    position: fixed;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 100;
+  }
+  .side-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border, rgba(255,255,255,0.06));
+    background: var(--card-bg, rgba(255,255,255,0.06));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text-color, #e2e8f0);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+    opacity: 0.35;
+  }
+  .side-nav-btn:hover {
+    opacity: 1;
+    background: var(--accent-bg, rgba(59,130,246,0.15));
+    color: var(--accent-color, #3b82f6);
+  }
+  .side-nav-btn svg {
+    pointer-events: none;
   }
 
   .app-footer {

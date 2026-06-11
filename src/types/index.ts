@@ -128,14 +128,14 @@ export const DEFAULT_SEARCH_ENGINES: SearchEngine[] = [
   { id: 'bing', name: 'Bing', url: 'https://www.bing.com/search?q={keyword}', icon: '' },
   { id: 'sogou', name: '搜狗', url: 'https://www.sogou.com/web?query={keyword}', icon: '' },
   { id: 'so', name: '360搜索', url: 'https://www.so.com/s?q={keyword}', icon: '' },
-  { id: 'zhihu', name: '知乎', url: 'https://www.zhihu.com/search?type=content&q={keyword}', icon: '' },
+  { id: 'zhihu', name: '知乎', url: 'https://www.zhihu.com/search?type=content&q={keyword}', icon: '', proOnly: true },
   { id: 'weibo', name: '微博', url: 'https://s.weibo.com/weibo/{keyword}', icon: '', proOnly: true },
   { id: 'bilibili', name: '哔哩哔哩', url: 'https://search.bilibili.com/all?keyword={keyword}', icon: '', proOnly: true },
   { id: 'github', name: 'GitHub', url: 'https://github.com/search?q={keyword}', icon: '', proOnly: true },
   { id: 'duckduckgo', name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q={keyword}', icon: '', proOnly: true },
   { id: 'twitter', name: 'X (Twitter)', url: 'https://twitter.com/search?q={keyword}', icon: '', proOnly: true },
   { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com/results?search_query={keyword}', icon: '', proOnly: true },
-  { id: 'taobao', name: '淘宝', url: 'https://s.taobao.com/search?q={keyword}&pid=mm_14822724_24216217_80956897', icon: '', proOnly: true },
+  { id: 'taobao', name: '淘宝', url: 'https://s.taobao.com/search?q={keyword}&pid=mm_14822724_24216217_80956897', icon: '' },
 ];
 
 export const DEFAULT_SETTINGS: AppSettings = {

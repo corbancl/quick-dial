@@ -3,6 +3,7 @@
   import { getChatMessages, getChatConfig, isChatLoading, sendMessage, clearChat, setAIConfig, getCurrentProvider } from '../stores/chat.svelte';
   import { chatCompletion, BUILTIN_PROVIDERS, getProvider, CUSTOM_MODEL_VALUE } from '../utils/ai';
   import { addNote } from '../stores/notes.svelte';
+  import { getIsPro } from '../stores/subscription.svelte';
 
   import { tick } from 'svelte';
 
@@ -15,6 +16,7 @@
   let configProvider = $state('deepseek');
   let configModel = $state('deepseek-chat');
   let configCustomModel = $state('');
+  let configSystemPrompt = $state('');
 
   function isCustom(val: string): boolean { return val === CUSTOM_MODEL_VALUE; }
 
@@ -26,6 +28,7 @@
     const c = getChatConfig();
     configProvider = c.provider;
     configKey = c.apiKey;
+    configSystemPrompt = c.systemPrompt || '';
     // Check if current model is a built-in one or custom
     const p = getProvider(c.provider);
     const isBuiltin = p?.models.some(m => m.value === c.model);
@@ -35,7 +38,7 @@
   }
 
   function saveConfig() {
-    setAIConfig({ provider: configProvider, apiKey: configKey, model: getEffectiveModel() });
+    setAIConfig({ provider: configProvider, apiKey: configKey, model: getEffectiveModel(), systemPrompt: configSystemPrompt });
     showConfig = false;
   }
 
@@ -177,6 +180,23 @@
           <input id="ai-custom-model" class="ai-input" type="text" bind:value={configCustomModel} placeholder="e.g. my-custom-model" autofocus />
         </div>
       {/if}
+      <!-- System Prompt (Pro) -->
+      <div class="ai-config-row">
+        <span class="ai-config-label">
+          {t('ai.systemPrompt')}
+          {#if !getIsPro()}
+            <span class="ai-pro-badge">PRO</span>
+          {/if}
+        </span>
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        {#if getIsPro()}
+          <textarea id="ai-system-prompt" class="ai-textarea" bind:value={configSystemPrompt} placeholder={t('ai.systemPromptHint')} rows="3"></textarea>
+        {:else}
+          <div class="ai-locked-field" role="button" tabindex="0" onclick={() => { if (onclose) onclose(); alert(t('ai.systemPromptPro')); }} onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { if (onclose) onclose(); alert(t('ai.systemPromptPro')); } }}>
+            <span class="ai-locked-text">{t('ai.systemPromptLocked')}</span>
+          </div>
+        {/if}
+      </div>
       <div class="ai-config-actions">
         <button class="ai-config-btn" onclick={saveConfig}>{t('common.confirm')}</button>
         <button class="ai-config-btn ai-config-cancel" onclick={() => showConfig = false}>{t('common.cancel')}</button>
@@ -361,4 +381,31 @@
     background: #3b82f6; color: white;
   }
   .ai-config-cancel { background: var(--hover-bg, rgba(0,0,0,0.05)); color: var(--text-color, #1e293b); }
+  .ai-textarea {
+    width: 100%; padding: 8px 12px; border-radius: 6px;
+    border: 1px solid var(--card-border, rgba(0,0,0,0.1));
+    background: var(--input-bg, rgba(0,0,0,0.04));
+    color: var(--text-color, #1e293b); font-size: 13px;
+    outline: none; box-sizing: border-box; resize: vertical;
+    font-family: inherit;
+  }
+  .ai-textarea:focus { border-color: #3b82f6; }
+  .ai-textarea::placeholder { opacity: 0.4; }
+  .ai-pro-badge {
+    font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;
+    background: linear-gradient(135deg, #f59e0b, #f97316); color: #fff;
+    margin-left: 6px; vertical-align: middle;
+  }
+  .ai-locked-field {
+    width: 100%; padding: 10px 12px; border-radius: 6px;
+    border: 1px dashed var(--card-border, rgba(0,0,0,0.15));
+    background: var(--hover-bg, rgba(0,0,0,0.02));
+    box-sizing: border-box; cursor: pointer;
+    text-align: center; transition: all 0.15s;
+  }
+  .ai-locked-field:hover {
+    border-color: #f59e0b;
+    background: rgba(245,158,11,0.05);
+  }
+  .ai-locked-text { font-size: 12px; opacity: 0.4; }
 </style>

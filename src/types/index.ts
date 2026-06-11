@@ -67,6 +67,8 @@ export interface AppSettings {
   hideBranding: boolean;
   recentSitesCount: number;
   openInNewTab: boolean;
+  wallpaperAutoSwitch: boolean;
+  wallpaperSwitchInterval: 'hourly' | 'daily';
 }
 
 // ====== 最近访问 ======
@@ -102,6 +104,7 @@ export interface AIConfig {
   provider: string;
   apiKey: string;
   model: string;
+  systemPrompt?: string;
 }
 
 // ====== 根数据 ======
@@ -151,6 +154,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   hideBranding: false,
   recentSitesCount: 8,
   openInNewTab: true,
+  wallpaperAutoSwitch: false,
+  wallpaperSwitchInterval: 'daily',
 };
 
 export const DEFAULT_THEME: ThemeConfig = {

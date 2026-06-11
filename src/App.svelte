@@ -27,6 +27,8 @@
   import { initNotes, getNotes } from './stores/notes.svelte';
   import { initChat, getChatMessages, getChatConfig } from './stores/chat.svelte';
   import { getIsPro } from './stores/subscription.svelte';
+  import { getWallpaper, setWallpaper } from './stores/wallpaper.svelte';
+  import { fetchRandomWallpaper } from './utils/weather';
   import { isLoggedIn } from './utils/sync';
   import { checkSubscription } from './utils/payment';
   import { showToast } from './utils/toast.svelte';
@@ -62,6 +64,18 @@ import { t, getLang } from './utils/i18n.svelte';
         showAddDial = true;
       }
     }, 500);
+    return () => clearInterval(interval);
+  });
+
+  // 定时切换壁纸
+  $effect(() => {
+    const s = getSettings();
+    if (!s.wallpaperAutoSwitch || !getIsPro()) return;
+    const ms = s.wallpaperSwitchInterval === 'hourly' ? 3_600_000 : 86_400_000;
+    const interval = setInterval(async () => {
+      const url = await fetchRandomWallpaper();
+      if (url) setWallpaper({ type: 'image', value: url, blur: getWallpaper().blur, brightness: getWallpaper().brightness });
+    }, ms);
     return () => clearInterval(interval);
   });
 

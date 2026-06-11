@@ -3,6 +3,10 @@ import { getDialsState } from '../stores/dials.svelte';
 import { getTheme } from '../stores/theme.svelte';
 import { getSettings } from '../stores/settings.svelte';
 import { getRecentSites } from '../stores/recentSites.svelte';
+import { getTodos } from '../stores/todos.svelte';
+import { getNotes } from '../stores/notes.svelte';
+import { getChatMessages, getChatConfig } from '../stores/chat.svelte';
+import { getIsPro } from '../stores/subscription.svelte';
 
 const API_BASE = 'https://sync.ruseo.cn/api/sync.php';
 
@@ -87,6 +91,7 @@ export function logout() {
 
 function getLocalSnapshot(): AppData {
   const dialsState = getDialsState();
+  const isPro = getIsPro();
   return {
     version: 1,
     dials: dialsState.items,
@@ -95,9 +100,14 @@ function getLocalSnapshot(): AppData {
     theme: getTheme(),
     settings: getSettings(),
     recentSites: getRecentSites().map(s => ({ ...s })),
-    customCss: localStorage.getItem('quick-dial-custom-css') || '',
-    customTitle: localStorage.getItem('quick-dial-custom-title') || '',
-    customFooter: localStorage.getItem('quick-dial-custom-footer') || '',
+    todos: getTodos().map(t => ({ ...t })),
+    notes: getNotes().map(n => ({ ...n })),
+    // Pro 专属：同步 AI 对话历史
+    chatMessages: isPro ? getChatMessages().map(m => ({ ...m })) : undefined,
+    chatConfig: isPro ? { ...getChatConfig() } : undefined,
+    customCss: isPro ? (localStorage.getItem('quick-dial-custom-css') || '') : '',
+    customTitle: isPro ? (localStorage.getItem('quick-dial-custom-title') || '') : '',
+    customFooter: isPro ? (localStorage.getItem('quick-dial-custom-footer') || '') : '',
   };
 }
 

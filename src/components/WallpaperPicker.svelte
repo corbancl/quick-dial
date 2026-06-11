@@ -3,6 +3,7 @@ import { t } from '../utils/i18n.svelte';
   import { getWallpaper, setWallpaper, setBlur, setBrightness } from '../stores/wallpaper.svelte';
   import { fetchRandomWallpaper } from '../utils/weather';
   import { getIsPro } from '../stores/subscription.svelte';
+  import { getSettings, setWallpaperAutoSwitch, setWallpaperSwitchInterval } from '../stores/settings.svelte';
   import type { WallpaperConfig } from '../types';
 
   interface Props {
@@ -51,6 +52,8 @@ import { t } from '../utils/i18n.svelte';
 
   let customUrl = $state('');
   let loadingRandom = $state(false);
+  let autoSwitch = $state(getSettings().wallpaperAutoSwitch);
+  let switchInterval = $state(getSettings().wallpaperSwitchInterval);
 
   function applyPreset(preset: typeof presets[0]) {
     setWallpaper({
@@ -244,6 +247,38 @@ import { t } from '../utils/i18n.svelte';
     <div class="form-actions">
       <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
     </div>
+
+    <!-- 定时切换（Pro 专属） -->
+    <div class="auto-switch-section">
+      <div class="auto-switch-header">
+        <span class="auto-switch-title">{t('wp.autoSwitch')}</span>
+        {#if !getIsPro()}
+          <span class="pro-badge-sm">PRO</span>
+        {/if}
+      </div>
+      {#if getIsPro()}
+        <label class="toggle-row">
+          <span class="toggle-label">{t('wp.autoSwitchEnable')}</span>
+          <div class="toggle-switch">
+            <input type="checkbox" bind:checked={autoSwitch} onchange={() => { setWallpaperAutoSwitch(autoSwitch); }} />
+            <span class="toggle-slider"></span>
+          </div>
+        </label>
+        {#if autoSwitch}
+          <div class="interval-row">
+            <span class="toggle-label">{t('wp.switchInterval')}</span>
+            <select class="ai-select" style="width:auto;flex:0;" bind:value={switchInterval} onchange={() => { setWallpaperSwitchInterval(switchInterval); }}>
+              <option value="hourly">{t('wp.eachHour')}</option>
+              <option value="daily">{t('wp.eachDay')}</option>
+            </select>
+          </div>
+        {/if}
+      {:else}
+        <div class="locked-feature" role="button" tabindex="0" onclick={() => { if (onclose) onclose(); alert(t('wp.autoSwitchPro')); }} onkeydown={(e) => { if (e.key === 'Enter') { if (onclose) onclose(); alert(t('wp.autoSwitchPro')); } }}>
+          <span class="locked-text">{t('wp.autoSwitchLocked')}</span>
+        </div>
+      {/if}
+    </div>
   </div>
 </div>
 
@@ -358,4 +393,96 @@ import { t } from '../utils/i18n.svelte';
     align-items: center;
     padding: 4px 0;
   }
+
+  .auto-switch-section {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--card-border, rgba(0,0,0,0.06));
+  }
+  .auto-switch-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .auto-switch-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-color, #1e293b);
+  }
+  .pro-badge-sm {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: #fff;
+  }
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    cursor: pointer;
+  }
+  .toggle-label { font-size: 13px; opacity: 0.7; }
+  .toggle-switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+  }
+  .toggle-switch input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 1;
+    margin: 0;
+  }
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--card-border, rgba(0,0,0,0.15));
+    border-radius: 12px;
+    transition: background 0.2s;
+  }
+  .toggle-slider::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .toggle-switch input:checked + .toggle-slider {
+    background: #3b82f6;
+  }
+  .toggle-switch input:checked + .toggle-slider::after {
+    transform: translateX(20px);
+  }
+  .interval-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+  }
+  .locked-feature {
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px dashed var(--card-border, rgba(0,0,0,0.15));
+    background: var(--hover-bg, rgba(0,0,0,0.02));
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .locked-feature:hover {
+    border-color: #f59e0b;
+    background: rgba(245,158,11,0.05);
+  }
+  .locked-text { font-size: 12px; opacity: 0.4; }
 </style>

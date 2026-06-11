@@ -57,3 +57,11 @@ export function setShowAI(show: boolean): void {
 export function setHideBranding(hide: boolean): void {
   settings.hideBranding = hide;
 }
+
+export function setWallpaperAutoSwitch(auto: boolean): void {
+  settings.wallpaperAutoSwitch = auto;
+}
+
+export function setWallpaperSwitchInterval(interval: 'hourly' | 'daily'): void {
+  settings.wallpaperSwitchInterval = interval;
+}

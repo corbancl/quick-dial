@@ -250,6 +250,7 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
   if (!provider) throw new Error(`Unknown provider: ${config.provider}`);
 
   const model = config.model || provider.defaultModel;
+  const systemPrompt = config.systemPrompt?.trim();
 
   // Anthropic uses Messages API (different format)
   if (config.provider === 'anthropic') {
@@ -258,11 +259,12 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
       'x-api-key': config.apiKey,
       'anthropic-version': '2023-06-01',
     };
-    const body = {
+    const body: any = {
       model,
       max_tokens: 8192,
       messages: messages.map(m => ({ role: m.role, content: m.text })),
     };
+    if (systemPrompt) body.system = systemPrompt;
     const res = await fetch(provider.baseUrl, {
       method: 'POST',
       headers,
@@ -277,14 +279,13 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
   }
 
   if (config.provider === 'ollama') {
+    const reqMessages: any[] = [];
+    if (systemPrompt) reqMessages.push({ role: 'system', content: systemPrompt });
+    reqMessages.push(...messages.map(m => ({ role: m.role, content: m.text })));
     const res = await fetch(provider.baseUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model,
-        messages: messages.map(m => ({ role: m.role, content: m.text })),
-        stream: false,
-      }),
+      body: JSON.stringify({ model, messages: reqMessages, stream: false }),
     });
     if (!res.ok) throw new Error(`Ollama error: ${res.status}`);
     const data = await res.json();
@@ -298,11 +299,11 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
   const apiKey = config.apiKey || (!provider.needKey ? _decryptKey() : '');
   if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
 
-  const body = {
-    model,
-    messages: messages.map(m => ({ role: m.role, content: m.text })),
-    stream: false,
-  };
+  const reqMessages: any[] = [];
+  if (systemPrompt) reqMessages.push({ role: 'system', content: systemPrompt });
+  reqMessages.push(...messages.map(m => ({ role: m.role, content: m.text })));
+
+  const body = { model, messages: reqMessages, stream: false };
 
   const res = await fetch(apiUrl, {
     method: 'POST',

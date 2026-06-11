@@ -6,16 +6,12 @@ import { getRecentSites } from '../stores/recentSites.svelte';
 import { getTodos } from '../stores/todos.svelte';
 import { getNotes } from '../stores/notes.svelte';
 import { getChatMessages, getChatConfig } from '../stores/chat.svelte';
-import { getIsPro } from '../stores/subscription.svelte';
+import { getIsPro, setAuthToken, getAuthToken } from '../stores/subscription.svelte';
 
 const API_BASE = 'https://sync.ruseo.cn/api/sync.php';
 
 function getToken(): string | null {
-  return localStorage.getItem('quick-dial-token');
-}
-
-function setToken(token: string) {
-  localStorage.setItem('quick-dial-token', token);
+  return getAuthToken();
 }
 
 function getLocalVersion(): number {
@@ -53,7 +49,7 @@ export async function register(username: string, password: string): Promise<{ ok
     });
     const result = await res.json();
     if (result.code === 201) {
-      setToken(result.data.token);
+      setAuthToken(result.data.token);
       localStorage.setItem('quick-dial-username', result.data.username);
       return { ok: true, msg: '注册成功' };
     }
@@ -72,7 +68,7 @@ export async function login(username: string, password: string): Promise<{ ok: b
     });
     const result = await res.json();
     if (result.code === 200) {
-      setToken(result.data.token);
+      setAuthToken(result.data.token);
       localStorage.setItem('quick-dial-username', result.data.username);
       return { ok: true, msg: '登录成功' };
     }
@@ -83,7 +79,7 @@ export async function login(username: string, password: string): Promise<{ ok: b
 }
 
 export function logout() {
-  localStorage.removeItem('quick-dial-token');
+  setAuthToken(null);
   localStorage.removeItem('quick-dial-username');
 }
 

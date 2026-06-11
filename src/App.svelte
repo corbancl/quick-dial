@@ -26,7 +26,7 @@
   import { initTodos, getTodos } from './stores/todos.svelte';
   import { initNotes, getNotes } from './stores/notes.svelte';
   import { initChat, getChatMessages, getChatConfig } from './stores/chat.svelte';
-  import { getIsPro } from './stores/subscription.svelte';
+  import { getIsPro, syncProStatus, getAuthToken } from './stores/subscription.svelte';
   import { getWallpaper, setWallpaper } from './stores/wallpaper.svelte';
   import { fetchRandomWallpaper } from './utils/weather';
   import { isLoggedIn } from './utils/sync';
@@ -99,6 +99,14 @@ import { t, getLang } from './utils/i18n.svelte';
     }
   });
 
+  // 每次加载或登录时从服务器同步 Pro 状态，同步完成后的状态决定是否 Pro
+  // cleanupProFeatures() 由 syncProStatus() 内部在检测到 Pro 被取消时自动调用
+  $effect(() => {
+    const token = getAuthToken();
+    if (!token) return;
+    syncProStatus();
+  });
+
   // 初始化
   if (!checkStorageSupport()) {
     alert('您的浏览器不支持本地存储，部分功能可能无法使用。');
@@ -141,6 +149,10 @@ import { t, getLang } from './utils/i18n.svelte';
       { title: 'CSDN', url: 'https://www.csdn.net/', icon: fav('csdn.net') },
       { title: '百度翻译', url: 'https://fanyi.baidu.com/', icon: fav('fanyi.baidu.com') },
       { title: '搜狗', url: 'https://www.sogou.com/', icon: fav('sogou.com') },
+      { title: '呲啦起始页官网', url: 'https://www.cilacila.cn/', icon: fav('www.cilacila.cn') },
+      { title: '呲啦起始页', url: 'https://cilacila.cn/', icon: fav('cilacila.cn') },
+      { title: '澄曜API Hub', url: 'https://api.ruseo.cn/', icon: 'https://api.ruseo.cn/apple-touch-icon.png' },
+      { title: '瑞索工具网', url: 'https://ruseo.cn/', icon: 'https://ruseo.cn/static/images/logo.png' },
     ];
     commonItems.forEach((item, i) => {
       addDial({ title: item.title, url: item.url, icon: item.icon, groupId: defaultGroupId, sortOrder: i });

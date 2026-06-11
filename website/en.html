@@ -128,8 +128,47 @@
   .faq-item.open .faq-q::after { content: '−'; }
 
   /* Footer */
-  .footer { text-align: center; padding: 40px 24px; font-size: 13px; color: var(--text2); border-top: 1px solid var(--border); }
-  .footer a { color: var(--accent); text-decoration: none; }
+  .footer {
+    text-align: center;
+    padding: 48px 24px 32px;
+    font-size: 13px;
+    color: var(--text2);
+    border-top: 1px solid var(--border);
+  }
+  .footer .footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    margin-bottom: 14px;
+  }
+  .footer .footer-links a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .footer .footer-links a:hover {
+    opacity: 0.75;
+    text-decoration: underline;
+  }
+  .footer .footer-filings {
+    font-size: 12px;
+    line-height: 2;
+    color: var(--text2);
+    opacity: 0.75;
+  }
+  .footer .footer-filings a {
+    color: var(--text2);
+    text-decoration: none;
+  }
+  .footer .footer-filings a:hover {
+    color: var(--accent);
+  }
+  .footer .footer-sep {
+    display: inline-block;
+    margin: 0 10px;
+    color: var(--border);
+  }
 
   /* Toast */
   #toast {
@@ -158,6 +197,10 @@
   }
   .btt.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
   .btt:hover { background: rgba(0,0,0,0.08); color: var(--text); }
+  @media (max-width: 640px) {
+    .footer { padding: 32px 16px 24px; font-size: 12px; }
+    .footer .footer-links { gap: 2px 14px; }
+  }
 </style>
 </head>
 <body>
@@ -182,9 +225,9 @@
 <!-- Hero -->
 <section class="hero">
   <div class="container">
-    <div class="hero-tag">v1.0.4</div>
+    <div class="hero-tag">v1.0.6</div>
     <h1>A fresh start,<br>every time <span>you open a tab.</span></h1>
-    <p>Replace your browser's default new tab and cluttered navigation sites. Minimal design, lightning fast, completely ad-free.</p>
+    <p>Replace your browser's default new tab and cluttered navigation sites. Minimal, fast, ad-free. Built-in AI assistant, to-do list, analytics dashboard.</p>
     <div class="hero-btns">
     <a href="#download" class="btn btn-primary">⬇ Install Extension</a>
     <a href="https://cilacila.cn" target="_blank" class="btn btn-outline">Try Online</a>
@@ -203,7 +246,7 @@
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
         <h3>Lightning Search</h3>
-        <p>Google, Baidu, Bing, Zhihu, Bilibili, GitHub… 12 engines. Ctrl+K to focus, type to search.</p>
+        <p>Google, Baidu, Bing, Zhihu, Bilibili, GitHub… 13 engines. Ctrl+K to focus, type to search.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📌</div>
@@ -224,6 +267,26 @@
         <div class="feature-icon">☁️</div>
         <h3>Cloud Sync (Pro)</h3>
         <p>Sync dials across devices seamlessly. No reconfiguration needed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Assistant (Pro)</h3>
+        <p>Chat with 14 LLMs including DeepSeek, GPT-4o, Claude. Custom system prompts &amp; cloud history.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✅</div>
+        <h3>To-Do List</h3>
+        <p>Capture tasks on the fly. Check off when done. All stored locally, private by design.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Analytics (Pro)</h3>
+        <p>Daily click stats, 7-day trend chart, Top 10 ranking. CSV export to track your habits.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🕐</div>
+        <h3>6 Clock Styles</h3>
+        <p>Digital, Minimal, Classic, Flip, Neon, Binary — find the one that fits your desktop.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🔒</div>
@@ -250,9 +313,10 @@
           <div>6 Search Engines</div>
           <div>3 Dial Groups</div>
           <div>12 Preset Wallpapers</div>
-          <div>Random Wallpapers</div>
+          <div>18 Local Dials</div>
           <div>Weather & Lunar</div>
-          <div>Analytics</div>
+          <div>6 Clock Styles</div>
+          <div>To-Do List</div>
           <div>Local Storage</div>
         </div>
       </div>
@@ -262,6 +326,7 @@
         <div class="price-desc">Monthly subscription</div>
         <div class="price-features">
           <div>All Pro Features</div>
+          <div>Hide Branding</div>
           <div>Unlimited Groups</div>
           <div>Cloud Sync</div>
           <div>Custom Wallpaper Upload</div>
@@ -275,11 +340,15 @@
         <div class="price-desc">≈ $5.7/mo, save 43%</div>
         <div class="price-features">
           <div>All Free Features</div>
-          <div>12 Engines + Custom</div>
+          <div>13 Engines + Custom</div>
           <div>Unlimited Groups</div>
           <div>Custom Wallpaper Upload</div>
+          <div>Scheduled Wallpaper Rotation</div>
+          <div>AI Assistant (14 Models)</div>
           <div>Cloud Sync</div>
           <div>Custom CSS</div>
+          <div>Analytics & CSV Export</div>
+          <div>Hide Branding</div>
         </div>
         <a href="#download" class="btn btn-primary btn-sm" style="width:100%">Activate after install</a>
       </div>
@@ -288,7 +357,7 @@
         <div class="price-amount">$198</div>
         <div class="price-desc">Pay once, forever</div>
         <div class="price-features">
-          <div>All Pro Features</div>
+          <div>All Pro Yearly Features</div>
           <div>Forever access</div>
           <div>No renewal needed</div>
           <div>All future updates</div>
@@ -307,7 +376,7 @@
       <p>Works on all major browsers, 30 sec install</p>
     </div>
     <div class="download-cards">
-      <a class="download-card" href="#" onclick="alert('Coming soon to Chrome Web Store')">
+      <a class="download-card" href="https://chromewebstore.google.com/detail/quick-dial/jdjbpekbanikppkcdiegnfahkffnmpll" target="_blank">
         <div class="download-icon">🌐</div>
         <h3>Chrome / Edge</h3>
         <p>One-click install from store</p>
@@ -317,14 +386,15 @@
         <h3>GitHub / Gitee</h3>
         <p>Open source + Manual install</p>
       </a>
-      <a class="download-card" href="https://cilacila.cn">
+      <a class="download-card" href="https://cilacila.cn" target="_blank">
         <div class="download-icon">👀</div>
         <h3>Try Online</h3>
         <p>Go to cilacila.cn to start</p>
       </a>
     </div>
     <div style="max-width:500px;margin:32px auto 0;font-size:13px;color:var(--text2);text-align:center;line-height:1.8;">
-      <strong>Chrome manual install:</strong> Download → chrome://extensions → Developer mode → Load unpacked<br>
+      <strong>Online install (recommended):</strong> <a href="https://chromewebstore.google.com/detail/quick-dial/jdjbpekbanikppkcdiegnfahkffnmpll" target="_blank" style="color:var(--accent);">Chrome Web Store →</a> one-click install<br>
+      <strong>Manual install:</strong> Download → chrome://extensions → Developer mode → Load unpacked<br>
       Open a new tab to start using it
     </div>
   </div>
@@ -363,8 +433,19 @@
 
 <!-- Footer -->
 <div class="footer">
-  &copy;2026 cilacila.cn Quick Dial All Rights Reserved | <a href="en-about.html">About</a> | <a href="en-privacy.html">Privacy</a> | <a href="en-copyright.html">Copyright</a> | <a href="en-contact.html">Contact</a><br>
-  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
+  <div class="footer-links">
+    <a href="en-about.html">About</a>
+    <a href="en-privacy.html">Privacy</a>
+    <a href="en-copyright.html">Copyright</a>
+    <a href="en-contact.html">Contact</a>
+    <a href="en-guide.html">Guide</a>
+  </div>
+  <div class="footer-filings">
+    &copy;2026 cilacila.cn Quick Dial All Rights Reserved<br>
+    <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
+    <span class="footer-sep">|</span>
+    <img src="beian.png" alt="" style="width:14px;height:14px;vertical-align:middle;margin-right:2px;"><a href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">鲁公网安备37098202000884号</a>
+  </div>
 </div>
 
 <!-- Back to top -->

@@ -3,10 +3,12 @@
  * 与 sync.ruseo.cn/api/pay.php 通信
  */
 
+import { getAuthToken } from '../stores/subscription.svelte';
+
 const PAY_API = 'https://sync.ruseo.cn/api/pay.php';
 
 function getToken(): string | null {
-  return localStorage.getItem('quick-dial-token');
+  return getAuthToken();
 }
 
 export interface PlanInfo {

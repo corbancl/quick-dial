@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setShowNotes, setShowAI, setHideBranding, setRecentSitesCount, setOpenInNewTab } from '../stores/settings.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
+  import { getAvailableEngines, getLockedEngines, getAllEngines } from '../utils/search';
   import { checkSubscription } from '../utils/payment';
   import { t, getLang, setLang } from '../utils/i18n.svelte';
   import type { ClockStyle } from '../types';
@@ -79,6 +80,9 @@
 
   function handleSearchEngineChange(e: Event) {
     const select = e.target as HTMLSelectElement;
+    const engine = getAllEngines().find(en => en.id === select.value);
+    if (!engine) return;
+    if (!getIsPro() && engine.proOnly) return;
     setSearchEngine(select.value);
   }
 
@@ -105,12 +109,14 @@
       <div class="setting-item">
         <label class="setting-label" for="search-engine">{t('settings.engine')}</label>
         <select id="search-engine" class="form-select" value={getSettings().searchEngine} onchange={handleSearchEngineChange}>
-          <option value="google">Google</option>
-          <option value="baidu">百度</option>
-          <option value="bing">Bing</option>
-          <option value="sogou">搜狗</option>
-          <option value="so">360搜索</option>
-          <option value="zhihu">知乎</option>
+          {#each getAvailableEngines() as engine}
+            <option value={engine.id}>
+              {engine.name}{engine.isCustom ? ' ★' : ''}
+            </option>
+          {/each}
+          {#each getLockedEngines() as engine}
+            <option value={engine.id} disabled>🔒 {engine.name} (PRO)</option>
+          {/each}
         </select>
       </div>
 

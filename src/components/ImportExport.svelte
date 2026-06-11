@@ -126,6 +126,8 @@
         const state = getDialsState();
         const existingUrls = new Set(state.items.map(d => d.url.toLowerCase()));
         let totalImported = 0;
+        let totalSkipped = 0;
+        let totalInput = 0;
 
         // 免费用户最多3组，超出文件夹自动并入默认分组
         const maxGroups = getIsPro() ? 999 : 3;
@@ -157,9 +159,17 @@
             targetGroup = defaultGroup;
           }
 
-          const newItems = bg.items
-            .filter(b => !existingUrls.has(b.url.toLowerCase()))
-            .slice(0, 50)
+          const filteredItems = bg.items.filter(b => {
+            totalInput++;
+            if (existingUrls.has(b.url.toLowerCase())) {
+              totalSkipped++;
+              return false;
+            }
+            existingUrls.add(b.url.toLowerCase());
+            return true;
+          }).slice(0, 50);
+
+          const newItems = filteredItems
             .map((b, i) => ({
               id: crypto.randomUUID(), title: b.title, url: b.url,
               icon: '', groupId: targetGroup.id, sortOrder: i, createdAt: Date.now(),
@@ -173,11 +183,13 @@
 
         initDials({ dials: state.items, groups: state.groups });
 
-        message = `成功导入 ${totalImported} 个书签至 ${Math.min(groups.length, maxGroups)} 个分组`;
+        const groupCount = Math.min(groups.length, maxGroups);
+        message = `✅ ${t('ie.imported')} ${totalImported}`;
+        if (totalSkipped > 0) message += `，${t('ie.skipped')} ${totalSkipped}`;
+        message += ` → ${groupCount} ${t('ie.groups')}`;
         if (!getIsPro() && groups.length > maxGroups) {
-          message += `，超出 ${groups.length - maxGroups} 个文件夹自动归入"默认收藏"`;
+          message += ` (${t('ie.merged')} ${groups.length - maxGroups})`;
         }
-        message += '！';
         setTimeout(() => { message = ''; }, 5000);
       } catch (err) {
         isError = true;

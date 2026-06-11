@@ -84,7 +84,7 @@
   <!-- 头部 -->
   <div class="ai-header">
     <div class="ai-header-left" style="color:var(--text-color,#1e293b);">
-      <span class="ai-icon">{t('ai.icon') || '🤖'}</span>
+      <img class="ai-icon" src="aizss.png" alt="AI" />
       <span style="font-weight:600;font-size:15px;color:var(--text-color,#1e293b);">{t('ai.title')}</span>
       <span class="ai-badge">{provider.name}</span>
     </div>
@@ -113,9 +113,9 @@
         <div class="ai-msg" class:ai-user={msg.role === 'user'} class:ai-assistant={msg.role === 'assistant'}>
           <div class="ai-avatar">
             {#if msg.role === 'assistant'}
-              <span>🤖</span>
+              <img src="aizss.png" alt="AI" style="width:20px;height:20px;" />
             {:else}
-              <span class="user-avatar">U</span>
+              <img src="u.png" alt="User" style="width:24px;height:24px;border-radius:50%;" />
             {/if}
           </div>
           <div class="ai-bubble">
@@ -132,7 +132,7 @@
       {/each}
       {#if loading}
         <div class="ai-msg ai-assistant">
-          <div class="ai-avatar"><span>🤖</span></div>
+          <div class="ai-avatar"><img src="aizss.png" alt="AI" style="width:20px;height:20px;" /></div>
           <div class="ai-bubble">
             <p class="ai-bubble-text ai-thinking">{t('ai.thinking')}</p>
           </div>
@@ -248,7 +248,7 @@
     flex-shrink: 0;
   }
   .ai-header-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .ai-icon { font-size: 20px; line-height: 1; }
+  .ai-icon { width: 24px; height: 24px; border-radius: 6px; object-fit: contain; }
   /* .ai-title 已移除，由 ai-badge 替代 */
   .ai-badge { font-size: 12px; padding: 2px 8px; border-radius: 6px; font-weight: 600; background: #1d4ed8; color: #fff; }
   .ai-header-actions { display: flex; gap: 4px; }
@@ -284,8 +284,7 @@
   .ai-msg { display: flex; gap: 8px; }
   .ai-user { flex-direction: row-reverse; }
   .ai-avatar { flex-shrink: 0; }
-  .ai-avatar span { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; background: var(--hover-bg, rgba(0,0,0,0.05)); }
-  .user-avatar { font-size: 12px !important; font-weight: 500; color: var(--text-color, #1e293b); }
+  .ai-avatar img { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--hover-bg, rgba(0,0,0,0.05)); }
 
   .ai-bubble {
     max-width: 80%;

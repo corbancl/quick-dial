@@ -10,7 +10,7 @@ import { t } from '../utils/i18n.svelte';
   }
 
   function handleClick(url: string) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 </script>
 

@@ -3,39 +3,19 @@
   import { initTheme, getTheme } from '../stores/theme.svelte';
   import { initSettings, getSettings } from '../stores/settings.svelte';
   import { initRecentSites, getRecentSites } from '../stores/recentSites.svelte';
-  import { loadData, saveData } from '../utils/storage';
+  import { loadData, saveData, removeData } from '../utils/storage';
   import { parseBookmarkGroups } from '../utils/bookmark';
   import { getIsPro } from '../stores/subscription.svelte';
   import { generateId } from '../types';
   import type { AppData, DialItem, DialGroup } from '../types';
   import { t } from '../utils/i18n.svelte';
+  import { modalClose } from '../utils/modalClose';
 
   interface Props {
     onclose: () => void;
   }
 
   let { onclose }: Props = $props();
-
-  let overlayEl: HTMLDivElement | undefined = $state();
-  let contentEl: HTMLDivElement | undefined = $state();
-
-  $effect(() => {
-    const o = overlayEl;
-    const c = contentEl;
-    if (!o) return;
-    function handleClick(e: MouseEvent) {
-      if (c && !c.contains(e.target as Node)) onclose();
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onclose();
-    }
-    o.addEventListener('click', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      o.removeEventListener('click', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  });
 
   let isProcessing = $state(false);
   let message = $state('');
@@ -171,7 +151,7 @@
 
           const newItems = filteredItems
             .map((b, i) => ({
-              id: crypto.randomUUID(), title: b.title, url: b.url,
+              id: generateId(), title: b.title, url: b.url,
               icon: '', groupId: targetGroup.id, sortOrder: i, createdAt: Date.now(),
             }));
 
@@ -206,14 +186,14 @@
     if (!confirm(t('ie.clear') + '？')) return;
     initDials({ dials: [], groups: [] });
     initRecentSites([]);
-    localStorage.removeItem('speed-dial-data');
+    removeData();
     message = t('ie.cleared');
     setTimeout(() => { message = ''; }, 2000);
   }
 </script>
 
-<div class="modal-overlay" bind:this={overlayEl}>
-  <div class="modal-content" bind:this={contentEl}>
+<div class="modal-overlay" use:modalClose={onclose}>
+  <div class="modal-content">
     <h3 class="modal-title">{t('ie.title')}</h3>
 
     <div class="ie-actions">

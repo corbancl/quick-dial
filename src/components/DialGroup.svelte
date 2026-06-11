@@ -38,7 +38,7 @@ import { t } from '../utils/i18n.svelte';
 
 <div class="dial-group">
   <div class="group-header">
-    <button class="group-toggle" onclick={toggleCollapse} title={isCollapsed ? '展开' : '折叠'} aria-label={isCollapsed ? '展开分组' : '折叠分组'}>
+    <button class="group-toggle" onclick={toggleCollapse} title={isCollapsed ? t('toolbar.expandGroup') : t('toolbar.collapseGroup')} aria-label={isCollapsed ? t('toolbar.expandGroup') : t('toolbar.collapseGroup')}>
       <span class="chevron" class:collapsed={isCollapsed}>▼</span>
     </button>
     <span class="group-name">{t(group.name)}</span>

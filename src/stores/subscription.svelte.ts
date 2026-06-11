@@ -11,10 +11,8 @@ let _authToken = $state<string | null>(localStorage.getItem('quick-dial-token'))
 export function getAuthToken() { return _authToken; }
 
 function init() {
-  // 不再从 localStorage 恢复 isPro — 始终从服务端重新验证。
-  // 防止管理后台取消 Pro 后本地缓存仍为 Pro。
-  // customEngines 仍从 localStorage 恢复，syncProStatus 会决定是否清除。
-  isPro = false;
+  // 页面加载时不预设 isPro（保持 false 默认），由 syncProStatus 异步验证
+  // 不缓存 isPro 到 localStorage —— 防止管理后台取消 Pro 后本地仍显示 Pro
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -23,7 +21,7 @@ function init() {
     }
   } catch { /* ignore */ }
 
-  // 页面加载时立即同步 Pro 状态（不依赖组件的 $effect）
+  // 页面加载时立即异步同步 Pro 状态（不依赖组件的 $effect）
   if (_authToken) {
     syncProStatus();
   }
@@ -31,8 +29,9 @@ function init() {
 init();
 
 function persist() {
+  // 只持久化 customEngines；isPro 由 syncProStatus 每次实时验证
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ isPro, customEngines }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ customEngines }));
   } catch { /* ignore */ }
 }
 
@@ -82,6 +81,46 @@ export function cleanupProFeatures() {
       }
     }
   } catch { /* ignore */ }
+
+  // 6. 回退 Pro 专属主题为 tech
+  try {
+    const appData = localStorage.getItem('quick-dial-storage');
+    if (appData) {
+      const data = JSON.parse(appData);
+      const style = data.settings?.themeStyle;
+      const PRO_THEMES = ['glass', 'neu', 'cyberpunk', 'retro'];
+      if (style && PRO_THEMES.includes(style)) {
+        data.settings.themeStyle = 'tech';
+        localStorage.setItem('quick-dial-storage', JSON.stringify(data));
+        localStorage.setItem('quick-dial-theme-style', 'tech');
+        document.documentElement.setAttribute('data-theme-style', 'tech');
+      }
+    }
+  } catch { /* ignore */ }
+
+  // 7. 回退 Pro 专属便签模式
+  try {
+    const appData = localStorage.getItem('quick-dial-storage');
+    if (appData) {
+      const data = JSON.parse(appData);
+      if (data.settings?.notesDisplayMode === 'colorful') {
+        data.settings.notesDisplayMode = 'structured';
+        localStorage.setItem('quick-dial-storage', JSON.stringify(data));
+      }
+    }
+  } catch { /* ignore */ }
+
+  // 8. 回退 Pro 专属待办模式
+  try {
+    const appData = localStorage.getItem('quick-dial-storage');
+    if (appData) {
+      const data = JSON.parse(appData);
+      if (data.settings?.todoDisplayMode === 'kanban') {
+        data.settings.todoDisplayMode = 'list';
+        localStorage.setItem('quick-dial-storage', JSON.stringify(data));
+      }
+    }
+  } catch { /* ignore */ }
   
   persist();
 }
@@ -100,6 +139,9 @@ export function setAuthToken(token: string | null) {
 
 /**
  * 从支付 API 同步 Pro 状态（登录或打开页面时调用）
+ * 
+ * 带指数退避重试（最多 3 次），解决 web 端刷新时网络抖动导致误判为免费的问题。
+ * 只有服务器明确返回"不是 Pro"才设为 false；网络错误/超时不改变当前状态。
  */
 export async function syncProStatus() {
   const token = _authToken;
@@ -108,29 +150,49 @@ export async function syncProStatus() {
     return;
   }
 
-  try {
-    const res = await fetch('https://sync.ruseo.cn/api/pay.php?action=status', {
-      headers: { 'Authorization': `Bearer ${token}` },
-    });
-    const result = await res.json();
-    if (result.code === 200) {
-      const serverPro = result.data?.is_pro || false;
-      const wasPro = isPro;
-      isPro = serverPro;
-      
-      if (!serverPro) {
-        // 非 Pro → 清理所有 Pro 专属功能和缓存
-        cleanupProFeatures();
+  const MAX_RETRIES = 3;
+  const BASE_DELAY = 1000; // ms
+
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      const ctrl = new AbortController();
+      const timeoutId = setTimeout(() => ctrl.abort(), 8000);
+      const res = await fetch('https://sync.ruseo.cn/api/pay.php?action=status', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        signal: ctrl.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (res.status === 401) {
+        // Token 无效 → 强制退出
+        isPro = false;
+        setAuthToken(null);
+        return;
       }
-      
-      // 始终持久化，确保 localStorage 与服务器一致
-      if (wasPro !== serverPro || !serverPro) {
-        persist();
+
+      const result = await res.json();
+      if (result.code === 200) {
+        const serverPro = result.data?.is_pro || false;
+        isPro = serverPro;
+
+        if (!serverPro) {
+          cleanupProFeatures();
+        }
+        return; // 成功，退出重试循环
       }
+      // code !== 200 但 HTTP 200 → 服务器返回异常，继续重试
+    } catch {
+      // 网络错误/超时 → 不改变 isPro，等下一次重试
     }
-  } catch {
-    // 网络错误保留本地状态，避免离线时误降级
+
+    // 还有重试机会则等待
+    if (attempt < MAX_RETRIES - 1) {
+      await new Promise(r => setTimeout(r, BASE_DELAY * Math.pow(2, attempt)));
+    }
   }
+
+  // 全部重试耗尽 → 静默降级，保持当前 isPro 不变
+  // 用户看到的仍是上次验证成功时的状态，而非误判免费
 }
 
 export function addCustomEngine(name: string, url: string): SearchEngine {

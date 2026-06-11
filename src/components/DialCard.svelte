@@ -18,10 +18,13 @@
   let iconError = $state(false);
 
   // 判断图标类型
+  const IMG_EXT = /\.(png|jpg|jpeg|gif|svg|ico|webp|bmp)(\?|$)/i;
   function getIconType(icon: string): 'fa' | 'image' | 'emoji' | 'fallback' {
     if (!icon) return 'fallback';
     if (icon.startsWith('fa-')) return 'fa';
-    if (icon.startsWith('http')) return 'image';
+    if (icon.startsWith('http') || icon.startsWith('/') || icon.startsWith('.')) return 'image';
+    // 纯文件名（如 "icon.png"）也当作图片
+    if (IMG_EXT.test(icon)) return 'image';
     return 'emoji';
   }
 
@@ -34,7 +37,7 @@
   function handleClick() {
     addRecentSite(dial.url, dial.title);
     if (getSettings().openInNewTab) {
-      window.open(dial.url, '_blank');
+      window.open(dial.url, '_blank', 'noopener,noreferrer');
     } else {
       window.location.href = dial.url;
     }

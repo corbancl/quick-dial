@@ -1,5 +1,6 @@
 <script lang="ts">
   import './app.css';
+  import './themes.css';
   import SearchBox from './components/SearchBox.svelte';
   import ClockWidget from './components/ClockWidget.svelte';
   import WeatherWidget from './components/WeatherWidget.svelte';
@@ -17,7 +18,11 @@
   import OnboardingGuide from './components/OnboardingGuide.svelte';
   import TodoWidget from './components/TodoWidget.svelte';
   import NotesWidget from './components/NotesWidget.svelte';
+  import HoroscopeWidget from './components/HoroscopeWidget.svelte';
+  import QuoteWidget from './components/QuoteWidget.svelte';
   import AIWidget from './components/AIWidget.svelte';
+  import PomodoroWidget from './components/PomodoroWidget.svelte';
+  import CurrencyWidget from './components/CurrencyWidget.svelte';
 
   import { initDials, getDialsState, ensureDefaultGroup, addDial } from './stores/dials.svelte';
   import { initTheme, getTheme } from './stores/theme.svelte';
@@ -26,6 +31,8 @@
   import { initTodos, getTodos } from './stores/todos.svelte';
   import { initNotes, getNotes } from './stores/notes.svelte';
   import { initChat, getChatMessages, getChatConfig } from './stores/chat.svelte';
+  import { initQuote } from './stores/quote.svelte';
+  import { initCurrency } from './stores/currency.svelte';
   import { getIsPro, syncProStatus, getAuthToken } from './stores/subscription.svelte';
   import { getWallpaper, setWallpaper } from './stores/wallpaper.svelte';
   import { fetchRandomWallpaper } from './utils/weather';
@@ -54,6 +61,7 @@ import { t, getLang } from './utils/i18n.svelte';
   let addDialPrefill = $state({ title: '', url: '' });
   let customFooter = $state(localStorage.getItem('quick-dial-custom-footer') || '');
   let cardExpanded = $state(false);
+  let activeTab = $state('dials');
 
   // 轮询右键菜单添加（扩展环境）
   $effect(() => {
@@ -121,6 +129,8 @@ import { t, getLang } from './utils/i18n.svelte';
     initTodos(saved.todos || []);
     initNotes(saved.notes || []);
     initChat({ messages: saved.chatMessages, config: saved.chatConfig });
+    initQuote();
+    initCurrency();
   } else {
     // 首次使用，创建默认分组和示例导航
     const defaultGroupId = ensureDefaultGroup();
@@ -149,10 +159,11 @@ import { t, getLang } from './utils/i18n.svelte';
       { title: 'CSDN', url: 'https://www.csdn.net/', icon: fav('csdn.net') },
       { title: '百度翻译', url: 'https://fanyi.baidu.com/', icon: fav('fanyi.baidu.com') },
       { title: '搜狗', url: 'https://www.sogou.com/', icon: fav('sogou.com') },
-      { title: '呲啦起始页官网', url: 'https://www.cilacila.cn/', icon: fav('www.cilacila.cn') },
+      { title: '呲啦官网', url: 'https://www.cilacila.cn/', icon: fav('www.cilacila.cn') },
       { title: '呲啦起始页', url: 'https://cilacila.cn/', icon: fav('cilacila.cn') },
       { title: '澄曜API Hub', url: 'https://api.ruseo.cn/', icon: 'https://api.ruseo.cn/apple-touch-icon.png' },
       { title: '瑞索工具网', url: 'https://ruseo.cn/', icon: 'https://ruseo.cn/static/images/logo.png' },
+      { title: '计数器API', url: 'https://js.ruseo.cn/', icon: 'counter-api.png' },
     ];
     commonItems.forEach((item, i) => {
       addDial({ title: item.title, url: item.url, icon: item.icon, groupId: defaultGroupId, sortOrder: i });
@@ -241,19 +252,63 @@ import { t, getLang } from './utils/i18n.svelte';
     <div class="header-widgets">
       <WeatherWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
       <LunarWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
-      {#if getSettings().showNotes}
-        <NotesWidget />
-      {/if}
     </div>
   </div>
 
   <SearchBox />
 
-  {#if getSettings().showTodo}
-    <TodoWidget />
+  {#if getSettings().showQuote}
+    <QuoteWidget />
   {/if}
 
-  <SpeedDial />
+  <!-- Tab 导航栏 -->
+  {#if getSettings().showHoroscope || getSettings().showTodo || getSettings().showNotes || getSettings().showPomodoro || getSettings().showCurrency}
+    <div class="tab-bar">
+      <button class="tab-btn" class:active={activeTab === 'dials'} onclick={() => activeTab = 'dials'}>
+        {t('tab.dials')}
+      </button>
+      {#if getSettings().showHoroscope}
+        <button class="tab-btn" class:active={activeTab === 'horoscope'} onclick={() => activeTab = 'horoscope'}>
+          {t('horoscope.title')}
+        </button>
+      {/if}
+      {#if getSettings().showTodo}
+        <button class="tab-btn" class:active={activeTab === 'todo'} onclick={() => activeTab = 'todo'}>
+          {t('todo.title')}
+        </button>
+      {/if}
+      {#if getSettings().showNotes}
+        <button class="tab-btn" class:active={activeTab === 'notes'} onclick={() => activeTab = 'notes'}>
+          {t('note.title')}
+        </button>
+      {/if}
+      {#if getSettings().showPomodoro}
+        <button class="tab-btn" class:active={activeTab === 'pomodoro'} onclick={() => activeTab = 'pomodoro'}>
+          {t('pomodoro.title')}
+        </button>
+      {/if}
+      {#if getSettings().showCurrency}
+        <button class="tab-btn" class:active={activeTab === 'currency'} onclick={() => activeTab = 'currency'}>
+          {t('currency.title')}
+        </button>
+      {/if}
+    </div>
+  {/if}
+
+  <!-- Tab 内容区 -->
+  {#if activeTab === 'dials' || (!getSettings().showHoroscope && !getSettings().showTodo && !getSettings().showNotes && !getSettings().showPomodoro && !getSettings().showCurrency)}
+    <SpeedDial />
+  {:else if activeTab === 'horoscope'}
+    <HoroscopeWidget />
+  {:else if activeTab === 'todo'}
+    <TodoWidget />
+  {:else if activeTab === 'notes'}
+    <NotesWidget />
+  {:else if activeTab === 'pomodoro'}
+    <PomodoroWidget />
+  {:else if activeTab === 'currency'}
+    <CurrencyWidget />
+  {/if}
 
   {#if getSettings().showRecentSites}
     <RecentSites />
@@ -308,7 +363,7 @@ import { t, getLang } from './utils/i18n.svelte';
       <div class="footer-row footer-row-brand">
         {#if !getIsPro() || !getSettings().hideBranding}
         <div class="footer-brand">
-          <span class="footer-logo">⚡</span>
+          <span class="footer-logo"></span>
           <span class="footer-name">{t('footer.domain')}</span>
           {#if isLoggedIn() && getIsPro() && customFooter}
             <span class="footer-custom">{customFooter}</span>
@@ -409,6 +464,46 @@ import { t, getLang } from './utils/i18n.svelte';
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  /* Tab 导航栏 */
+  .tab-bar {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin: 12px auto 0;
+    max-width: 800px;
+    padding: 4px;
+    border-radius: 10px;
+    background: var(--card-bg, rgba(255,255,255,0.06));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--card-border, rgba(255,255,255,0.06));
+  }
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-color, #e2e8f0);
+    font-size: 13px;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover {
+    opacity: 0.8;
+    background: var(--hover-bg, rgba(255,255,255,0.08));
+  }
+  .tab-btn.active {
+    opacity: 1;
+    background: var(--accent-bg, rgba(59,130,246,0.15));
+    color: var(--accent-color, #3b82f6);
+    font-weight: 600;
   }
 
   .toolbar {

@@ -1,10 +1,13 @@
 <script lang="ts">
-  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setShowNotes, setShowAI, setHideBranding, setRecentSitesCount, setOpenInNewTab } from '../stores/settings.svelte';
+  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setShowNotes, setShowAI, setShowHoroscope, setZodiacSign, setHideBranding, setRecentSitesCount, setOpenInNewTab, setThemeStyle, setNotesDisplayMode, setTodoDisplayMode, setShowQuote, setQuoteType, setShowPomodoro, setShowCurrency } from '../stores/settings.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
   import { getAvailableEngines, getLockedEngines, getAllEngines } from '../utils/search';
   import { checkSubscription } from '../utils/payment';
   import { t, getLang, setLang } from '../utils/i18n.svelte';
-  import type { ClockStyle } from '../types';
+  import { modalClose } from '../utils/modalClose';
+  import type { ClockStyle, ThemeStyle, NotesDisplayMode, TodoDisplayMode, ZodiacSign, QuoteType } from '../types';
+  import { isProTheme, ZODIAC_SIGNS } from '../types';
+  import { applyThemeStyle } from '../utils/theme';
 
   interface Props {
     onclose: () => void;
@@ -57,27 +60,6 @@
     }
   });
 
-  let overlayEl: HTMLDivElement | undefined = $state();
-  let contentEl: HTMLDivElement | undefined = $state();
-
-  $effect(() => {
-    const o = overlayEl;
-    const c = contentEl;
-    if (!o) return;
-    function handleClick(e: MouseEvent) {
-      if (c && !c.contains(e.target as Node)) onclose();
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onclose();
-    }
-    o.addEventListener('click', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      o.removeEventListener('click', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  });
-
   function handleSearchEngineChange(e: Event) {
     const select = e.target as HTMLSelectElement;
     const engine = getAllEngines().find(en => en.id === select.value);
@@ -90,19 +72,61 @@
     const select = e.target as HTMLSelectElement;
     setClockStyle(select.value as ClockStyle);
   }
+
+  function handleThemeStyleChange(e: Event) {
+    const select = e.target as HTMLSelectElement;
+    const style = select.value as ThemeStyle;
+    // 免费用户不能选 Pro 主题
+    if (isProTheme(style) && !getIsPro()) {
+      alert(t('theme.proRequired'));
+      select.value = getSettings().themeStyle;
+      return;
+    }
+    setThemeStyle(style);
+    applyThemeStyle(style);
+  }
+
+  function handleNotesDisplayModeChange(e: Event) {
+    const select = e.target as HTMLSelectElement;
+    const mode = select.value as NotesDisplayMode;
+    if (mode === 'colorful' && !getIsPro()) {
+      alert(t('note.proRequired'));
+      select.value = getSettings().notesDisplayMode;
+      return;
+    }
+    setNotesDisplayMode(mode);
+  }
+
+  function handleTodoDisplayModeChange(e: Event) {
+    const select = e.target as HTMLSelectElement;
+    const mode = select.value as TodoDisplayMode;
+    if (mode === 'kanban' && !getIsPro()) {
+      alert(t('todo.proRequired'));
+      select.value = getSettings().todoDisplayMode;
+      return;
+    }
+    setTodoDisplayMode(mode);
+  }
 </script>
 
-<div class="modal-overlay" bind:this={overlayEl}>
-  <div class="modal-content" bind:this={contentEl}>
+<div class="modal-overlay" use:modalClose={onclose}>
+  <div class="modal-content">
     <h3 class="modal-title">{t('settings.title')}</h3>
 
     <div class="settings-list">
-      <!-- 主题 -->
+      <!-- UI 主题风格 -->
       <div class="setting-item">
-        <div class="setting-info">
-          <span class="setting-label">{t('settings.theme')}</span>
-          <span class="setting-hint">{t('settings.themeHint')}</span>
-        </div>
+        <label class="setting-label" for="theme-style">{t('settings.theme')}</label>
+        <select id="theme-style" class="form-select" value={getSettings().themeStyle} onchange={handleThemeStyleChange}>
+          <option value="tech">{t('theme.tech')}</option>
+          <option value="minimal">{t('theme.minimal')}</option>
+          <option value="paper">{t('theme.paper')}</option>
+          <option value="ocean">{t('theme.ocean')}</option>
+          <option value="glass" disabled={!getIsPro()}>{t('theme.glass')}</option>
+          <option value="neu" disabled={!getIsPro()}>{t('theme.neu')}</option>
+          <option value="cyberpunk" disabled={!getIsPro()}>{t('theme.cyberpunk')}</option>
+          <option value="retro" disabled={!getIsPro()}>{t('theme.retro')}</option>
+        </select>
       </div>
 
       <!-- 搜索引擎 -->
@@ -178,6 +202,17 @@
         </label>
       </div>
 
+      <!-- 待办显示模式 -->
+      {#if getSettings().showTodo}
+        <div class="setting-item">
+          <label class="setting-label" for="todo-mode">{t('todo.mode')}</label>
+          <select id="todo-mode" class="form-select" value={getSettings().todoDisplayMode} onchange={handleTodoDisplayModeChange}>
+            <option value="list">{t('todo.modeList')}</option>
+            <option value="kanban" disabled={!getIsPro()}>{t('todo.modeKanban')}</option>
+          </select>
+        </div>
+      {/if}
+
       <!-- 显示便签 -->
       <div class="setting-item">
         <label class="setting-label" for="show-notes">{t('settings.showNotes')}</label>
@@ -187,11 +222,82 @@
         </label>
       </div>
 
+      <!-- 便签显示模式 -->
+      {#if getSettings().showNotes}
+        <div class="setting-item">
+          <label class="setting-label" for="notes-mode">{t('note.mode')}</label>
+          <select id="notes-mode" class="form-select" value={getSettings().notesDisplayMode} onchange={handleNotesDisplayModeChange}>
+            <option value="structured">{t('note.modeStructured')}</option>
+            <option value="list">{t('note.modeList')}</option>
+            <option value="colorful" disabled={!getIsPro()}>{t('note.modeColorful')}</option>
+          </select>
+        </div>
+      {/if}
+
       <!-- 显示 AI 助手 -->
       <div class="setting-item">
         <label class="setting-label" for="show-ai">{t('settings.showAI')}</label>
         <label class="toggle">
           <input id="show-ai" type="checkbox" checked={getSettings().showAI} onchange={(e) => setShowAI((e.target as HTMLInputElement).checked)} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- 显示星座运势 -->
+      <div class="setting-item">
+        <label class="setting-label" for="show-horoscope">{t('horoscope.settings')}</label>
+        <label class="toggle">
+          <input id="show-horoscope" type="checkbox" checked={getSettings().showHoroscope} onchange={(e) => setShowHoroscope((e.target as HTMLInputElement).checked)} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- 我的星座 -->
+      {#if getSettings().showHoroscope}
+        <div class="setting-item">
+          <label class="setting-label" for="zodiac-sign">{t('horoscope.zodiac')}</label>
+          <select id="zodiac-sign" class="form-select" value={getSettings().zodiacSign} onchange={(e) => setZodiacSign((e.target as HTMLSelectElement).value as ZodiacSign)}>
+            {#each ZODIAC_SIGNS as zs}
+              <option value={zs.id}>{getLang() === 'zh-CN' ? zs.zh : zs.en}</option>
+            {/each}
+          </select>
+        </div>
+      {/if}
+
+      <!-- 显示每日一言 -->
+      <div class="setting-item">
+        <label class="setting-label" for="show-quote">{t('quote.settings')}</label>
+        <label class="toggle">
+          <input id="show-quote" type="checkbox" checked={getSettings().showQuote} onchange={(e) => setShowQuote((e.target as HTMLInputElement).checked)} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- 一言类型 -->
+      {#if getSettings().showQuote}
+        <div class="setting-item">
+          <label class="setting-label" for="quote-type">{t('quote.type')}</label>
+          <select id="quote-type" class="form-select" value={getSettings().quoteType} onchange={(e) => setQuoteType((e.target as HTMLSelectElement).value as QuoteType)}>
+            <option value="hitokoto">{t('quote.hitokoto')}</option>
+            <option value="qinggan">{t('quote.qinggan')}</option>
+          </select>
+        </div>
+      {/if}
+
+      <!-- 显示番茄钟 -->
+      <div class="setting-item">
+        <label class="setting-label" for="show-pomodoro">{t('settings.showPomodoro')}</label>
+        <label class="toggle">
+          <input id="show-pomodoro" type="checkbox" checked={getSettings().showPomodoro} onchange={(e) => setShowPomodoro((e.target as HTMLInputElement).checked)} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- 显示汇率换算 -->
+      <div class="setting-item">
+        <label class="setting-label" for="show-currency">{t('settings.showCurrency')}</label>
+        <label class="toggle">
+          <input id="show-currency" type="checkbox" checked={getSettings().showCurrency} onchange={(e) => setShowCurrency((e.target as HTMLInputElement).checked)} />
           <span class="toggle-slider"></span>
         </label>
       </div>
@@ -227,7 +333,7 @@
     {#if getIsPro()}
       <div class="card-section custom-css-card">
         <div class="card-header">
-          <span class="card-icon">🎨</span>
+          <span class="card-icon"></span>
           <span class="card-title">{t('pro.customCss')}</span>
         </div>
         <p class="card-desc">{t('pro.customCssDesc')}</p>
@@ -258,7 +364,7 @@
           {#if subExpire}
             <div class="sub-expire">{t('pro.expire')}{subExpire.slice(0, 10)}</div>
           {:else}
-            <div class="sub-expire lifetime">终身有效</div>
+            <div class="sub-expire lifetime">{t('settings.lifetime')}</div>
           {/if}
           {#if subPlan !== 'lifetime' && onsubscribe}
             <button class="btn btn-outline btn-renew" onclick={onsubscribe}>{t('pro.renew')}</button>
@@ -268,7 +374,7 @@
         <!-- 自定义底部文案 -->
         <div class="card-section">
           <div class="card-header">
-            <span class="card-icon">🏷️</span>
+            <span class="card-icon"></span>
             <span class="card-title">{t('pro.customTitle')}</span>
           </div>
           <p class="card-desc">{t('pro.customTitleDesc')}</p>
@@ -289,7 +395,7 @@
         <!-- 自定义底部文案 -->
         <div class="card-section">
           <div class="card-header">
-            <span class="card-icon">✏️</span>
+            <span class="card-icon"></span>
             <span class="card-title">{t('pro.customFooter')}</span>
           </div>
           <p class="card-desc">{t('pro.customFooterDesc')}</p>
@@ -306,7 +412,7 @@
         <!-- 隐藏品牌名 -->
         <div class="setting-item">
           <label class="setting-label" for="hide-branding">
-            <span>👻</span> {t('pro.hideBranding')}
+            {t('pro.hideBranding')}
           </label>
           <label class="toggle">
             <input id="hide-branding" type="checkbox" checked={getSettings().hideBranding} onchange={(e) => setHideBranding((e.target as HTMLInputElement).checked)} />
@@ -322,11 +428,11 @@
           </div>
           <div class="pro-feature">
             <span class="feature-check">✓</span>
-            <span>云端数据同步</span>
+            <span>{t('pro.featureSync')}</span>
           </div>
           <div class="pro-feature">
             <span class="feature-check">✓</span>
-            <span>自定义上传壁纸</span>
+            <span>{t('pro.featureWallpaper')}</span>
           </div>
           <div class="pro-feature">
             <span class="feature-check">✓</span>
@@ -352,7 +458,7 @@
 
         {#if onsubscribe}
           <button class="btn btn-primary btn-subscribe" onclick={onsubscribe}>
-            ⚡ 升级 Quick Dial Pro
+            {t('pro.upgrade')}
           </button>
         {/if}
       {/if}
@@ -388,19 +494,6 @@
     font-size: 14px;
     color: var(--text-color, #1e293b);
     margin: 0;
-  }
-
-  .setting-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
-
-  .setting-hint {
-    font-size: 12px;
-    color: var(--text-color, #1e293b);
-    opacity: 0.4;
   }
 
   /* Toggle Switch */

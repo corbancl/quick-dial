@@ -10,7 +10,7 @@ const zh: Dict = {
   'ie.title': '导入 / 导出','ie.export': '导出备份','ie.import': '导入备份','ie.importBookmarks': '导入浏览器书签','ie.clear': '清空所有数据','ie.clearHint': '仅清除导航卡片，不影响其他设置','ie.close': '关闭','ie.bookmarkHint': '免费版最多 3 个分组，超出的文件夹自动归入"默认收藏"。开通 Pro 可创建无限分组。',
   'dial.add': '添加导航','dial.edit': '编辑导航','dial.name': '网站名称','dial.url': '网站链接','dial.urlPlaceholder': '粘贴链接自动识别名称','dial.icon': '图标','dial.group': '分组','dial.save': '保存','dial.cancel': '取消','dial.bgColor': '背景色',
   'wp.title': '壁纸设置','wp.random': '随机壁纸','wp.upload': '上传图片','wp.autoSwitch': '定时切换','wp.autoSwitchEnable': '启用定时切换','wp.switchInterval': '切换间隔','wp.eachHour': '每小时','wp.eachDay': '每天','wp.autoSwitchPro': '定时切换壁纸为 Pro 专属功能，请升级后使用','wp.autoSwitchLocked': '🔒 升级 Pro 解锁定时切换壁纸',
-  'sub.title': '升级 Quick Dial Pro','sub.pay': '立即支付','sub.creating': '创建订单中...','sub.scanHint': '请使用{method}扫码支付','sub.paidRefresh': '支付完成后，刷新页面即可激活 Pro',
+  'sub.title': '升级 Quick Dial Pro','sub.pay': '立即支付','sub.creating': '创建订单中...','sub.scanHint': '请使用{method}扫码支付','sub.paidRefresh': '支付完成后，刷新页面即可激活 Pro','sub.opened': '已在新窗口打开支付页面','sub.failed': '获取支付链接失败','sub.qrAlt': '支付二维码','sub.scanWith': '使用{method}扫码支付','sub.back': '返回','sub.perDay': '/{days}天','sub.perMonth': '/月','sub.perYear': '/年','sub.lifetimeLabel': '终身','sub.pkgLabel': '{name}套餐','sub.badge': '最划算','sub.lifetime': '永久',
   'stats.title': '访问统计','stats.total': '总点击','stats.sites': '站点数','stats.ranking': '点击排行','stats.empty': '暂无访问数据','stats.clear': '清除数据','stats.export': '导出 CSV','stats.today': '今日','stats.weekly': '近 7 天趋势',
   'onboard.skip': '跳过','onboard.next': '下一步','onboard.start': '开始使用','onboard.step1Title': '搜索直达','onboard.step1Desc': '在搜索框输入关键词，按 Enter 或点搜索按钮','onboard.step2Title': '添加导航','onboard.step2Desc': '点右下角 + 按钮，粘贴网址自动识别名称和图标','onboard.step3Title': '自定义壁纸','onboard.step3Desc': '点 🎨 按钮选择 12 种精美渐变，打造专属风格','onboard.step4Title': '账户管理','onboard.step4Desc': '前往官网 www.cilacila.cn 绑定邮箱、找回密码、管理订阅',
   'help.title': '键盘快捷键','help.tip': '按 ? 随时打开此面板',
@@ -25,8 +25,10 @@ const zh: Dict = {
   // Additional UI
   'recent.title': '最近访问','recent.empty': '暂无最近访问',
   'dial.empty': '点击 + 添加第一个导航',
-  'todo.title': '待办清单','todo.placeholder': '输入新任务，Enter 添加','todo.pending': '个待办','todo.done': '标记完成','todo.undo': '取消完成','todo.empty': '暂无待办，输入上方添加','todo.clearDone': '清除已完成',
-  'note.title': '便签','note.placeholder': '输入笔记，Enter 保存','note.empty': '暂无便签，输入上方添加','note.add': '添加便签',
+  'todo.title': '待办清单','todo.placeholder': '输入新任务，Enter 添加','todo.pending': '个待办','todo.done': '标记完成','todo.undo': '取消完成','todo.empty': '暂无待办，输入上方添加','todo.clearDone': '清除已完成','todo.filterAll': '全部','todo.filterActive': '未完成','todo.filterDone': '已完成','todo.priority': '优先级','todo.priorityLow': '低','todo.priorityNormal': '中','todo.priorityHigh': '高','todo.dueDate': '截止日期','todo.dueOverdue': '已过期','todo.dueToday': '今天','todo.dueTomorrow': '明天','todo.noDueDate': '无截止','todo.mode': '待办显示','todo.modeList': '列表视图','todo.modeKanban': '看板视图','todo.statusTodo': '待办','todo.statusInProgress': '进行中','todo.statusDone': '已完成','todo.proRequired': '看板视图为 Pro 专属，当前使用列表模式',  'todo.setPriority': '设置优先级','todo.setDueDate': '设置截止',
+  // 星座运势
+  'horoscope.title': '星座运势','horoscope.loading': '加载中...','horoscope.error': '加载失败','horoscope.retry': '重试','horoscope.today': '今日','horoscope.week': '本周','horoscope.month': '本月','horoscope.year': '本年','horoscope.proTime': '本周/月/年运势为 Pro 专属','horoscope.overall': '综合','horoscope.health': '健康','horoscope.love': '爱情','horoscope.money': '财运','horoscope.work': '事业','horoscope.lucky': '幸运','horoscope.luckyColor': '幸运色','horoscope.luckyNumber': '幸运数字','horoscope.luckyConst': '幸运星座','horoscope.todo': '宜忌','horoscope.yi': '宜','horoscope.ji': '忌','horoscope.settings': '显示星座运势','horoscope.zodiac': '我的星座',
+  'note.title': '便签','note.placeholder': '输入笔记，Enter 保存','note.empty': '暂无便签，输入上方添加','note.add': '添加便签','note.mode': '便签显示','note.modeColorful': '彩色便签卡','note.modeStructured': '结构化卡片','note.modeList': '列表+预览','note.statusNormal': '普通','note.statusImportant': '重要','note.statusDone': '完成','note.pin': '置顶','note.unpin': '取消置顶','note.edit': '编辑','note.color': '颜色','note.proRequired': '彩色便签卡为 Pro 专属，当前使用免费模式','note.selectHint': '← 点击左侧便签查看详情',
   'ai.title': 'AI 助手','ai.icon': '🤖','ai.placeholder': '向 AI 提问...','ai.send': '提问','ai.thinking': '思考中...','ai.welcome': '你好！我是 AI 助手，可以帮你搜索、生成文案、整理笔记。有什么需要帮忙的吗？','ai.suggest1': '帮我整理今天的工作计划','ai.suggest2': '用 Markdown 写个周报模板','ai.suggest3': '总结一下当前有哪些功能','ai.clear': '清空对话','ai.config': '设置','ai.provider': 'AI 提供商','ai.apiKey': 'API Key','ai.apiKeyHint': '输入 API Key','ai.model': '模型名称','ai.customModel': '自定义模型','ai.copy': '复制到剪贴板','ai.saveToNotes': '保存到便签','ai.copied': '已复制！','ai.noteSaved': '已保存到便签','ai.systemPrompt': '系统提示词','ai.systemPromptHint': '为 AI 设定角色或回答风格','ai.systemPromptPro': '系统提示词为 Pro 专属功能，请升级后使用','ai.systemPromptLocked': '🔒 升级 Pro 解锁自定义 System Prompt',
   'group.limit': '{current}/{max} 个分组 · Pro 无限',
   'group.add': '添加分组','group.done': '完成','group.addBtn': '添加',
@@ -36,6 +38,7 @@ const zh: Dict = {
   'dial.addToGroup': '添加到本组',
   'pro.monthly': '月度会员','pro.yearly': '年度会员','pro.lifetime': '终身会员','pro.expire': '到期：','pro.expireTip': 'Pro 将于 {days} 天后到期，请及时续费','pro.days': '天',
   'settings.engine': '默认搜索引擎',
+  'theme.tech': '深色科技','theme.glass': '毛玻璃','theme.minimal': '极简扁平','theme.neu': '新拟态','theme.paper': '素纸暖调','theme.ocean': '深海幽蓝','theme.cyberpunk': '赛博朋克','theme.retro': '复古终端','theme.proRequired': '该主题为 Pro 专属，请升级后使用',
   'pro.customFooterEg': '例如：我的公司','pro.customTitle': '自定义标题','pro.customTitleDesc': '替换浏览器标签页标题','pro.customTitleEg': '例如：我的起始页','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
   'pro.cssPlaceholder': '/* 在此输入自定义 CSS */',
   'icon.customUrl': '自定义图标 URL',
@@ -53,8 +56,18 @@ const zh: Dict = {
   'pro.featureSync': '云端数据同步','pro.featureWallpaper': '自定义上传壁纸',
   'toolbar.expand': '展开','toolbar.collapse': '折叠','toolbar.expandGroup': '展开分组','toolbar.collapseGroup': '折叠分组',
   'search.switchEngine': '切换搜索引擎',
+  // 汇率换算
+  'currency.title': '汇率换算','currency.amount': '金额','currency.base': '基准货币','currency.refresh': '刷新','currency.updated': '更新时间','settings.showCurrency': '显示汇率换算',
+  // 每日一言
+  'quote.title': '每日一言','quote.empty': '点击刷新获取一言','quote.loading': '加载中...','quote.error': '加载失败','quote.refresh': '换一句','quote.settings': '显示每日一言','quote.type': '一言类型','quote.hitokoto': '随机一言','quote.qinggan': '情感一言',
+  // Tab 导航
+  'tab.dials': '导航',
   // Default group names (stored in data, translated at render)
   '常用': '常用','默认收藏': '默认收藏',
+  // 星座名
+  'zodiac.aries': '白羊座','zodiac.taurus': '金牛座','zodiac.gemini': '双子座','zodiac.cancer': '巨蟹座','zodiac.leo': '狮子座','zodiac.virgo': '处女座','zodiac.libra': '天秤座','zodiac.scorpio': '天蝎座','zodiac.sagittarius': '射手座','zodiac.capricorn': '摩羯座','zodiac.aquarius': '水瓶座','zodiac.pisces': '双鱼座',
+  // 番茄钟
+  'pomodoro.work': '专注','pomodoro.break': '休息','pomodoro.start': '开始','pomodoro.pause': '暂停','pomodoro.reset': '重置','pomodoro.title': '番茄钟','settings.showPomodoro': '显示番茄钟',
 };
 
 const en: Dict = {
@@ -79,8 +92,9 @@ const en: Dict = {
   'pay.wechat': 'WeChat','pay.alipay': 'Alipay','pay.monthly': 'Monthly','pay.yearly': 'Yearly','pay.lifetime': 'Lifetime',
   'recent.title': 'Recent Sites','recent.empty': 'No recent sites',
   'dial.empty': 'Click + to add your first dial',
-  'todo.title': 'Todo List','todo.placeholder': 'Add a task, press Enter','todo.pending': ' pending','todo.done': 'Mark done','todo.undo': 'Undo','todo.empty': 'No tasks yet, add one above','todo.clearDone': 'Clear completed',
-  'note.title': 'Notes','note.placeholder': 'Type a note, press Enter','note.empty': 'No notes yet','note.add': 'Add note',
+  'todo.title': 'Todo List','todo.placeholder': 'Add a task, press Enter','todo.pending': ' pending','todo.done': 'Mark done','todo.undo': 'Undo','todo.empty': 'No tasks yet, add one above','todo.clearDone': 'Clear completed','todo.filterAll': 'All','todo.filterActive': 'Active','todo.filterDone': 'Done','todo.priority': 'Priority','todo.priorityLow': 'Low','todo.priorityNormal': 'Normal','todo.priorityHigh': 'High','todo.dueDate': 'Due date','todo.dueOverdue': 'Overdue','todo.dueToday': 'Today','todo.dueTomorrow': 'Tomorrow','todo.noDueDate': 'No due','todo.mode': 'Todo Display','todo.modeList': 'List View','todo.modeKanban': 'Kanban Board','todo.statusTodo': 'Todo','todo.statusInProgress': 'In Progress','todo.statusDone': 'Done','todo.proRequired': 'Kanban view is Pro-only. Using list mode instead.',  'todo.setPriority': 'Set Priority','todo.setDueDate': 'Set Due',
+  'horoscope.title': 'Horoscope','horoscope.loading': 'Loading...','horoscope.error': 'Load failed','horoscope.retry': 'Retry','horoscope.today': 'Today','horoscope.week': 'This Week','horoscope.month': 'This Month','horoscope.year': 'This Year','horoscope.proTime': 'Week/Month/Year horoscope is Pro-only','horoscope.overall': 'Overall','horoscope.health': 'Health','horoscope.love': 'Love','horoscope.money': 'Wealth','horoscope.work': 'Career','horoscope.lucky': 'Lucky','horoscope.luckyColor': 'Color','horoscope.luckyNumber': 'Number','horoscope.luckyConst': 'Sign','horoscope.todo': 'Tips','horoscope.yi': 'Do','horoscope.ji': 'Don\'t','horoscope.settings': 'Show Horoscope','horoscope.zodiac': 'My Sign',
+  'note.title': 'Notes','note.placeholder': 'Type a note, press Enter','note.empty': 'No notes yet','note.add': 'Add note','note.mode': 'Notes Display','note.modeColorful': 'Colorful Cards','note.modeStructured': 'Structured Cards','note.modeList': 'List + Preview','note.statusNormal': 'Normal','note.statusImportant': 'Important','note.statusDone': 'Done','note.pin': 'Pin','note.unpin': 'Unpin','note.edit': 'Edit','note.color': 'Color','note.proRequired': 'Colorful Cards is Pro-only. Using free mode instead.','note.selectHint': '← Click a note to view details',
   'ai.title': 'AI Assistant','ai.icon': '🤖','ai.placeholder': 'Ask AI anything...','ai.send': 'Ask','ai.thinking': 'Thinking...','ai.welcome': 'Hi! I\'m your AI assistant. I can search, write, and organize notes. How can I help?','ai.suggest1': 'Plan my work today','ai.suggest2': 'Write a weekly report template','ai.suggest3': 'Summarize available features','ai.clear': 'Clear chat','ai.config': 'Settings','ai.provider': 'AI Provider','ai.apiKey': 'API Key','ai.apiKeyHint': 'Enter API Key','ai.model': 'Model name','ai.customModel': 'Custom model','ai.copy': 'Copy to clipboard','ai.saveToNotes': 'Save to notes','ai.copied': 'Copied!','ai.noteSaved': 'Saved to notes','ai.systemPrompt': 'System Prompt','ai.systemPromptHint': 'Set AI role or response style','ai.systemPromptPro': 'System Prompt is a Pro feature. Upgrade to unlock.','ai.systemPromptLocked': '🔒 Upgrade to Pro to unlock System Prompt',
   'group.limit': '{current}/{max} groups · Pro unlimited',
   'group.add': 'Add Group','group.done': 'Done','group.addBtn': 'Add',
@@ -89,6 +103,7 @@ const en: Dict = {
   'dial.addToGroup': 'Add to Group',
   'pro.monthly': 'Monthly','pro.yearly': 'Yearly','pro.lifetime': 'Lifetime','pro.expire': 'Expires: ','pro.expireTip': 'Pro expires in {days} days, please renew','pro.days': 'd',
   'settings.engine': 'Default Engine',
+  'theme.tech': 'Dark Tech','theme.glass': 'Glass Morphism','theme.minimal': 'Minimal Flat','theme.neu': 'Neumorphic','theme.paper': 'Warm Paper','theme.ocean': 'Deep Ocean','theme.cyberpunk': 'Cyberpunk','theme.retro': 'Retro Terminal','theme.proRequired': 'This theme is Pro-only. Please upgrade to unlock.',
   'pro.customFooterEg': 'e.g. My Company',
   'pro.customTitle': 'Custom Title',
   'pro.customTitleDesc': 'Replace browser tab title',
@@ -112,7 +127,16 @@ const en: Dict = {
   'toolbar.wallpaper': 'Wallpaper','toolbar.ie': 'Import/Export','toolbar.stats': 'Stats','toolbar.sync': 'Cloud Sync','toolbar.upgrade': 'Upgrade','toolbar.settings': 'Settings','toolbar.help': 'Shortcuts',
   'toolbar.expand': 'Expand','toolbar.collapse': 'Collapse','toolbar.expandGroup': 'Expand','toolbar.collapseGroup': 'Collapse',
   'search.switchEngine': 'Switch Engine',
+  // 汇率换算
+  'currency.title': 'Currency','currency.amount': 'Amount','currency.base': 'Base','currency.refresh': 'Refresh','currency.updated': 'Updated','settings.showCurrency': 'Show Currency',
+  // 每日一言
+  'quote.title': 'Daily Quote','quote.empty': 'Click refresh for a quote','quote.loading': 'Loading...','quote.error': 'Load failed','quote.refresh': 'New quote','quote.settings': 'Show Daily Quote','quote.type': 'Quote Type','quote.hitokoto': 'Random','quote.qinggan': 'Love Quotes',
+  // Tab 导航
+  'tab.dials': 'Dials',
   '常用': 'Default','默认收藏': 'Default',
+  'zodiac.aries': 'Aries','zodiac.taurus': 'Taurus','zodiac.gemini': 'Gemini','zodiac.cancer': 'Cancer','zodiac.leo': 'Leo','zodiac.virgo': 'Virgo','zodiac.libra': 'Libra','zodiac.scorpio': 'Scorpio','zodiac.sagittarius': 'Sagittarius','zodiac.capricorn': 'Capricorn','zodiac.aquarius': 'Aquarius','zodiac.pisces': 'Pisces',
+  // Pomodoro
+  'pomodoro.work': 'Focus','pomodoro.break': 'Break','pomodoro.start': 'Start','pomodoro.pause': 'Pause','pomodoro.reset': 'Reset','pomodoro.title': 'Pomodoro','settings.showPomodoro': 'Show Pomodoro',
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');

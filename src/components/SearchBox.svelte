@@ -17,7 +17,7 @@
     if (!trimmed) return;
     const engineId = getSettings().searchEngine;
     const url = buildSearchUrl(engineId, trimmed);
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   function switchEngine(id: string) {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { t } from '../utils/i18n.svelte';
+  import { modalClose } from '../utils/modalClose';
   import { getClickCounts, getTotalClicks, clearClickCounts, getDailyClicks, getWeekDates, clearDailyClicks } from '../stores/recentSites.svelte';
 
   interface Props {
@@ -8,27 +9,7 @@
 
   let { onclose }: Props = $props();
 
-  let overlayEl: HTMLDivElement | undefined = $state();
-  let contentEl: HTMLDivElement | undefined = $state();
   let chartCanvas: HTMLCanvasElement | undefined = $state();
-
-  $effect(() => {
-    const o = overlayEl;
-    const c = contentEl;
-    if (!o) return;
-    function handleClick(e: MouseEvent) {
-      if (c && !c.contains(e.target as Node)) onclose();
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onclose();
-    }
-    o.addEventListener('click', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      o.removeEventListener('click', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  });
 
   // 绘制 7 天柱状图
   $effect(() => {
@@ -114,8 +95,8 @@
   }
 </script>
 
-<div class="modal-overlay" bind:this={overlayEl}>
-  <div class="modal-content" bind:this={contentEl}>
+<div class="modal-overlay" use:modalClose={onclose}>
+  <div class="modal-content">
     <h3 class="modal-title">{t('stats.title')}</h3>
 
     <div class="stats-summary">

@@ -1,5 +1,6 @@
 <script lang="ts">
-import { t } from '../utils/i18n.svelte';
+import { t, getLang } from '../utils/i18n.svelte';
+  import { modalClose } from '../utils/modalClose';
   import { getIsPro, syncProStatus } from '../stores/subscription.svelte';
   import { isLoggedIn, getUsername, login, register, logout, uploadSync, downloadSync, getLastSyncTime } from '../utils/sync';
   import { loadData, saveData } from '../utils/storage';
@@ -18,26 +19,6 @@ import { t } from '../utils/i18n.svelte';
   let statusOk = $state(true);
   let loading = $state(false);
 
-  let overlayEl: HTMLDivElement | undefined = $state();
-  let contentEl: HTMLDivElement | undefined = $state();
-
-  $effect(() => {
-    const o = overlayEl;
-    const c = contentEl;
-    if (!o) return;
-    function handleClick(e: MouseEvent) {
-      if (c && !c.contains(e.target as Node)) onclose();
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onclose();
-    }
-    o.addEventListener('click', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      o.removeEventListener('click', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  });
 
   async function handleAuth() {
     if (!username.trim() || !password.trim()) {
@@ -114,13 +95,13 @@ import { t } from '../utils/i18n.svelte';
     if (!iso) return t('sync.never');
     try {
       const d = new Date(iso);
-      return d.toLocaleString('zh-CN');
+      return d.toLocaleString(getLang() === 'zh-CN' ? 'zh-CN' : 'en-US');
     } catch { return iso; }
   }
 </script>
 
-<div class="modal-overlay" bind:this={overlayEl}>
-  <div class="modal-content" bind:this={contentEl}>
+<div class="modal-overlay" use:modalClose={onclose}>
+  <div class="modal-content">
     <h3 class="modal-title">☁️ {t('sync.title')}</h3>
 
     {#if isLoggedIn()}

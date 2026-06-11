@@ -1,5 +1,6 @@
 <script lang="ts">
 import { t } from '../utils/i18n.svelte';
+  import { modalClose } from '../utils/modalClose';
   import { getUsername } from '../utils/sync';
   import { PLANS, createOrder, generateQRCodeSVG } from '../utils/payment';
   import type { PlanInfo } from '../utils/payment';
@@ -19,27 +20,6 @@ import { t } from '../utils/i18n.svelte';
   let orderInfo = $state<{ plan: string; amount: number } | null>(null);
   let showQr = $state(false);
 
-  let overlayEl: HTMLDivElement | undefined = $state();
-  let contentEl: HTMLDivElement | undefined = $state();
-
-  $effect(() => {
-    const o = overlayEl;
-    const c = contentEl;
-    if (!o) return;
-    function handleClick(e: MouseEvent) {
-      if (c && !c.contains(e.target as Node)) onclose();
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onclose();
-    }
-    o.addEventListener('click', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      o.removeEventListener('click', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  });
-
   async function handlePay() {
     loading = true;
     status = '';
@@ -52,15 +32,15 @@ import { t } from '../utils/i18n.svelte';
         qrCode = generateQRCodeSVG(result.qrCode);
         orderInfo = { plan: result.plan || selectedPlan, amount: result.amount || 0 };
         showQr = true;
-        status = '请使用' + (payMethod === 'wechat' ? '微信' : '支付宝') + '扫码支付';
+        status = t('sub.scanWith', { method: payMethod === 'wechat' ? t('pay.wechat') : t('pay.alipay') });
         statusOk = true;
       } else if (result.payUrl) {
         // 支付宝 page_pay 兜底
-        window.open(result.payUrl, '_blank');
-        status = '已在新窗口打开支付页面';
+        window.open(result.payUrl, '_blank', 'noopener,noreferrer');
+        status = t('sub.opened');
         statusOk = true;
       } else {
-        status = '获取支付链接失败';
+        status = t('sub.failed');
         statusOk = false;
       }
     } else {
@@ -75,21 +55,21 @@ import { t } from '../utils/i18n.svelte';
   }
 </script>
 
-<div class="modal-overlay" bind:this={overlayEl}>
-  <div class="modal-content subscribe-modal" bind:this={contentEl}>
+<div class="modal-overlay" use:modalClose={onclose}>
+  <div class="modal-content subscribe-modal">
     <h3 class="modal-title">⚡ {t('sub.title')}</h3>
 
     {#if showQr}
       ...
       <!-- 支付二维码 -->
       <div class="qr-section">
-        <p class="qr-hint">使用 {payMethod === 'wechat' ? '微信' : '支付宝'} 扫码支付</p>
+        <p class="qr-hint">{t('sub.scanWith', { method: payMethod === 'wechat' ? t('pay.wechat') : t('pay.alipay') })}</p>
         {#if qrCode}
-          <img class="qr-img" src={qrCode} alt="支付二维码" />
+          <img class="qr-img" src={qrCode} alt={t('sub.qrAlt')} />
         {/if}
         {#if orderInfo}
           <div class="qr-info">
-            <span>{PLANS.find(p => p.id === orderInfo.plan)?.name}套餐</span>
+            <span>{t('sub.pkgLabel', { name: PLANS.find(p => p.id === orderInfo.plan)?.name || '' })}</span>
             <span class="qr-amount">¥{orderInfo.amount.toFixed(2)}</span>
           </div>
         {/if}
@@ -112,7 +92,7 @@ import { t } from '../utils/i18n.svelte';
             {/if}
             <span class="plan-name">{plan.name}</span>
             <span class="plan-price">{getPlanPrice(plan)}</span>
-            <span class="plan-period">{plan.days ? `/${plan.days}天` : '永久'}</span>
+            <span class="plan-period">{plan.days ? t('sub.perDay', { days: String(plan.days) }) : t('sub.lifetimeLabel')}</span>
           </label>
         {/each}
       </div>
@@ -122,12 +102,12 @@ import { t } from '../utils/i18n.svelte';
         <label class="pay-method" class:selected={payMethod === 'wechat'}>
           <input type="radio" name="method" value="wechat" bind:group={payMethod} hidden />
           <span class="pay-icon">💚</span>
-          <span>微信支付</span>
+          <span>{t('pay.wechat')}</span>
         </label>
         <label class="pay-method" class:selected={payMethod === 'alipay'}>
           <input type="radio" name="method" value="alipay" bind:group={payMethod} hidden />
           <span class="pay-icon">💙</span>
-          <span>支付宝</span>
+          <span>{t('pay.alipay')}</span>
         </label>
       </div>
 

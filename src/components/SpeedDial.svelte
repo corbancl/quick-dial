@@ -171,7 +171,7 @@ import { t } from '../utils/i18n.svelte';
   {:else}
     <div class="empty-state">
       <div class="empty-icon"><i class="fa-regular fa-rectangle-list"></i></div>
-      <p class="empty-text">暂无导航，点击下方按钮添加</p>
+      <p class="empty-text">{t('speedDial.empty')}</p>
       <button class="btn btn-primary" onclick={() => openAddDial()}><i class="fa-solid fa-plus"></i> {t('dial.add')}</button>
     </div>
   {/each}
@@ -196,10 +196,10 @@ import { t } from '../utils/i18n.svelte';
     role="menu"
   >
     <button class="context-item" onclick={() => { openEditDial(contextMenu!.dial); closeContextMenu(); }} role="menuitem">
-      <i class="fa-solid fa-pen-to-square"></i> 编辑
+      <i class="fa-solid fa-pen-to-square"></i> {t('speedDial.edit')}
     </button>
     <button class="context-item danger" onclick={() => { handleDeleteDial(contextMenu!.dial.id); closeContextMenu(); }} role="menuitem">
-      <i class="fa-solid fa-trash-can"></i> 删除
+      <i class="fa-solid fa-trash-can"></i> {t('speedDial.delete')}
     </button>
   </div>
 {/if}
@@ -220,6 +220,7 @@ import { t } from '../utils/i18n.svelte';
   .speed-dial {
     width: 100%;
     max-width: 800px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 8px;

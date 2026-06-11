@@ -135,6 +135,7 @@ export const DEFAULT_SEARCH_ENGINES: SearchEngine[] = [
   { id: 'duckduckgo', name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q={keyword}', icon: '', proOnly: true },
   { id: 'twitter', name: 'X (Twitter)', url: 'https://twitter.com/search?q={keyword}', icon: '', proOnly: true },
   { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com/results?search_query={keyword}', icon: '', proOnly: true },
+  { id: 'jd', name: '京东', url: 'https://search.jd.com/Search?keyword={keyword}&enc=utf-8', icon: '', proOnly: true },
   { id: 'taobao', name: '淘宝', url: 'https://s.taobao.com/search?q={keyword}&pid=mm_14822724_24216217_80956897', icon: '' },
 ];
 

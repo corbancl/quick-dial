@@ -53,3 +53,7 @@ export function setOpenInNewTab(open: boolean): void {
 export function setShowAI(show: boolean): void {
   settings.showAI = show;
 }
+
+export function setHideBranding(hide: boolean): void {
+  settings.hideBranding = hide;
+}

@@ -64,6 +64,7 @@ export interface AppSettings {
   showTodo: boolean;
   showNotes: boolean;
   showAI: boolean;
+  hideBranding: boolean;
   recentSitesCount: number;
   openInNewTab: boolean;
 }
@@ -147,6 +148,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   showTodo: true,
   showNotes: true,
   showAI: true,
+  hideBranding: false,
   recentSitesCount: 8,
   openInNewTab: true,
 };

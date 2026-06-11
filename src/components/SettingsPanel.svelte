@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setShowNotes, setShowAI, setRecentSitesCount, setOpenInNewTab } from '../stores/settings.svelte';
+  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setShowNotes, setShowAI, setHideBranding, setRecentSitesCount, setOpenInNewTab } from '../stores/settings.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
   import { checkSubscription } from '../utils/payment';
   import { t, getLang, setLang } from '../utils/i18n.svelte';
@@ -296,6 +296,18 @@
             />
           </div>
         </div>
+
+        <!-- 隐藏品牌名 -->
+        <div class="setting-item">
+          <label class="setting-label" for="hide-branding">
+            <span>👻</span> {t('pro.hideBranding')}
+          </label>
+          <label class="toggle">
+            <input id="hide-branding" type="checkbox" checked={getSettings().hideBranding} onchange={(e) => setHideBranding((e.target as HTMLInputElement).checked)} />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <p class="card-desc" style="margin-top:4px">{t('pro.hideBrandingDesc')}</p>
       {:else}
         <div class="pro-features">
           <div class="pro-feature">

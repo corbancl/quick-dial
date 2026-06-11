@@ -280,6 +280,7 @@ import { t, getLang } from './utils/i18n.svelte';
     <div class="footer-inner">
       <!-- 第一行：版权 + 品牌 + 版本 -->
       <div class="footer-row footer-row-brand">
+        {#if !getIsPro() || !getSettings().hideBranding}
         <div class="footer-brand">
           <span class="footer-logo">⚡</span>
           <span class="footer-name">{t('footer.domain')}</span>
@@ -287,6 +288,7 @@ import { t, getLang } from './utils/i18n.svelte';
             <span class="footer-custom">{customFooter}</span>
           {/if}
         </div>
+        {/if}
         <div class="footer-meta">
           <span class="footer-version">{VERSION}</span>
           {#if isLoggedIn() && getIsPro()}

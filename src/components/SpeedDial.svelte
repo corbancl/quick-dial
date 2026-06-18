@@ -225,6 +225,12 @@ import { t } from '../utils/i18n.svelte';
     flex-direction: column;
     gap: 8px;
   }
+  :global(html[data-layout="wide"]) .speed-dial {
+    max-width: 1200px;
+  }
+  :global(html[data-layout="sidebar"]) .speed-dial {
+    max-width: 1400px;
+  }
 
   .empty-state {
     display: flex;

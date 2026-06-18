@@ -100,6 +100,9 @@ export interface HoroscopeData {
   todo: { yi: string; ji: string };
 }
 
+// ====== 布局模式 ======
+export type LayoutMode = 'centered' | 'wide' | 'sidebar';
+
 // ====== 全局设置 ======
 export interface AppSettings {
   searchEngine: string;
@@ -119,6 +122,8 @@ export interface AppSettings {
   showPomodoro: boolean;
   showCurrency: boolean;
   showAI: boolean;
+  showRss: boolean;
+  layout: LayoutMode;
   hideBranding: boolean;
   recentSitesCount: number;
   openInNewTab: boolean;
@@ -201,6 +206,7 @@ export interface AppData {
   notes?: NoteItem[];
   chatMessages?: ChatMessage[];
   chatConfig?: AIConfig;
+  rssData?: RssData;
   customCss?: string;
   customTitle?: string;
   customFooter?: string;
@@ -241,6 +247,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   showPomodoro: true,
   showCurrency: true,
   showAI: true,
+  showRss: true,
+  layout: 'centered',
   hideBranding: false,
   recentSitesCount: 8,
   openInNewTab: true,
@@ -299,6 +307,30 @@ export interface PomodoroState {
   totalSeconds: number;
   isRunning: boolean;
 }
+
+// ====== RSS 订阅 ======
+export interface RssFeed {
+  url: string;
+  title: string;
+  icon?: string;
+}
+
+export interface RssArticle {
+  feedUrl: string;
+  title: string;
+  link: string;
+  pubDate: string;
+  snippet: string;
+  read: boolean;
+}
+
+export interface RssData {
+  feeds: RssFeed[];
+  articles: RssArticle[];
+  lastFetch: number;
+}
+
+export const RSS_FEED_LIMIT = 5;
 
 // ====== 订阅 ======
 export interface SubscriptionState {

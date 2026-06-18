@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setShowNotes, setShowAI, setShowHoroscope, setZodiacSign, setHideBranding, setRecentSitesCount, setOpenInNewTab, setThemeStyle, setNotesDisplayMode, setTodoDisplayMode, setShowQuote, setQuoteType, setShowPomodoro, setShowCurrency } from '../stores/settings.svelte';
+  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setShowNotes, setShowAI, setShowHoroscope, setZodiacSign, setHideBranding, setRecentSitesCount, setOpenInNewTab, setThemeStyle, setNotesDisplayMode, setTodoDisplayMode, setShowQuote, setQuoteType, setShowPomodoro, setShowCurrency, setShowRss, setLayout } from '../stores/settings.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
   import { getAvailableEngines, getLockedEngines, getAllEngines } from '../utils/search';
   import { checkSubscription } from '../utils/payment';
@@ -126,6 +126,16 @@
           <option value="neu" disabled={!getIsPro()}>{t('theme.neu')}</option>
           <option value="cyberpunk" disabled={!getIsPro()}>{t('theme.cyberpunk')}</option>
           <option value="retro" disabled={!getIsPro()}>{t('theme.retro')}</option>
+        </select>
+      </div>
+
+      <!-- 页面布局 -->
+      <div class="setting-item">
+        <label class="setting-label" for="layout-mode">{t('layout.title')}</label>
+        <select id="layout-mode" class="form-select" value={getSettings().layout} onchange={(e) => setLayout((e.target as HTMLSelectElement).value as any)}>
+          <option value="centered">{t('layout.centered')}</option>
+          <option value="wide">{t('layout.wide')}</option>
+          <option value="sidebar">{t('layout.sidebar')}</option>
         </select>
       </div>
 
@@ -305,6 +315,15 @@
         <label class="setting-label" for="show-currency">{t('settings.showCurrency')}</label>
         <label class="toggle">
           <input id="show-currency" type="checkbox" checked={getSettings().showCurrency} onchange={(e) => setShowCurrency((e.target as HTMLInputElement).checked)} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- 显示 RSS 订阅 -->
+      <div class="setting-item">
+        <label class="setting-label" for="show-rss">{t('settings.showRss')}</label>
+        <label class="toggle">
+          <input id="show-rss" type="checkbox" checked={getSettings().showRss} onchange={(e) => setShowRss((e.target as HTMLInputElement).checked)} />
           <span class="toggle-slider"></span>
         </label>
       </div>

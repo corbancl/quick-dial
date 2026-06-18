@@ -23,6 +23,7 @@
   import AIWidget from './components/AIWidget.svelte';
   import PomodoroWidget from './components/PomodoroWidget.svelte';
   import CurrencyWidget from './components/CurrencyWidget.svelte';
+  import RssWidget from './components/RssWidget.svelte';
 
   import { initDials, getDialsState, ensureDefaultGroup, addDial } from './stores/dials.svelte';
   import { initTheme, getTheme } from './stores/theme.svelte';
@@ -31,6 +32,7 @@
   import { initTodos, getTodos } from './stores/todos.svelte';
   import { initNotes, getNotes } from './stores/notes.svelte';
   import { initChat, getChatMessages, getChatConfig } from './stores/chat.svelte';
+  import { initRss, getRssData } from './stores/rss.svelte';
   import { initQuote } from './stores/quote.svelte';
   import { initCurrency } from './stores/currency.svelte';
   import { getIsPro, syncProStatus, getAuthToken } from './stores/subscription.svelte';
@@ -133,6 +135,11 @@ import { t, getLang } from './utils/i18n.svelte';
     return () => clearInterval(interval);
   });
 
+  // 布局模式同步到 document 属性（跨组件 CSS 引用）
+  $effect(() => {
+    document.documentElement.setAttribute('data-layout', getSettings().layout);
+  });
+
   // 初始化
   if (!checkStorageSupport()) {
     alert('您的浏览器不支持本地存储，部分功能可能无法使用。');
@@ -147,10 +154,14 @@ import { t, getLang } from './utils/i18n.svelte';
     initTodos(saved.todos || []);
     initNotes(saved.notes || []);
     initChat({ messages: saved.chatMessages, config: saved.chatConfig });
+    initRss(saved.rssData);
     initQuote();
     initCurrency();
   } else {
-    // 首次使用，创建默认分组和示例导航
+    // 首次使用，确保主题初始化
+    initTheme(undefined);
+    initSettings(undefined);
+    // 创建默认分组和示例导航
     const defaultGroupId = ensureDefaultGroup();
 
     // 常用分组 - 21个热门网站
@@ -240,6 +251,7 @@ import { t, getLang } from './utils/i18n.svelte';
       notes: notes,
       chatMessages: chatMessages,
       chatConfig: chatConfig,
+      rssData: getRssData(),
       customCss: localStorage.getItem('quick-dial-custom-css') || '',
     };
   });
@@ -269,72 +281,77 @@ import { t, getLang } from './utils/i18n.svelte';
   setSearchEngine(getLang() === 'zh-CN' ? 'baidu' : 'google');
 }} />
 
-<div class="app-container">
-  <div class="app-header">
-    <ClockWidget />
-    <div class="header-widgets">
-      <WeatherWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
-      <LunarWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
-    </div>
+{#snippet headerContent()}
+  <ClockWidget />
+  <div class="header-widgets">
+    <WeatherWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
+    <LunarWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
   </div>
+{/snippet}
 
-  <SearchBox />
-
-  {#if getSettings().showQuote}
-    <QuoteWidget />
-  {/if}
-
-  <!-- Tab 导航栏 -->
-  {#if getSettings().showHoroscope || getSettings().showTodo || getSettings().showNotes || getSettings().showPomodoro || getSettings().showCurrency}
-    <div class="tab-bar">
-      <button class="tab-btn" class:active={activeTab === 'dials'} onclick={() => activeTab = 'dials'}>
-        {t('tab.dials')}
-      </button>
-      {#if getSettings().showHoroscope}
-        <button class="tab-btn" class:active={activeTab === 'horoscope'} onclick={() => activeTab = 'horoscope'}>
-          {t('horoscope.title')}
-        </button>
-      {/if}
-      {#if getSettings().showTodo}
-        <button class="tab-btn" class:active={activeTab === 'todo'} onclick={() => activeTab = 'todo'}>
-          {t('todo.title')}
-        </button>
-      {/if}
-      {#if getSettings().showNotes}
-        <button class="tab-btn" class:active={activeTab === 'notes'} onclick={() => activeTab = 'notes'}>
-          {t('note.title')}
-        </button>
-      {/if}
-      {#if getSettings().showPomodoro}
-        <button class="tab-btn" class:active={activeTab === 'pomodoro'} onclick={() => activeTab = 'pomodoro'}>
-          {t('pomodoro.title')}
-        </button>
-      {/if}
-      {#if getSettings().showCurrency}
-        <button class="tab-btn" class:active={activeTab === 'currency'} onclick={() => activeTab = 'currency'}>
-          {t('currency.title')}
-        </button>
-      {/if}
+<div class="app-container">
+  {#if getSettings().layout === 'sidebar'}
+    <!-- 侧栏布局 -->
+    <div class="sidebar-root">
+      <aside class="sidebar-left">
+        {@render headerContent()}
+      </aside>
+      <main class="sidebar-right">
+        <SearchBox />
+        <div class="sidebar-body">
+          {#if getSettings().showQuote}<QuoteWidget />{/if}
+          {#if getSettings().showHoroscope || getSettings().showTodo || getSettings().showNotes || getSettings().showPomodoro || getSettings().showCurrency || getSettings().showRss}
+            <div class="tab-bar">
+              <button class="tab-btn" class:active={activeTab === 'dials'} onclick={() => activeTab = 'dials'}>{t('tab.dials')}</button>
+              {#if getSettings().showHoroscope}<button class="tab-btn" class:active={activeTab === 'horoscope'} onclick={() => activeTab = 'horoscope'}>{t('horoscope.title')}</button>{/if}
+              {#if getSettings().showTodo}<button class="tab-btn" class:active={activeTab === 'todo'} onclick={() => activeTab = 'todo'}>{t('todo.title')}</button>{/if}
+              {#if getSettings().showNotes}<button class="tab-btn" class:active={activeTab === 'notes'} onclick={() => activeTab = 'notes'}>{t('note.title')}</button>{/if}
+              {#if getSettings().showPomodoro}<button class="tab-btn" class:active={activeTab === 'pomodoro'} onclick={() => activeTab = 'pomodoro'}>{t('pomodoro.title')}</button>{/if}
+              {#if getSettings().showCurrency}<button class="tab-btn" class:active={activeTab === 'currency'} onclick={() => activeTab = 'currency'}>{t('currency.title')}</button>{/if}
+              {#if getSettings().showRss}<button class="tab-btn" class:active={activeTab === 'rss'} onclick={() => activeTab = 'rss'}>{t('rss.title')}</button>{/if}
+            </div>
+          {/if}
+          {#if activeTab === 'dials' || (!getSettings().showHoroscope && !getSettings().showTodo && !getSettings().showNotes && !getSettings().showPomodoro && !getSettings().showCurrency && !getSettings().showRss)}
+            <SpeedDial />
+          {:else if activeTab === 'horoscope'}<HoroscopeWidget />
+          {:else if activeTab === 'todo'}<TodoWidget />
+          {:else if activeTab === 'notes'}<NotesWidget />
+          {:else if activeTab === 'pomodoro'}<PomodoroWidget />
+          {:else if activeTab === 'currency'}<CurrencyWidget />
+          {:else if activeTab === 'rss'}<RssWidget />
+          {/if}
+          {#if getSettings().showRecentSites}<RecentSites />{/if}
+        </div>
+      </main>
     </div>
-  {/if}
-
-  <!-- Tab 内容区 -->
-  {#if activeTab === 'dials' || (!getSettings().showHoroscope && !getSettings().showTodo && !getSettings().showNotes && !getSettings().showPomodoro && !getSettings().showCurrency)}
-    <SpeedDial />
-  {:else if activeTab === 'horoscope'}
-    <HoroscopeWidget />
-  {:else if activeTab === 'todo'}
-    <TodoWidget />
-  {:else if activeTab === 'notes'}
-    <NotesWidget />
-  {:else if activeTab === 'pomodoro'}
-    <PomodoroWidget />
-  {:else if activeTab === 'currency'}
-    <CurrencyWidget />
-  {/if}
-
-  {#if getSettings().showRecentSites}
-    <RecentSites />
+  {:else}
+    <!-- 居中/宽屏布局 -->
+    <div class="app-header">
+      {@render headerContent()}
+    </div>
+    <SearchBox />
+    {#if getSettings().showQuote}<QuoteWidget />{/if}
+    {#if getSettings().showHoroscope || getSettings().showTodo || getSettings().showNotes || getSettings().showPomodoro || getSettings().showCurrency || getSettings().showRss}
+      <div class="tab-bar">
+        <button class="tab-btn" class:active={activeTab === 'dials'} onclick={() => activeTab = 'dials'}>{t('tab.dials')}</button>
+        {#if getSettings().showHoroscope}<button class="tab-btn" class:active={activeTab === 'horoscope'} onclick={() => activeTab = 'horoscope'}>{t('horoscope.title')}</button>{/if}
+        {#if getSettings().showTodo}<button class="tab-btn" class:active={activeTab === 'todo'} onclick={() => activeTab = 'todo'}>{t('todo.title')}</button>{/if}
+        {#if getSettings().showNotes}<button class="tab-btn" class:active={activeTab === 'notes'} onclick={() => activeTab = 'notes'}>{t('note.title')}</button>{/if}
+        {#if getSettings().showPomodoro}<button class="tab-btn" class:active={activeTab === 'pomodoro'} onclick={() => activeTab = 'pomodoro'}>{t('pomodoro.title')}</button>{/if}
+        {#if getSettings().showCurrency}<button class="tab-btn" class:active={activeTab === 'currency'} onclick={() => activeTab = 'currency'}>{t('currency.title')}</button>{/if}
+        {#if getSettings().showRss}<button class="tab-btn" class:active={activeTab === 'rss'} onclick={() => activeTab = 'rss'}>{t('rss.title')}</button>{/if}
+      </div>
+    {/if}
+    {#if activeTab === 'dials' || (!getSettings().showHoroscope && !getSettings().showTodo && !getSettings().showNotes && !getSettings().showPomodoro && !getSettings().showCurrency && !getSettings().showRss)}
+      <SpeedDial />
+    {:else if activeTab === 'horoscope'}<HoroscopeWidget />
+    {:else if activeTab === 'todo'}<TodoWidget />
+    {:else if activeTab === 'notes'}<NotesWidget />
+    {:else if activeTab === 'pomodoro'}<PomodoroWidget />
+    {:else if activeTab === 'currency'}<CurrencyWidget />
+    {:else if activeTab === 'rss'}<RssWidget />
+    {/if}
+    {#if getSettings().showRecentSites}<RecentSites />{/if}
   {/if}
 
   <!-- 底部工具栏 -->
@@ -510,7 +527,7 @@ import { t, getLang } from './utils/i18n.svelte';
     gap: 4px;
     margin: 4px auto 0;
     width: calc(100% - 16px);
-    max-width: 800px;
+    max-width: 1200px;
     padding: 4px;
     border-radius: 10px;
     background: var(--card-bg, rgba(255,255,255,0.06));
@@ -698,4 +715,60 @@ import { t, getLang } from './utils/i18n.svelte';
     display: flex; justify-content: flex-end;
   }
   .ai-close-area { flex: 1; cursor: pointer; }
+
+  /* ====== 布局模式 ====== */
+  /* 宽屏 */
+  :global(html[data-layout="wide"]) .app-header,
+  :global(html[data-layout="wide"]) .tab-bar {
+    max-width: 1200px !important;
+  }
+
+  /* 侧栏 */
+  .sidebar-root {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 0 24px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .sidebar-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    min-height: 60vh;
+    min-width: 0;
+  }
+  .sidebar-left > :global(*) {
+    width: 100%;
+    max-width: 260px;
+  }
+  .sidebar-left :global(.header-widgets) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+  }
+  .sidebar-left :global(.header-widgets) > :global(*) {
+    width: 100%;
+  }
+  .sidebar-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 60vh;
+    min-width: 0;
+  }
+  .sidebar-right :global(.search-container) {
+    align-self: center;
+    max-width: 800px;
+  }
+  .sidebar-body {
+    display: flex;
+    flex-direction: column;
+  }
 </style>

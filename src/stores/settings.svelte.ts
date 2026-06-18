@@ -1,4 +1,4 @@
-import type { AppSettings, ClockStyle, ThemeStyle, NotesDisplayMode, TodoDisplayMode, ZodiacSign, QuoteType } from '../types';
+import type { AppSettings, ClockStyle, ThemeStyle, NotesDisplayMode, TodoDisplayMode, ZodiacSign, QuoteType, LayoutMode } from '../types';
 import { DEFAULT_SETTINGS, isProTheme } from '../types';
 import { getIsPro } from './subscription.svelte';
 
@@ -95,6 +95,14 @@ export function setShowPomodoro(show: boolean): void {
 
 export function setShowCurrency(show: boolean): void {
   settings.showCurrency = show;
+}
+
+export function setShowRss(show: boolean): void {
+  settings.showRss = show;
+}
+
+export function setLayout(mode: LayoutMode): void {
+  settings.layout = mode;
 }
 
 export function setHideBranding(hide: boolean): void {

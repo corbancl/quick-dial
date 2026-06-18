@@ -69,6 +69,10 @@ const zh: Dict = {
   'zodiac.aries': '白羊座','zodiac.taurus': '金牛座','zodiac.gemini': '双子座','zodiac.cancer': '巨蟹座','zodiac.leo': '狮子座','zodiac.virgo': '处女座','zodiac.libra': '天秤座','zodiac.scorpio': '天蝎座','zodiac.sagittarius': '射手座','zodiac.capricorn': '摩羯座','zodiac.aquarius': '水瓶座','zodiac.pisces': '双鱼座',
   // 番茄钟
   'pomodoro.work': '专注','pomodoro.break': '休息','pomodoro.start': '开始','pomodoro.pause': '暂停','pomodoro.reset': '重置','pomodoro.title': '番茄钟','settings.showPomodoro': '显示番茄钟',
+  // RSS
+  'rss.title': 'RSS 订阅','rss.add': '添加 RSS 源','rss.refresh': '刷新','rss.markAllRead': '全部已读','rss.readMore': '阅读原文','rss.empty': '暂无文章','rss.noFeed': '暂无订阅源，点击上方按钮添加','rss.invalid': '无效的 RSS 地址','rss.limit': '免费版最多 5 个 RSS 源','settings.showRss': '显示 RSS 订阅',
+  // Layout
+  'layout.title': '页面布局','layout.centered': '居中','layout.wide': '宽屏','layout.sidebar': '侧栏',
 };
 
 const en: Dict = {
@@ -140,6 +144,10 @@ const en: Dict = {
   'zodiac.aries': 'Aries','zodiac.taurus': 'Taurus','zodiac.gemini': 'Gemini','zodiac.cancer': 'Cancer','zodiac.leo': 'Leo','zodiac.virgo': 'Virgo','zodiac.libra': 'Libra','zodiac.scorpio': 'Scorpio','zodiac.sagittarius': 'Sagittarius','zodiac.capricorn': 'Capricorn','zodiac.aquarius': 'Aquarius','zodiac.pisces': 'Pisces',
   // Pomodoro
   'pomodoro.work': 'Focus','pomodoro.break': 'Break','pomodoro.start': 'Start','pomodoro.pause': 'Pause','pomodoro.reset': 'Reset','pomodoro.title': 'Pomodoro','settings.showPomodoro': 'Show Pomodoro',
+  // RSS
+  'rss.title': 'RSS Feeds','rss.add': 'Add RSS Feed','rss.refresh': 'Refresh','rss.markAllRead': 'Mark All Read','rss.readMore': 'Read More','rss.empty': 'No articles','rss.noFeed': 'No feeds yet, add one above','rss.invalid': 'Invalid RSS URL','rss.limit': 'Free: max 5 feeds','settings.showRss': 'Show RSS Feeds',
+  // Layout
+  'layout.title': 'Page Layout','layout.centered': 'Centered','layout.wide': 'Wide','layout.sidebar': 'Sidebar',
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');

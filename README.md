@@ -10,8 +10,9 @@
   <a href="https://cilacila.cn"><img src="https://img.shields.io/badge/Live-cilacila.cn-3b82f6?style=flat-square" /></a>
   <a href="https://gitee.com/corbancc/quick-dial"><img src="https://img.shields.io/badge/Gitee-开源仓库-c71d23?style=flat-square" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" /></a>
-  <img src="https://img.shields.io/badge/version-1.0.3-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/version-1.0.6-blue?style=flat-square" />
   <img src="https://img.shields.io/badge/Svelte-5-ff3e00?style=flat-square&logo=svelte" />
+  <a href="https://developer.fnnas.com"><img src="https://img.shields.io/badge/fnOS-AppStore-00b894?style=flat-square" /></a>
 </p>
 
 ---
@@ -36,6 +37,7 @@
 |---|------|---------|
 | 🔍 | **多引擎搜索** — Google / 百度 / Bing / 知乎 / Bilibili / GitHub 等 12 种引擎，Ctrl+K 聚焦 | **Multi-Engine Search** — 12 engines including Google, Baidu, Bing, Zhihu, Bilibili, GitHub. Ctrl+K to focus |
 | 📌 | **快捷导航** — 拖拽排序、分组管理、70+ 图标库，粘贴网址自动识别 | **Quick Dials** — Drag & drop, groups, 70+ icon library. Paste URL to auto-detect |
+| 🖥️ | **飞牛NAS** — 已上架飞牛应用商店，一键安装，自动发现NAS应用 | **fnOS App** — Available on fnOS App Store, one-click install, auto-discover NAS apps |
 | 🎨 | **精美壁纸** — 12 种预设渐变（深海、极光、日落、樱花……），自适应深浅文字 | **Beautiful Wallpapers** — 12 preset gradients. Auto-adapts light/dark text |
 | 🌤️ | **天气与农历** — 实时天气、温度、节气、黄历日期 | **Weather & Lunar** — Live weather, temperature, solar terms, lunar dates |
 | 🕐 | **多款时钟** — 6 种样式（数字/极简/经典/翻页/霓虹/二进制） | **Clock Widgets** — 6 styles (Digital, Minimal, Classic, Flip, Neon, Binary) |
@@ -81,6 +83,19 @@ npm run dev      # 开发模式 / Dev → http://localhost:5173
 npm run build    # 构建 / Build → dist/
 ```
 
+## 🖥️ 飞牛NAS / fnOS
+
+呲啦起始页已上架飞牛应用商店，支持一键安装。首次打开自动检测 NAS 上已安装的应用，生成「飞牛应用」快捷导航组。
+
+```bash
+npm run build:all   # 构建前端 + 填充 fnos/app/ui/
+cd fnos && fnpack build   # 打包为 .fpk
+```
+
+在飞牛NAS应用中心 → 手动安装 → 选择 `.fpk` 文件即可。默认端口 `9527`。
+
+> 📥 [下载最新 fpk 安装包](https://pan.butuan.cn/file.php?hash=fc24f083ec3d2e421c8c6b1db420c784)
+
 ## 🧩 安装为扩展 / Install as Extension
 
 1. `npm run build`
@@ -125,6 +140,7 @@ quick-dial/
 │   │   ├── sync.ts                  # Pro 云同步
 │   │   ├── payment.ts               # Pro 支付
 │   │   ├── i18n.ts                  # 多语言
+│   │   ├── fnos.ts                  # 飞牛应用自动发现
 │   │   ├── contextMenu.ts           # 右键菜单
 │   │   └── toast.svelte.ts          # Toast 通知
 │   ├── stores/
@@ -158,6 +174,19 @@ quick-dial/
 │   ├── manifest.json                # Chrome 扩展清单
 │   ├── manifest-edge.json           # Edge 扩展清单
 │   └── pwa-manifest.json            # PWA 清单
+├── fnos/                            # 飞牛NAS应用包
+│   ├── manifest                     # 飞牛应用信息
+│   ├── ICON.PNG / ICON_256.PNG      # 应用图标
+│   ├── app/
+│   │   ├── Dockerfile               # 容器构建
+│   │   ├── server.js                # Node 服务 + /api/apps
+│   │   ├── docker/docker-compose.yaml
+│   │   └── ui/                      # 前端静态文件
+│   ├── cmd/                         # 生命周期脚本
+│   ├── config/                      # 权限/资源
+│   └── wizard/                      # 安装向导
+├── scripts/                         # 构建脚本
+│   └── build-fnos.js                # 构建+填充 fnos/app/ui/
 ├── website/                         # 官网（闭源）
 ├── api/                             # Pro 后端（闭源）
 └── package.json

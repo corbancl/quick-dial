@@ -1,0 +1,10 @@
+{
+    "docker-project": {
+        "projects": [
+            {
+                "name": "quick-dial",
+                "path": "docker"
+            }
+        ]
+    }
+}

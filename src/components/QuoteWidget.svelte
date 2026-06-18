@@ -53,21 +53,19 @@
     font-size: 12px;
     color: var(--text-color, #e2e8f0);
     opacity: 0.5;
-    max-width: 580px;
+    max-width: 800px;
     margin: 0 auto;
-    overflow: hidden;
     user-select: none;
   }
   .quote-text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 340px;
+    text-align: center;
+    line-height: 1.5;
   }
   .quote-source {
     opacity: 0.5;
     white-space: nowrap;
     font-size: 11px;
+    flex-shrink: 0;
   }
   .quote-refresh {
     display: inline-flex;

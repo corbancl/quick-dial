@@ -274,7 +274,7 @@ export function generateId(): string {
 }
 
 // ====== 每日一言 ======
-export type QuoteType = 'hitokoto' | 'qinggan';
+export type QuoteType = 'hitokoto' | 'qinggan' | 'love' | 'saylove' | 'dog' | 'wanan' | 'zaoan' | 'saohua' | 'poison_soup';
 
 export interface QuoteData {
   content: string;

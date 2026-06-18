@@ -21,10 +21,8 @@ function init() {
     }
   } catch { /* ignore */ }
 
-  // 页面加载时立即异步同步 Pro 状态（不依赖组件的 $effect）
-  if (_authToken) {
-    syncProStatus();
-  }
+  // 页面加载时，token 存在性由 App.svelte 的 $effect 触发 syncProStatus，无需在此重复调用
+  // 移除旧代码中的直接调用，避免与 $effect 并发执行造成的竞态条件
 }
 init();
 

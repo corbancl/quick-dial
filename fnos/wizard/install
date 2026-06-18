@@ -1,0 +1,19 @@
+[
+    {
+        "stepTitle": "欢迎使用 Quick Dial",
+        "items": [
+            {
+                "type": "tips",
+                "helpText": "Quick Dial 是一款极简无广告的浏览器起始页，安装后即可使用。"
+            },
+            {
+                "type": "tips",
+                "helpText": "默认端口 <strong>9527</strong>，安装后通过 <strong>http://你的NAS:9527</strong> 访问。"
+            },
+            {
+                "type": "tips",
+                "helpText": "如需修改端口，安装后到应用设置中编辑 docker-compose.yaml。"
+            }
+        ]
+    }
+]

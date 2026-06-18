@@ -280,6 +280,13 @@
           <select id="quote-type" class="form-select" value={getSettings().quoteType} onchange={(e) => setQuoteType((e.target as HTMLSelectElement).value as QuoteType)}>
             <option value="hitokoto">{t('quote.hitokoto')}</option>
             <option value="qinggan">{t('quote.qinggan')}</option>
+            <option value="love">{t('quote.love')}</option>
+            <option value="saylove">{t('quote.saylove')}</option>
+            <option value="dog">{t('quote.dog')}</option>
+            <option value="wanan">{t('quote.wanan')}</option>
+            <option value="zaoan">{t('quote.zaoan')}</option>
+            <option value="saohua">{t('quote.saohua')}</option>
+            <option value="poison_soup">{t('quote.poison_soup')}</option>
           </select>
         </div>
       {/if}
@@ -494,6 +501,19 @@
     font-size: 14px;
     color: var(--text-color, #1e293b);
     margin: 0;
+    flex-shrink: 0;
+  }
+
+  /* 带下拉菜单的设置项：label 和 select 同行排列 */
+  .setting-item:has(select.form-select) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 12px;
+  }
+  .setting-item:has(select.form-select) .form-select {
+    width: auto;
+    min-width: 0;
   }
 
   /* Toggle Switch */

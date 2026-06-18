@@ -15,19 +15,32 @@ export function getQuoteError(): string { return error; }
 
 export async function fetchQuote(forceType?: QuoteType): Promise<QuoteData | null> {
   const type = forceType || getSettings().quoteType;
-  const route = type === 'hitokoto' ? 'hitokoto' : 'qinggan';
+
+  // 类型 -> API 路由映射
+  const routeMap: Record<string, string> = {
+    hitokoto: 'hitokoto',
+    qinggan: 'qinggan',
+    love: 'love',
+    saylove: 'saylove',
+    dog: 'dog',
+    wanan: 'wanan',
+    zaoan: 'zaoan',
+    saohua: 'saohua',
+    poison_soup: 'poison_soup',
+  };
+  const route = routeMap[type] || 'hitokoto';
 
   loading = true;
   error = '';
 
   try {
     const res = await fetch(`https://api.ruseo.cn/api/${route}?key=${API_KEY}`,
-      { signal: AbortSignal.timeout(8000) });
+      { signal: AbortSignal.timeout(15000) });
     const result = await res.json();
 
     if (result.code === 0 && result.data) {
       const data: QuoteData = {
-        content: type === 'hitokoto' ? (result.data.msg || '') : (result.data.content || ''),
+        content: result.data.content || result.data.msg || '',
         source: result.data.source || '',
       };
       content = data.content;

@@ -44,6 +44,7 @@
   import { getToasts, dismissToast } from './utils/toast.svelte';
   import { getContextAdd } from './utils/contextMenu';
 import { t, getLang } from './utils/i18n.svelte';
+  import { discoverFnosApps } from './utils/fnos';
   import type { AppData } from './types';
 
   const VERSION = __VERSION__;
@@ -123,6 +124,15 @@ import { t, getLang } from './utils/i18n.svelte';
     syncProStatus();
   });
 
+  // Web端定期刷新 Pro 状态（30分钟间隔），防止 token 过期或服务端状态变更后无法感知
+  // 扩展端每次新标签页会重新 init()，无需此机制
+  $effect(() => {
+    const token = getAuthToken();
+    if (!token) return;
+    const interval = setInterval(() => syncProStatus(), 30 * 60 * 1000);
+    return () => clearInterval(interval);
+  });
+
   // 初始化
   if (!checkStorageSupport()) {
     alert('您的浏览器不支持本地存储，部分功能可能无法使用。');
@@ -167,15 +177,20 @@ import { t, getLang } from './utils/i18n.svelte';
       { title: 'CSDN', url: 'https://www.csdn.net/', icon: fav('csdn.net') },
       { title: '百度翻译', url: 'https://fanyi.baidu.com/', icon: fav('fanyi.baidu.com') },
       { title: '搜狗', url: 'https://www.sogou.com/', icon: fav('sogou.com') },
+      { title: '豆包', url: 'https://www.doubao.com/', icon: fav('www.doubao.com') },
       { title: '呲啦官网', url: 'https://www.cilacila.cn/', icon: fav('www.cilacila.cn') },
       { title: '呲啦起始页', url: 'https://cilacila.cn/', icon: fav('cilacila.cn') },
       { title: '澄曜API Hub', url: 'https://api.ruseo.cn/', icon: 'https://api.ruseo.cn/apple-touch-icon.png' },
+      { title: '澄曜工作室', url: 'https://www.chenliang.xyz/', icon: fav('www.chenliang.xyz') },
       { title: '瑞索工具网', url: 'https://ruseo.cn/', icon: 'https://ruseo.cn/static/images/logo.png' },
       { title: '计数器API', url: 'https://js.ruseo.cn/', icon: 'counter-api.png' },
     ];
     commonItems.forEach((item, i) => {
       addDial({ title: item.title, url: item.url, icon: item.icon, groupId: defaultGroupId, sortOrder: i });
     });
+
+    // 飞牛NAS：自动发现已安装应用
+    discoverFnosApps();
   }
 
   // 键盘快捷键
@@ -491,8 +506,10 @@ import { t, getLang } from './utils/i18n.svelte';
   .tab-bar {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 4px;
     margin: 4px auto 0;
+    width: calc(100% - 16px);
     max-width: 800px;
     padding: 4px;
     border-radius: 10px;
@@ -653,6 +670,14 @@ import { t, getLang } from './utils/i18n.svelte';
   }
 
   @media (max-width: 640px) {
+    .tab-bar {
+      width: calc(100% - 12px);
+    }
+    .tab-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
     .toolbar {
       bottom: 12px;
       right: 12px;

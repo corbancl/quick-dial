@@ -1,0 +1,13 @@
+services:
+  quick-dial:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: quick-dial
+    volumes:
+      - /var/apps:/var/apps:ro
+    ports:
+      - "${TRIM_SERVICE_PORT}:80"
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai

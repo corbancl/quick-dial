@@ -1,0 +1,34 @@
+#!/bin/bash
+# Docker 应用：应用中心自动管理 compose，start/stop 无需手动操作
+# 仅需检查容器运行状态
+set -e
+
+PROJECT_DIR="${TRIM_APPDEST}/docker"
+COMPOSE_FILE="${PROJECT_DIR}/docker-compose.yaml"
+
+is_running() {
+    DOCKER_NAME=$(grep "container_name" "$COMPOSE_FILE" 2>/dev/null | awk -F ':' '{print $2}' | xargs)
+    if [ -n "$DOCKER_NAME" ]; then
+        docker inspect "$DOCKER_NAME" 2>/dev/null | grep -q '"Status": "running"' && return 0
+    fi
+    return 1
+}
+
+case $1 in
+start)
+    exit 0
+    ;;
+stop)
+    exit 0
+    ;;
+status)
+    if is_running; then
+        exit 0
+    else
+        exit 3
+    fi
+    ;;
+*)
+    exit 1
+    ;;
+esac

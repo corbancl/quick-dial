@@ -1,0 +1,38 @@
+appname=quick-dial
+version=1.0.6
+display_name=呲啦起始页
+desc="""<p><strong>呲啦起始页 - Quick Dial</strong></p>
+<p>极简、无广告的浏览器新标签页替代品。内置快捷导航、多引擎搜索、天气、农历、精美壁纸、AI 助手、待办清单、便签等功能。</p>
+<p>部署在飞牛NAS上，局域网内所有设备都能通过浏览器访问，配合浏览器扩展的"自定义新标签页URL"功能，实现全设备统一起始页。</p>
+<p><strong>功能亮点：</strong></p>
+<ul>
+<li>12 种搜索引擎一键切换</li>
+<li>拖拽排序的快捷导航</li>
+<li>实时天气 + 农历黄历</li>
+<li>精美壁纸库</li>
+<li>AI 对话助手</li>
+<li>待办清单 + 便签</li>
+<li>Pro 云同步（跨设备同步数据）</li>
+</ul>
+<p><strong>使用方法：</strong></p>
+<ol>
+<li>安装后点击桌面图标或访问 http://你的NAS:端口</li>
+<li>在浏览器扩展中设置自定义新标签页URL为该地址</li>
+<li>所有设备访问同一地址，配合 Pro 云同步实现数据统一</li>
+</ol>
+<p>在线体验：<a href="https://cilacila.cn">https://cilacila.cn</a></p>
+"""
+platform=all
+source=thirdparty
+
+maintainer=澄曜
+maintainer_url=https://www.cilacila.cn/
+distributor=澄曜
+distributor_url=https://www.cilacila.cn
+
+os_min_version=0.9.0
+ctl_stop=true
+desktop_uidir=ui
+desktop_applaunchname=quick-dial.APPLICATION
+service_port=9527
+checkport=false

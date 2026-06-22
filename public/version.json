@@ -1,9 +1,9 @@
 {
-    "version":  "1.0.8",
-    "buildDate":  "2026-06-22",
-    "downloadUrl":  "https://github.com/corbancc/quick-dial/releases/tag/v1.0.8",
-    "platforms":  {
-                      "web":  "https://cilacila.cn",
-                      "fnos":  "https://github.com/corbancc/quick-dial/releases/latest"
-                  }
+  "version": "1.0.8",
+  "buildDate": "2026-06-22",
+  "downloadUrl": "https://github.com/corbancc/quick-dial/releases/tag/v1.0.8",
+  "platforms": {
+    "web": "https://cilacila.cn",
+    "fnos": "https://github.com/corbancc/quick-dial/releases/latest"
+  }
 }

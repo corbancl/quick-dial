@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>Copyright · Quick Dial</title>
+<style>
+  :root { --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #1e293b; --text2: #64748b; --accent: #3b82f6; --shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,250,252,0.92); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 56px; }
+  .nav-logo { font-size: 11px; font-weight: 600; letter-spacing: 0px; text-decoration: none; color: var(--text2); line-height: 1.15; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  .nav-logo-img { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
+  .nav-logo-txt { line-height: 1.15; }
+  .nav-logo .sub { display: block; font-size: 17px; font-weight: 800; color: var(--accent); letter-spacing: 0px; }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: var(--accent); color: white; }
+  .nav-btn:hover { opacity: 0.9; }
+  .nav-lang { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 16px; cursor: pointer; color: var(--text2); transition: all 0.2s; }
+  .nav-lang:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .container { max-width: 720px; margin: 0 auto; padding: 120px 24px 60px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 40px 36px; }
+  h1 { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+  h2 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; }
+  p { font-size: 14px; color: var(--text2); line-height: 1.9; margin-bottom: 8px; }
+  .back { display: inline-block; margin-top: 32px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; }
+  .back:hover { text-decoration: underline; }
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 48px 24px 32px;
+    font-size: 13px;
+    color: var(--text2);
+    border-top: 1px solid var(--border);
+  }
+  .footer .footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    margin-bottom: 14px;
+  }
+  .footer .footer-links a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .footer .footer-links a:hover {
+    opacity: 0.75;
+    text-decoration: underline;
+  }
+  .footer .footer-filings {
+    font-size: 12px;
+    line-height: 2;
+    color: var(--text2);
+    opacity: 0.75;
+  }
+  .footer .footer-filings a {
+    color: var(--text2);
+    text-decoration: none;
+  }
+  .footer .footer-filings a:hover {
+    color: var(--accent);
+  }
+  .footer .footer-sep {
+    display: inline-block;
+    margin: 0 10px;
+    color: var(--border);
+  }
+  @media (max-width: 768px) { .container { padding: 100px 16px 40px; } .card { padding: 28px 20px; } .nav-links a { display: none; } }
+  @media (max-width: 640px) {
+    .footer { padding: 32px 16px 24px; font-size: 12px; }
+    .footer .footer-links { gap: 2px 14px; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="en.html" class="nav-logo"><img src="favicon.png" class="nav-logo-img" alt="" /><span class="nav-logo-txt">Quick Dial<span class="sub">Quick Dial</span></span></a>
+    <div class="nav-links">
+      <a href="en.html#features">Features</a>
+      <a href="en.html#pricing">Pricing</a>
+      <a href="en.html#download">Download</a>
+      <a href="en.html#faq">FAQ</a>
+      <a href="en-about.html">About</a>
+      <button class="nav-btn" onclick="window.location.href='en.html'">Home</button>
+      <button class="nav-lang" onclick="qdToggleLang()" title="切换到中>🌐</button>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <div class="card">
+    <h1>Copyright Notice</h1>
+    <h2>1. Site Classification</h2>
+    <p>cilacila.cn (Quick Dial) is a personal non-news utility website. All site content consists of tool features, URL navigation, and public convenience services. There is no news reporting, information publishing, or prohibited content output.</p>
+    <h2>2. Copyright</h2>
+    <p>The frontend interface, functional design, and page layout of this site are original designs protected by copyright law. Without written authorization, no individual or organization may copy, steal, imitate, or tamper with the overall page and functional code of this site.</p>
+    <h2>3. Third-Party Resources</h2>
+    <p>Third-party websites, external links, and third-party tool content accessed through navigation on this site are copyrighted by their respective platforms. This site only provides quick access entry points and does not claim any copyright over third-party content.</p>
+    <h2>4. Infringement Reports</h2>
+    <p>If any content on this site involves copyright disputes, please contact us promptly through the provided contact information. We will verify and rectify or remove the relevant content as soon as possible.</p>
+    <a href="en.html" class="back">&larr; Back to Home</a>
+  </div>
+</div>
+<div class="footer">
+  <div class="footer-links">
+    <a href="en-about.html">About</a>
+    <a href="en-privacy.html">Privacy</a>
+    <a href="en-copyright.html">Copyright</a>
+    <a href="en-contact.html">Contact</a>
+    <a href="en-guide.html">Guide</a>
+  </div>
+  <div class="footer-filings">
+    &copy;2026 cilacila.cn Quick Dial All Rights Reserved<br>
+    <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP701203023</a>
+    <span class="footer-sep">|</span>
+    <img src="beian.png" alt="" style="width:14px;height:14px;vertical-align:middle;margin-right:2px;"><a href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">鲁公网安7098202000884/a>
+  </div>
+</div>
+<script src="lang.js"></script>
+<script src=theme.js></script></body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>Guide · Quick Dial</title>
+<style>
+  :root { --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #1e293b; --text2: #64748b; --accent: #3b82f6; --shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; min-height: 100vh; }
+  .nav { position: fixed; top:0; left:0; right:0; z-index:100; background: rgba(248,250,252,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 56px; }
+  .nav-logo { font-size: 11px; font-weight: 600; text-decoration: none; color: var(--text2); letter-spacing: 0px; line-height: 1.15; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  .nav-logo-img { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
+  .nav-logo-txt { line-height: 1.15; }
+  .nav-logo .sub { display: block; font-size: 17px; font-weight: 800; color: var(--accent); letter-spacing: 0px; }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; background: var(--accent); color: white; }
+  .nav-lang { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 16px; cursor: pointer; color: var(--text2); }
+  .container { max-width: 900px; margin: 0 auto; padding: 100px 24px 60px; }
+  h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+  .subtitle { color: var(--text2); font-size: 14px; margin-bottom: 36px; }
+  .overview-img { width: 100%; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 40px; }
+  h2 { font-size: 22px; font-weight: 700; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+  h3 { font-size: 16px; font-weight: 700; margin: 24px 0 8px; color: var(--accent); }
+  p { font-size: 14px; color: var(--text2); margin-bottom: 10px; }
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .feature-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; box-shadow: var(--shadow); }
+  .feature-item .icon { font-size: 24px; margin-bottom: 8px; }
+  .feature-item h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .feature-item p { font-size: 12px; color: var(--text2); margin: 0; }
+  .pro-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 6px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; margin-left: 6px; vertical-align: middle; }
+  .kbd { display: inline-block; padding: 2px 8px; font-size: 12px; font-family: monospace; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text2); }
+  ul { padding-left: 20px; margin-bottom: 12px; }
+  li { font-size: 14px; color: var(--text2); margin-bottom: 4px; }
+  .toc { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 32px; }
+  .toc h3 { margin: 0 0 10px; font-size: 14px; }
+  .toc a { display: block; color: var(--accent); text-decoration: none; font-size: 13px; padding: 4px 0; }
+  .toc a:hover { text-decoration: underline; }
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 48px 24px 32px;
+    font-size: 13px;
+    color: var(--text2);
+    border-top: 1px solid var(--border);
+  }
+  .footer .footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    margin-bottom: 14px;
+  }
+  .footer .footer-links a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .footer .footer-links a:hover {
+    opacity: 0.75;
+    text-decoration: underline;
+  }
+  .footer .footer-filings {
+    font-size: 12px;
+    line-height: 2;
+    color: var(--text2);
+    opacity: 0.75;
+  }
+  .footer .footer-filings a {
+    color: var(--text2);
+    text-decoration: none;
+  }
+  .footer .footer-filings a:hover {
+    color: var(--accent);
+  }
+  .footer .footer-sep {
+    display: inline-block;
+    margin: 0 10px;
+    color: var(--border);
+  }
+  @media (max-width: 768px) { .container { padding: 90px 16px 40px; } .feature-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .footer { padding: 32px 16px 24px; font-size: 12px; }
+    .footer .footer-links { gap: 2px 14px; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="en.html" class="nav-logo"><img src="favicon.png" class="nav-logo-img" alt="" /><span class="nav-logo-txt">Quick Dial<span class="sub">Quick Dial</span></span></a>
+    <div class="nav-links">
+      <a href="en.html#features">Features</a>
+      <a href="en.html#pricing">Pricing</a>
+      <a href="en.html#download">Download</a>
+      <a href="en-guide.html">Guide</a>
+      <a href="en-about.html">About</a>
+      <button class="nav-btn" onclick="location.href='en.html'">Home</button>
+      <button class="nav-lang" onclick="location.href='guide.html'">🌐</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>📖 User Guide</h1>
+  <p class="subtitle">A complete walkthrough of Quick Dial features</p>
+
+  <img src="imgs/main.png" class="overview-img" alt="Quick Dial main page" />
+
+  <div class="toc">
+    <h3>📑 Contents</h3>
+    <a href="#search">🔍 Search</a>
+    <a href="#dials">📌 Speed Dials</a>
+    <a href="#clock">🕐 Clock Styles</a>
+    <a href="#weather">🌤Weather & Lunar</a>
+    <a href="#wallpaper">🎨 Wallpaper & Themes</a>
+    <a href="#data">💾 Backup & Restore</a>
+    <a href="#sync">☁️ Cloud Sync</a>
+    <a href="#todo">To-Do</a>
+    <a href="#notes">📝 Notes</a>
+    <a href="#ai">🤖 AI Assistant</a>
+    <a href="#stats">📊 Statistics</a>
+    <a href="#settings">⚙️ Preferences</a>
+    <a href="#shortcuts">⌨️ Keyboard Shortcuts</a>
+    <a href="#pro">💎 Pro Membership</a>
+    <a href="#tips">💡 Tips</a>
+  </div>
+
+  <img src="imgs/main.png" class="overview-img" alt="Search" style="margin-top:12px" /><h2 id="search">🔍 Search</h2>
+  <div class="feature-grid">
+    <div class="feature-item"><div class="icon">🌐</div><h4>6 Free Engines</h4><p>Google · Baidu · Bing · Sogou · 360 · Taobao</p></div>
+    <div class="feature-item"><div class="icon">/div><h4>Pro Engines<span class="pro-badge">PRO</span></h4><p>Zhihu · Weibo · Bilibili · GitHub · DuckDuckGo · X · YouTube</p></div>
+    <div class="feature-item"><div class="icon">/div><h4>Custom Engines<span class="pro-badge">PRO</span></h4><p>Add any search engine with {keyword} placeholder</p></div>
+    <div class="feature-item"><div class="icon">⌨️</div><h4>Quick Focus</h4><p><span class="kbd">Ctrl+K</span> or <span class="kbd">/</span> to jump to search</p></div>
+  </div>
+
+  <h2 id="dials">📌 Speed Dials</h2>
+  <h3>Adding Dials</h3>
+  <ul>
+    <li>Click the <strong>+ button</strong> at bottom-right</li>
+    <li>Paste a URL name and favicon are auto-detected</li>
+    <li>Choose from 7 icon categories with 60+ emojis + 18 brand icons</li>
+    <li>Custom icon URLs available in Advanced Options</li>
+  </ul>
+  <h3>Groups</h3>
+  <ul>
+    <li>Free: up to <strong>3 groups</strong>. Pro: unlimited</li>
+    <li>Right-click a card Edit assign a group</li>
+    <li>Drag cards between groups</li>
+  </ul>
+  <h3>Bookmark Import</h3>
+  <ul>
+    <li>Open Import/Export Import Browser Bookmarks</li>
+    <li>Select a Chrome/Edge HTML bookmarks file</li>
+    <li>Auto-deduplication; extras go to "Default" on free plan</li>
+  </ul>
+
+  <h2 id="clock">🕐 Clock Styles</h2>
+  <p>6 clock styles in Settings:</p>
+  <div class="feature-grid">
+    <div class="feature-item"><div class="icon">🔢</div><h4>Digital</h4><p>HH:MM:SS default display</p></div>
+    <div class="feature-item"><div class="icon">/div><h4>Minimal</h4><p>HH:MM with blinking colon</p></div>
+    <div class="feature-item"><div class="icon">🕰/div><h4>Classic</h4><p>AM/PM + seconds bar</p></div>
+    <div class="feature-item"><div class="icon">📟</div><h4>Flip</h4><p>Card-style flip clock</p></div>
+    <div class="feature-item"><div class="icon">💡</div><h4>Neon</h4><p>Glowing text with pulse</p></div>
+    <div class="feature-item"><div class="icon">💻</div><h4>Binary</h4><p>6-bit dots + decimal</p></div>
+  </div>
+
+  <h2 id="weather">🌤Weather & Lunar</h2>
+  <p>Auto-detects location via IP. Shows temperature, humidity, wind. Click to expand 3-day forecast.</p>
+  <p>Lunar calendar shows date, zodiac, solar terms. Tap to see auspicious/inauspicious directions.</p>
+
+  <img src="imgs/wallpaper.png" class="overview-img" alt="Wallpaper" style="margin-top:12px" /><h2 id="wallpaper">🎨 Wallpaper & Themes <span class="pro-badge">PRO</span></h2>
+  <p>12 free gradient presets. Pro users can upload local images (max 5MB), set URL wallpapers, or use random online wallpapers. Adjust blur (0-20px) and brightness (50%-150%). Custom CSS supported.</p>
+
+  <img src="imgs/importexport.png" class="overview-img" alt="Import Export" style="margin-top:12px" /><h2 id="data">💾 Backup & Restore</h2>
+  <p>Export all data as JSON. Import to restore. Clear all with confirmation (backup first!). Auto-saves every change.</p>
+
+  <img src="imgs/sync.png" class="overview-img" alt="Cloud Sync" style="margin-top:12px" /><h2 id="sync">☁️ Cloud Sync <span class="pro-badge">PRO</span></h2>
+  <p>Register/login, then upload/download your config. Syncs dials, groups, settings, wallpaper, custom CSS, title, and footer.</p>
+
+  <!-- To-Do -->
+  <h2 id="todo">To-Do List</h2>
+  <p>Open via the bottom-left panel or toolbar. Capture tasks on the fly:</p>
+  <ul>
+    <li>Press Enter to add a task, supports batch entry</li>
+    <li>Click checkbox to mark complete completed items get strikethrough</li>
+    <li>Hover to reveal delete button</li>
+    <li>Data stored in browser LocalStorage, works offline</li>
+    <li>Toggle visibility in Settings Show To-Do</li>
+  </ul>
+
+  <!-- Notes -->
+  <h2 id="notes">📝 Notes</h2>
+  <p>Open via the bottom-left panel or toolbar. Jot down memos and ideas:</p>
+  <ul>
+    <li>Click to add a note, supports Markdown formatting</li>
+    <li>Edit and delete all changes save in real-time</li>
+    <li>AI chat responses can be saved to notes with one click</li>
+    <li>Toggle visibility in Settings Show Notes</li>
+  </ul>
+
+  <!-- AI Assistant -->
+  <h2 id="ai">🤖 AI Assistant <span class="pro-badge">PRO</span></h2>
+  <p>Click the AI icon (bottom-right) or open via toolbar to chat with LLMs:</p>
+  <div class="feature-grid">
+    <div class="feature-item"><div class="icon">🧠</div><h4>14 Models</h4><p>DeepSeek, GPT-4o, Claude, Gemini, Hunyuan, Doubao, Mistral, Groq, SiliconFlow &amp; more</p></div>
+    <div class="feature-item"><div class="icon">🔑</div><h4>Built-in Key</h4><p>DeepSeek comes with an encrypted API key, ready to use. Other models need your own key.</p></div>
+    <div class="feature-item"><div class="icon">💬</div><h4>Streaming Chat</h4><p>Typewriter-effect output with multi-turn context</p></div>
+    <div class="feature-item"><div class="icon">⚙️</div><h4>System Prompt</h4><p>Pro users can customize System Prompt for role-play or specialized behavior</p></div>
+    <div class="feature-item"><div class="icon">📋</div><h4>Copy &amp; Save</h4><p>One-click copy to clipboard or save response to Notes</p></div>
+    <div class="feature-item"><div class="icon">☁️</div><h4>Cloud History</h4><p>Pro users get automatic cloud sync for chat history across devices</p></div>
+  </div>
+
+  <img src="imgs/stats.png" class="overview-img" alt="Statistics" style="margin-top:12px" /><h2 id="stats">📊 Statistics</h2>
+  <p>Total clicks, unique sites, top 10 ranking. Export as CSV. Clear anytime.</p>
+
+  <img src="imgs/settings.png" class="overview-img" alt="Preferences" style="margin-top:12px" /><h2 id="settings">⚙️ Preferences</h2>
+  <div class="feature-grid">
+    <div class="feature-item"><div class="icon">/div><h4>To-Do List</h4><p>Add/check off tasks, local storage</p></div>
+    <div class="feature-item"><div class="icon">📝</div><h4>Notes</h4><p>Quick memos, ideas, code snippets</p></div>
+    <div class="feature-item"><div class="icon">🤖</div><h4>AI Assistant<span class="pro-badge">PRO</span></h4><p>DeepSeek, GPT-4o &amp; more</p></div>
+    <div class="feature-item"><div class="icon">🔍</div><h4>Default Engine</h4></div>
+    <div class="feature-item"><div class="icon">🕐</div><h4>Clock Style</h4></div>
+    <div class="feature-item"><div class="icon">📅</div><h4>Date/Weekday</h4></div>
+    <div class="feature-item"><div class="icon">🌙</div><h4>Auto Theme</h4></div>
+    <div class="feature-item"><div class="icon">📋</div><h4>Recent Sites</h4></div>
+    <div class="feature-item"><div class="icon">🔗</div><h4>New Tab Open</h4></div>
+    <div class="feature-item"><div class="icon">🌐</div><h4>Language</h4></div>
+    <div class="feature-item"><div class="icon">📱</div><h4>Recent Count</h4></div>
+  </div>
+
+  <img src="imgs/shortcuts.png" class="overview-img" alt="Shortcuts" style="margin-top:12px" /><h2 id="shortcuts">⌨️ Keyboard Shortcuts</h2>
+  <div class="feature-grid">
+    <div class="feature-item"><span class="kbd">Ctrl+K</span> Focus search</div>
+    <div class="feature-item"><span class="kbd">Ctrl+,</span> Settings</div>
+    <div class="feature-item"><span class="kbd">Ctrl+Shift+B</span> Wallpaper</div>
+    <div class="feature-item"><span class="kbd">Ctrl+Shift+S</span> Cloud Sync</div>
+    <div class="feature-item"><span class="kbd">?</span> Shortcuts panel</div>
+    <div class="feature-item"><span class="kbd">Escape</span> Close modal</div>
+  </div>
+
+  <h2 id="pro">💎 Pro Membership</h2>
+  <div class="feature-grid">
+    <div class="feature-item"><div class="icon">♾️</div><h4>Unlimited Groups</h4></div>
+    <div class="feature-item"><div class="icon">/div><h4>Pro Engines + Custom</h4></div>
+    <div class="feature-item"><div class="icon">☁️</div><h4>Cloud Sync</h4></div>
+    <div class="feature-item"><div class="icon">🖼/div><h4>Wallpaper Upload</h4></div>
+    <div class="feature-item"><div class="icon">🎨</div><h4>Custom CSS</h4></div>
+    <div class="feature-item"><div class="icon">🏷/div><h4>Custom Title/Footer</h4></div>
+  </div>
+  <p style="margin-top:16px"><a href="en.html#pricing" style="color:var(--accent);font-weight:700">View pricing /a></p>
+
+  <h2 id="tips">💡 Tips</h2>
+  <ul>
+    <li><strong>Right-click to add</strong>: on any webpage, right-click "Add to Quick Dial"</li>
+    <li><strong>Auto-save</strong>: all changes saved instantly to local storage</li>
+    <li><strong>Drag & drop</strong>: reorder cards and groups by dragging</li>
+    <li><strong>Pro expiry badge</strong>: 7 days before expiry, the PRO badge turns red with countdown</li>
+    <li><strong>Onboarding</strong>: first-time users get a 4-step tutorial</li>
+  </ul>
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="en-about.html">About</a>
+    <a href="en-privacy.html">Privacy</a>
+    <a href="en-copyright.html">Copyright</a>
+    <a href="en-contact.html">Contact</a>
+    <a href="en-guide.html">Guide</a>
+  </div>
+  <div class="footer-filings">
+    &copy;2026 cilacila.cn Quick Dial All Rights Reserved<br>
+    <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP701203023</a>
+    <span class="footer-sep">|</span>
+    <img src="beian.png" alt="" style="width:14px;height:14px;vertical-align:middle;margin-right:2px;"><a href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">鲁公网安7098202000884/a>
+  </div>
+</div>
+<script src="lang.js"></script>
+<script src=theme.js></script></body>
+</html>

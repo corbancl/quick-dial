@@ -82,6 +82,7 @@ export interface LunarData {
   weekday: string;
   lunar: {
     formatted: string;
+    year_chinese: string;
     year_ganzhi: string;
     year_shengxiao: string;
     day_ganzhi: string;
@@ -135,6 +136,7 @@ export async function fetchLunar(date?: string): Promise<LunarData | null> {
       weekday: result.data.weekday,
       lunar: {
         formatted: result.data.lunar?.formatted || '',
+        year_chinese: toChineseYear((result.data.lunar?.year || result.data.lunar?.year_ganzhi) ? parseInt(result.data.date?.split('-')[0]) || new Date().getFullYear() : new Date().getFullYear()),
         year_ganzhi: result.data.lunar?.year_ganzhi || '',
         year_shengxiao: result.data.lunar?.year_shengxiao || '',
         day_ganzhi: result.data.lunar?.day_ganzhi || '',
@@ -192,6 +194,14 @@ function cacheLunar(cacheKey: string, data: LunarData): void {
     }));
   } catch {
   }
+}
+
+/**
+ * 阿拉伯数字年份转中文数字，如 2026 → 二〇二六
+ */
+export function toChineseYear(year: number | string): string {
+  const digits = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+  return String(year).split('').map(d => digits[parseInt(d)] || d).join('');
 }
 
 export async function fetchWeather(): Promise<WeatherData | null> {

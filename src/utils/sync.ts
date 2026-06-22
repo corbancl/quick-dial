@@ -3,8 +3,6 @@ import { getDialsState } from '../stores/dials.svelte';
 import { getTheme } from '../stores/theme.svelte';
 import { getSettings } from '../stores/settings.svelte';
 import { getRecentSites } from '../stores/recentSites.svelte';
-import { getTodos } from '../stores/todos.svelte';
-import { getNotes } from '../stores/notes.svelte';
 import { getChatMessages, getChatConfig } from '../stores/chat.svelte';
 import { getIsPro, setAuthToken, getAuthToken } from '../stores/subscription.svelte';
 
@@ -96,8 +94,6 @@ function getLocalSnapshot(): AppData {
     theme: getTheme(),
     settings: getSettings(),
     recentSites: getRecentSites().map(s => ({ ...s })),
-    todos: getTodos().map(t => ({ ...t })),
-    notes: getNotes().map(n => ({ ...n })),
     // Pro 专属：同步 AI 对话历史
     chatMessages: isPro ? getChatMessages().map(m => ({ ...m })) : undefined,
     chatConfig: isPro ? { ...getChatConfig() } : undefined,

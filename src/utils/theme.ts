@@ -97,6 +97,11 @@ export function applyTheme(mode: ThemeMode, primaryColor: string, style: ThemeSt
   }
 
   root.style.setProperty('--bg-color', bgColor);
+  // 仅当没有图片壁纸时同步 --wallpaper，避免覆盖用户壁纸
+  const currentWallpaper = root.style.getPropertyValue('--wallpaper').trim();
+  if (!currentWallpaper || !currentWallpaper.startsWith('url(')) {
+    root.style.setProperty('--wallpaper', bgColor);
+  }
   root.style.setProperty('--text-color', textColor);
   root.style.setProperty('--card-bg', cardBg);
   root.style.setProperty('--card-border', cardBorder);

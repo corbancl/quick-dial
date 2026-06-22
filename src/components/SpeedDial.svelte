@@ -135,17 +135,31 @@ import { t } from '../utils/i18n.svelte';
   }
 
   // 获取按分组排序的数据
-  function getGroupedDials() {
+  let grouped = $derived.by(() => {
     const state = getDialsState();
     const sortedGroups = [...state.groups].sort((a, b) => a.sortOrder - b.sortOrder);
-
     return sortedGroups.map(group => ({
       group,
       dials: state.items
         .filter(d => d.groupId === group.id)
         .sort((a, b) => a.sortOrder - b.sortOrder)
     }));
+  });
+
+  // 分组折叠状态（Tab 模式下控制）
+  let collapsedGroups = $state(new Set<string>());
+
+  function toggleGroupCollapse(groupId: string) {
+    const next = new Set(collapsedGroups);
+    if (next.has(groupId)) {
+      next.delete(groupId);
+    } else {
+      next.add(groupId);
+    }
+    collapsedGroups = next;
   }
+
+  const hasGroups = $derived(grouped.length > 0);
 </script>
 
 <svelte:window onkeydown={(e) => {
@@ -153,28 +167,53 @@ import { t } from '../utils/i18n.svelte';
 }} />
 
 <div class="speed-dial">
-  {#each getGroupedDials() as { group, dials } (group.id)}
-    <DialGroup
-      {group}
-      {dials}
-      onedit={(dial) => openEditDial(dial)}
-      ondelete={(id) => handleDeleteDial(id)}
-      onadd={(groupId) => openAddDial(groupId)}
-      ondragstart={handleDragStart}
-      ondragover={handleDragOver}
-      ondrop={handleDrop}
-      ondragend={handleDragEnd}
-      ongroupdrop={handleGroupDrop}
-      oncontextmenu={handleContextMenu}
-      onkeydown={handleKeydown}
-    />
+  <!-- 水平分组标签栏 -->
+  {#if hasGroups}
+    <div class="group-tabs" role="tablist" aria-label={t('group.manage')}>
+      {#each grouped as { group, dials } (group.id)}
+        {@const collapsed = collapsedGroups.has(group.id)}
+        <button
+          class="group-tab"
+          class:collapsed
+          role="tab"
+          aria-selected={!collapsed}
+          onclick={() => toggleGroupCollapse(group.id)}
+        >
+          <span class="tab-chevron" class:collapsed></span>
+          <span class="tab-name">{t(group.name)}</span>
+          <span class="tab-count">{dials.length}</span>
+        </button>
+      {/each}
+    </div>
+  {/if}
+
+  <!-- 下方内容区 -->
+  {#if hasGroups}
+    {#each grouped as { group, dials } (group.id)}
+      <DialGroup
+        {group}
+        {dials}
+        hideHeader={true}
+        forceCollapsed={collapsedGroups.has(group.id)}
+        onedit={(dial) => openEditDial(dial)}
+        ondelete={(id) => handleDeleteDial(id)}
+        onadd={(groupId) => openAddDial(groupId)}
+        ondragstart={handleDragStart}
+        ondragover={handleDragOver}
+        ondrop={handleDrop}
+        ondragend={handleDragEnd}
+        ongroupdrop={handleGroupDrop}
+        oncontextmenu={handleContextMenu}
+        onkeydown={handleKeydown}
+      />
+    {/each}
   {:else}
     <div class="empty-state">
       <div class="empty-icon"><i class="fa-regular fa-rectangle-list"></i></div>
       <p class="empty-text">{t('speedDial.empty')}</p>
       <button class="btn btn-primary" onclick={() => openAddDial()}><i class="fa-solid fa-plus"></i> {t('dial.add')}</button>
     </div>
-  {/each}
+  {/if}
 
   <!-- 添加导航按钮 -->
   <div class="add-dial-row">
@@ -219,17 +258,95 @@ import { t } from '../utils/i18n.svelte';
 <style>
   .speed-dial {
     width: 100%;
-    max-width: 800px;
+    max-width: 960px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
   }
   :global(html[data-layout="wide"]) .speed-dial {
-    max-width: 1200px;
+    max-width: 1280px;
   }
   :global(html[data-layout="sidebar"]) .speed-dial {
-    max-width: 1400px;
+    max-width: 100%;
+  }
+
+  /* ── 水平分组标签栏 ── */
+  .group-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0 0 8px;
+    border-bottom: 1px solid;
+    border-color: color-mix(in srgb, var(--text-color, #1e293b) 10%, transparent);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .group-tabs::-webkit-scrollbar { display: none; }
+
+  .group-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-color, #1e293b);
+    opacity: 0.55;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    user-select: none;
+  }
+
+  .group-tab:hover {
+    opacity: 0.8;
+    background: var(--hover-bg, rgba(0,0,0,0.04));
+  }
+
+  .group-tab:not(.collapsed) {
+    opacity: 0.9;
+    background: var(--primary-color, #3b82f6);
+    background: color-mix(in srgb, var(--primary-color, #3b82f6) 12%, transparent);
+    color: var(--primary-color, #3b82f6);
+  }
+
+  .tab-chevron {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.25s ease;
+    margin-top: -2px;
+  }
+
+  .tab-chevron.collapsed {
+    transform: rotate(-45deg);
+    margin-top: 2px;
+  }
+
+  .tab-name {
+    font-weight: 600;
+  }
+
+  .tab-count {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: var(--hover-bg, rgba(0,0,0,0.06));
+    opacity: 0.7;
+    line-height: 1.5;
+  }
+
+  .group-tab:not(.collapsed) .tab-count {
+    opacity: 1;
+    background: var(--primary-color, #3b82f6);
+    background: color-mix(in srgb, var(--primary-color, #3b82f6) 18%, transparent);
   }
 
   .empty-state {

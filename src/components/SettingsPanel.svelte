@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setShowNotes, setShowAI, setShowHoroscope, setZodiacSign, setHideBranding, setRecentSitesCount, setOpenInNewTab, setThemeStyle, setNotesDisplayMode, setTodoDisplayMode, setShowQuote, setQuoteType, setShowPomodoro, setShowCurrency, setShowRss, setLayout } from '../stores/settings.svelte';
+  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowAI, setHideBranding, setRecentSitesCount, setOpenInNewTab, setThemeStyle, setShowQuote, setQuoteType, setShowRss, setLayout } from '../stores/settings.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
   import { getAvailableEngines, getLockedEngines, getAllEngines } from '../utils/search';
   import { checkSubscription } from '../utils/payment';
   import { t, getLang, setLang } from '../utils/i18n.svelte';
-  import { modalClose } from '../utils/modalClose';
-  import type { ClockStyle, ThemeStyle, NotesDisplayMode, TodoDisplayMode, ZodiacSign, QuoteType } from '../types';
-  import { isProTheme, ZODIAC_SIGNS } from '../types';
+  import type { ClockStyle, ThemeStyle, QuoteType } from '../types';
+  import { isProTheme } from '../types';
   import { applyThemeStyle } from '../utils/theme';
 
   interface Props {
@@ -15,6 +14,18 @@
   }
 
   let { onclose, onsubscribe }: Props = $props();
+
+  let closing = $state(false);
+
+  function handleClose() {
+    if (closing) return;
+    closing = true;
+    setTimeout(() => onclose(), 250);
+  }
+
+  function handleKey(e: KeyboardEvent) {
+    if (e.key === 'Escape') handleClose();
+  }
 
   let customCss = $state(localStorage.getItem('quick-dial-custom-css') || '');
   let customCssTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -73,51 +84,39 @@
     setClockStyle(select.value as ClockStyle);
   }
 
+  // 从 DOM 读取实际主题（比 getSettings() 快照更可靠）
+  let currentThemeStyle = $state(document.documentElement.getAttribute('data-theme-style') as ThemeStyle || getSettings().themeStyle || 'tech');
+
   function handleThemeStyleChange(e: Event) {
     const select = e.target as HTMLSelectElement;
     const style = select.value as ThemeStyle;
     // 免费用户不能选 Pro 主题
     if (isProTheme(style) && !getIsPro()) {
       alert(t('theme.proRequired'));
-      select.value = getSettings().themeStyle;
+      select.value = currentThemeStyle;
       return;
     }
+    currentThemeStyle = style;
     setThemeStyle(style);
     applyThemeStyle(style);
   }
 
-  function handleNotesDisplayModeChange(e: Event) {
-    const select = e.target as HTMLSelectElement;
-    const mode = select.value as NotesDisplayMode;
-    if (mode === 'colorful' && !getIsPro()) {
-      alert(t('note.proRequired'));
-      select.value = getSettings().notesDisplayMode;
-      return;
-    }
-    setNotesDisplayMode(mode);
-  }
-
-  function handleTodoDisplayModeChange(e: Event) {
-    const select = e.target as HTMLSelectElement;
-    const mode = select.value as TodoDisplayMode;
-    if (mode === 'kanban' && !getIsPro()) {
-      alert(t('todo.proRequired'));
-      select.value = getSettings().todoDisplayMode;
-      return;
-    }
-    setTodoDisplayMode(mode);
-  }
 </script>
 
-<div class="modal-overlay" use:modalClose={onclose}>
-  <div class="modal-content">
-    <h3 class="modal-title">{t('settings.title')}</h3>
+<svelte:window onkeydown={handleKey} />
+<div class="modal-overlay" class:closing onclick={handleClose} onkeydown={(e) => { if (e.key === 'Enter') handleClose(); }} role="dialog" tabindex="-1">
+  <div class="modal-panel" class:closing onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="document">
+    <div class="modal-header">
+      <h3 class="modal-title">{t('settings.title')}</h3>
+      <button class="modal-close" onclick={handleClose} aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
 
     <div class="settings-list">
       <!-- UI 主题风格 -->
       <div class="setting-item">
         <label class="setting-label" for="theme-style">{t('settings.theme')}</label>
-        <select id="theme-style" class="form-select" value={getSettings().themeStyle} onchange={handleThemeStyleChange}>
+        <select id="theme-style" class="form-select" value={currentThemeStyle} onchange={handleThemeStyleChange}>
           <option value="tech">{t('theme.tech')}</option>
           <option value="minimal">{t('theme.minimal')}</option>
           <option value="paper">{t('theme.paper')}</option>
@@ -135,7 +134,6 @@
         <select id="layout-mode" class="form-select" value={getSettings().layout} onchange={(e) => setLayout((e.target as HTMLSelectElement).value as any)}>
           <option value="centered">{t('layout.centered')}</option>
           <option value="wide">{t('layout.wide')}</option>
-          <option value="sidebar">{t('layout.sidebar')}</option>
         </select>
       </div>
 
@@ -203,47 +201,6 @@
         </label>
       </div>
 
-      <!-- 显示待办清单 -->
-      <div class="setting-item">
-        <label class="setting-label" for="show-todo">{t('settings.showTodo')}</label>
-        <label class="toggle">
-          <input id="show-todo" type="checkbox" checked={getSettings().showTodo} onchange={(e) => setShowTodo((e.target as HTMLInputElement).checked)} />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-
-      <!-- 待办显示模式 -->
-      {#if getSettings().showTodo}
-        <div class="setting-item">
-          <label class="setting-label" for="todo-mode">{t('todo.mode')}</label>
-          <select id="todo-mode" class="form-select" value={getSettings().todoDisplayMode} onchange={handleTodoDisplayModeChange}>
-            <option value="list">{t('todo.modeList')}</option>
-            <option value="kanban" disabled={!getIsPro()}>{t('todo.modeKanban')}</option>
-          </select>
-        </div>
-      {/if}
-
-      <!-- 显示便签 -->
-      <div class="setting-item">
-        <label class="setting-label" for="show-notes">{t('settings.showNotes')}</label>
-        <label class="toggle">
-          <input id="show-notes" type="checkbox" checked={getSettings().showNotes} onchange={(e) => setShowNotes((e.target as HTMLInputElement).checked)} />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-
-      <!-- 便签显示模式 -->
-      {#if getSettings().showNotes}
-        <div class="setting-item">
-          <label class="setting-label" for="notes-mode">{t('note.mode')}</label>
-          <select id="notes-mode" class="form-select" value={getSettings().notesDisplayMode} onchange={handleNotesDisplayModeChange}>
-            <option value="structured">{t('note.modeStructured')}</option>
-            <option value="list">{t('note.modeList')}</option>
-            <option value="colorful" disabled={!getIsPro()}>{t('note.modeColorful')}</option>
-          </select>
-        </div>
-      {/if}
-
       <!-- 显示 AI 助手 -->
       <div class="setting-item">
         <label class="setting-label" for="show-ai">{t('settings.showAI')}</label>
@@ -252,27 +209,6 @@
           <span class="toggle-slider"></span>
         </label>
       </div>
-
-      <!-- 显示星座运势 -->
-      <div class="setting-item">
-        <label class="setting-label" for="show-horoscope">{t('horoscope.settings')}</label>
-        <label class="toggle">
-          <input id="show-horoscope" type="checkbox" checked={getSettings().showHoroscope} onchange={(e) => setShowHoroscope((e.target as HTMLInputElement).checked)} />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-
-      <!-- 我的星座 -->
-      {#if getSettings().showHoroscope}
-        <div class="setting-item">
-          <label class="setting-label" for="zodiac-sign">{t('horoscope.zodiac')}</label>
-          <select id="zodiac-sign" class="form-select" value={getSettings().zodiacSign} onchange={(e) => setZodiacSign((e.target as HTMLSelectElement).value as ZodiacSign)}>
-            {#each ZODIAC_SIGNS as zs}
-              <option value={zs.id}>{getLang() === 'zh-CN' ? zs.zh : zs.en}</option>
-            {/each}
-          </select>
-        </div>
-      {/if}
 
       <!-- 显示每日一言 -->
       <div class="setting-item">
@@ -301,29 +237,14 @@
         </div>
       {/if}
 
-      <!-- 显示番茄钟 -->
+      <!-- RSS 订阅 (Pro) -->
       <div class="setting-item">
-        <label class="setting-label" for="show-pomodoro">{t('settings.showPomodoro')}</label>
-        <label class="toggle">
-          <input id="show-pomodoro" type="checkbox" checked={getSettings().showPomodoro} onchange={(e) => setShowPomodoro((e.target as HTMLInputElement).checked)} />
-          <span class="toggle-slider"></span>
+        <label class="setting-label" for="show-rss">
+          {t('settings.showRss')}
+          {#if !getIsPro()}<span class="pro-lock">🔒 PRO</span>{/if}
         </label>
-      </div>
-
-      <!-- 显示汇率换算 -->
-      <div class="setting-item">
-        <label class="setting-label" for="show-currency">{t('settings.showCurrency')}</label>
         <label class="toggle">
-          <input id="show-currency" type="checkbox" checked={getSettings().showCurrency} onchange={(e) => setShowCurrency((e.target as HTMLInputElement).checked)} />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-
-      <!-- 显示 RSS 订阅 -->
-      <div class="setting-item">
-        <label class="setting-label" for="show-rss">{t('settings.showRss')}</label>
-        <label class="toggle">
-          <input id="show-rss" type="checkbox" checked={getSettings().showRss} onchange={(e) => setShowRss((e.target as HTMLInputElement).checked)} />
+          <input id="show-rss" type="checkbox" disabled={!getIsPro()} checked={getSettings().showRss} onchange={(e) => setShowRss((e.target as HTMLInputElement).checked)} />
           <span class="toggle-slider"></span>
         </label>
       </div>
@@ -355,7 +276,7 @@
       </div>
     </div>
 
-    <!-- 自定义 CSS（独立卡片） -->
+    <!-- 自定义 CSS(独立卡片) -->
     {#if getIsPro()}
       <div class="card-section custom-css-card">
         <div class="card-header">
@@ -383,7 +304,7 @@
         {/if}
       </div>
 
-      <!-- Pro 已激活：订阅信息 + 续费 -->
+      <!-- Pro 已激活:订阅信息 + 续费 -->
       {#if getIsPro()}
         <div class="sub-info">
           <div class="sub-plan-name">{pn(subPlan)}</div>
@@ -491,13 +412,89 @@
 
     </div>
 
-    <div class="form-actions">
-      <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
     </div>
   </div>
 </div>
 
 <style>
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0);
+    transition: background 0.3s;
+  }
+  .modal-overlay:not(.closing) {
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+  }
+  .modal-panel {
+    position: relative;
+    width: 480px;
+    max-width: 95vw;
+    max-height: 85vh;
+    background: var(--bg-color, #0f172a);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .modal-panel.closing {
+    animation: modalOut 0.25s ease-in forwards;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes modalOut {
+    from { opacity: 1; transform: scale(1) translateY(0); }
+    to { opacity: 0; transform: scale(0.95) translateY(10px); }
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--card-border, rgba(255,255,255,0.06));
+    flex-shrink: 0;
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+  }
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border, rgba(255,255,255,0.1));
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+    transition: background 0.2s, color 0.2s;
+    opacity: 0.6;
+  }
+  .modal-close:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    opacity: 1;
+  }
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px 24px;
+  }
   .settings-list {
     display: flex;
     flex-direction: column;
@@ -523,7 +520,7 @@
     flex-shrink: 0;
   }
 
-  /* 带下拉菜单的设置项：label 和 select 同行排列 */
+  /* 带下拉菜单的设置项:label 和 select 同行排列 */
   .setting-item:has(select.form-select) {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -579,10 +576,12 @@
     transform: translateX(20px);
   }
 
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 16px;
+  .pro-lock {
+    font-size: 10px;
+    font-weight: 700;
+    color: #a855f7;
+    margin-left: 6px;
+    letter-spacing: 0.5px;
   }
 
   /* Pro Section */
@@ -739,5 +738,18 @@
     font-size: 15px;
     font-weight: 600;
     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  }
+
+  @media (max-width: 640px) {
+    .modal-panel {
+      width: 95vw;
+      max-height: 90vh;
+    }
+    .modal-header {
+      padding: 16px 16px 12px;
+    }
+    .modal-body {
+      padding: 16px;
+    }
   }
 </style>

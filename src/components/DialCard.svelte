@@ -96,38 +96,53 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 16px 12px 12px;
+    gap: 10px;
+    padding: 20px 16px 16px;
     background: var(--dial-bg, var(--card-bg, rgba(255,255,255,0.85)));
     border: 1px solid var(--card-border, rgba(0,0,0,0.06));
-    border-radius: 16px;
+    border-radius: 18px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
     min-width: 0;
     width: 100%;
+    position: relative;
+  }
+
+  .dial-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.06), transparent 70%);
+    pointer-events: none;
   }
 
   .dial-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    border-color: var(--primary-color, #4f46e5);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.1), 0 0 0 1px var(--primary-color, #3b82f6) inset;
+    border-color: var(--primary-color, #3b82f6);
   }
 
   .dial-card:active {
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
 
   .dial-icon {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
     flex-shrink: 0;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dial-card:hover .dial-icon {
+    transform: scale(1.08);
   }
 
   .dial-icon img {
@@ -143,30 +158,31 @@
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 600;
-    border-radius: 12px;
+    border-radius: 14px;
   }
 
   .dial-emoji {
-    font-size: 28px;
+    font-size: 32px;
     line-height: 1;
   }
 
   .dial-fa {
-    font-size: 26px;
+    font-size: 30px;
     color: var(--text-color, #1e293b);
     opacity: 0.7;
   }
 
   .dial-title {
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 500;
     color: var(--text-color, #1e293b);
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 80px;
-    opacity: 0.8;
+    max-width: 100px;
+    opacity: 0.85;
   }
 </style>

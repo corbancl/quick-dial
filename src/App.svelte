@@ -16,25 +16,17 @@
   import SubscribePanel from './components/SubscribePanel.svelte';
   import HelpPanel from './components/HelpPanel.svelte';
   import OnboardingGuide from './components/OnboardingGuide.svelte';
-  import TodoWidget from './components/TodoWidget.svelte';
-  import NotesWidget from './components/NotesWidget.svelte';
-  import HoroscopeWidget from './components/HoroscopeWidget.svelte';
   import QuoteWidget from './components/QuoteWidget.svelte';
   import AIWidget from './components/AIWidget.svelte';
-  import PomodoroWidget from './components/PomodoroWidget.svelte';
-  import CurrencyWidget from './components/CurrencyWidget.svelte';
   import RssWidget from './components/RssWidget.svelte';
 
   import { initDials, getDialsState, ensureDefaultGroup, addDial } from './stores/dials.svelte';
   import { initTheme, getTheme } from './stores/theme.svelte';
   import { initSettings, getSettings, setSearchEngine } from './stores/settings.svelte';
   import { initRecentSites, getRecentSites } from './stores/recentSites.svelte';
-  import { initTodos, getTodos } from './stores/todos.svelte';
-  import { initNotes, getNotes } from './stores/notes.svelte';
   import { initChat, getChatMessages, getChatConfig } from './stores/chat.svelte';
   import { initRss, getRssData } from './stores/rss.svelte';
   import { initQuote } from './stores/quote.svelte';
-  import { initCurrency } from './stores/currency.svelte';
   import { getIsPro, syncProStatus, getAuthToken } from './stores/subscription.svelte';
   import { getWallpaper, setWallpaper } from './stores/wallpaper.svelte';
   import { fetchRandomWallpaper } from './utils/weather';
@@ -45,7 +37,7 @@
   import { registerShortcut, focusSearch } from './utils/keyboard';
   import { getToasts, dismissToast } from './utils/toast.svelte';
   import { getContextAdd } from './utils/contextMenu';
-import { t, getLang } from './utils/i18n.svelte';
+  import { t, getLang } from './utils/i18n.svelte';
   import { discoverFnosApps } from './utils/fnos';
   import type { AppData } from './types';
 
@@ -60,11 +52,19 @@ import { t, getLang } from './utils/i18n.svelte';
   let showSubscribe = $state(false);
   let showHelp = $state(false);
   let showAI = $state(false);
+  let showRss = $state(false);
   let showAddDial = $state(false);
   let addDialPrefill = $state({ title: '', url: '' });
   let customFooter = $state(localStorage.getItem('quick-dial-custom-footer') || '');
   let cardExpanded = $state(false);
-  let activeTab = $state('dials');
+  let mobileWidgetExpanded = $state(false);
+  let isMobile = $state(window.innerWidth <= 640);
+  $effect(() => {
+    const onResize = () => { isMobile = window.innerWidth <= 640; };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  });
+  let compactWidgets = $derived(isMobile && !mobileWidgetExpanded);
 
   function scrollToTop() {
     document.getElementById('app')?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -118,16 +118,14 @@ import { t, getLang } from './utils/i18n.svelte';
     }
   });
 
-  // 每次加载或登录时从服务器同步 Pro 状态，同步完成后的状态决定是否 Pro
-  // cleanupProFeatures() 由 syncProStatus() 内部在检测到 Pro 被取消时自动调用
+  // 每次加载或登录时从服务器同步 Pro 状态
   $effect(() => {
     const token = getAuthToken();
     if (!token) return;
     syncProStatus();
   });
 
-  // Web端定期刷新 Pro 状态（30分钟间隔），防止 token 过期或服务端状态变更后无法感知
-  // 扩展端每次新标签页会重新 init()，无需此机制
+  // Web端定期刷新 Pro 状态（30分钟间隔）
   $effect(() => {
     const token = getAuthToken();
     if (!token) return;
@@ -135,7 +133,7 @@ import { t, getLang } from './utils/i18n.svelte';
     return () => clearInterval(interval);
   });
 
-  // 布局模式同步到 document 属性（跨组件 CSS 引用）
+  // 布局模式同步到 document 属性
   $effect(() => {
     document.documentElement.setAttribute('data-layout', getSettings().layout);
   });
@@ -151,12 +149,9 @@ import { t, getLang } from './utils/i18n.svelte';
     initTheme(saved.theme);
     initSettings(saved.settings);
     initRecentSites(saved.recentSites || []);
-    initTodos(saved.todos || []);
-    initNotes(saved.notes || []);
     initChat({ messages: saved.chatMessages, config: saved.chatConfig });
     initRss(saved.rssData);
     initQuote();
-    initCurrency();
   } else {
     // 首次使用，确保主题初始化
     initTheme(undefined);
@@ -164,7 +159,7 @@ import { t, getLang } from './utils/i18n.svelte';
     // 创建默认分组和示例导航
     const defaultGroupId = ensureDefaultGroup();
 
-    // 常用分组 - 21个热门网站
+    // 常用分组 - 热门网站
     const fav = (domain: string) => `https://sync.ruseo.cn/api/favicon.php?domain=${domain}`;
     const commonItems: Array<{ title: string; url: string; icon: string }> = [
       { title: '百度', url: 'https://www.baidu.com/', icon: fav('baidu.com') },
@@ -204,7 +199,6 @@ import { t, getLang } from './utils/i18n.svelte';
     discoverFnosApps();
   }
 
-  // 键盘快捷键
   // 保存右键菜单添加的导航
   function handleDialSave(data: { title: string; url: string; icon: string; groupId: string }) {
     addDial({
@@ -224,14 +218,12 @@ import { t, getLang } from './utils/i18n.svelte';
   registerShortcut('s', () => showSync = !showSync, 'shortcut.sync', { ctrl: true, shift: true });
   registerShortcut('?', () => showHelp = !showHelp, 'shortcut.help', {});
 
-  // 使用 $derived 创建稳定的数据引用，避免无限循环
+  // 使用 $derived 创建稳定的数据引用
   const appData = $derived((): AppData => {
     const dialsState = getDialsState();
     const theme = getTheme();
     const settings = getSettings();
     const recentSites = getRecentSites();
-    const todos = getTodos();
-    const notes = getNotes();
     const chatMessages = getChatMessages();
     const chatConfig = getChatConfig();
     
@@ -247,8 +239,6 @@ import { t, getLang } from './utils/i18n.svelte';
       },
       settings: settings,
       recentSites: recentSites,
-      todos: todos,
-      notes: notes,
       chatMessages: chatMessages,
       chatConfig: chatConfig,
       rssData: getRssData(),
@@ -256,19 +246,12 @@ import { t, getLang } from './utils/i18n.svelte';
     };
   });
 
-  // 防抖保存，避免频繁写入
+  // 防抖保存
   let saveTimeout: ReturnType<typeof setTimeout> | null = null;
   
   $effect(() => {
-    // 触发依赖追踪
     const data = appData();
-    
-    // 清除之前的定时器
-    if (saveTimeout) {
-      clearTimeout(saveTimeout);
-    }
-    
-    // 防抖 300ms 后保存
+    if (saveTimeout) clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
       saveData(data);
       saveTimeout = null;
@@ -277,19 +260,20 @@ import { t, getLang } from './utils/i18n.svelte';
 </script>
 
 <OnboardingGuide oncomplete={() => {
-  // 引导页完成后，根据用户选择的语言设置默认搜索引擎
   setSearchEngine(getLang() === 'zh-CN' ? 'baidu' : 'google');
 }} />
 
 {#snippet headerContent()}
   <ClockWidget />
-  <div class="header-widgets">
-    <WeatherWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
-    <LunarWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} />
-  </div>
 {/snippet}
 
-<div class="app-container">
+  <!-- 右上角挂件 -->
+  <div class="corner-widgets" class:mobile-expanded={mobileWidgetExpanded} onclick={() => mobileWidgetExpanded = !mobileWidgetExpanded} role="button" tabindex="0" onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') mobileWidgetExpanded = !mobileWidgetExpanded; }}>
+    <WeatherWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} compact={compactWidgets} />
+    <LunarWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} compact={compactWidgets} />
+  </div>
+
+  <div class="app-container">
   {#if getSettings().layout === 'sidebar'}
     <!-- 侧栏布局 -->
     <div class="sidebar-root">
@@ -299,27 +283,8 @@ import { t, getLang } from './utils/i18n.svelte';
       <main class="sidebar-right">
         <SearchBox />
         <div class="sidebar-body">
+          <SpeedDial />
           {#if getSettings().showQuote}<QuoteWidget />{/if}
-          {#if getSettings().showHoroscope || getSettings().showTodo || getSettings().showNotes || getSettings().showPomodoro || getSettings().showCurrency || getSettings().showRss}
-            <div class="tab-bar">
-              <button class="tab-btn" class:active={activeTab === 'dials'} onclick={() => activeTab = 'dials'}>{t('tab.dials')}</button>
-              {#if getSettings().showHoroscope}<button class="tab-btn" class:active={activeTab === 'horoscope'} onclick={() => activeTab = 'horoscope'}>{t('horoscope.title')}</button>{/if}
-              {#if getSettings().showTodo}<button class="tab-btn" class:active={activeTab === 'todo'} onclick={() => activeTab = 'todo'}>{t('todo.title')}</button>{/if}
-              {#if getSettings().showNotes}<button class="tab-btn" class:active={activeTab === 'notes'} onclick={() => activeTab = 'notes'}>{t('note.title')}</button>{/if}
-              {#if getSettings().showPomodoro}<button class="tab-btn" class:active={activeTab === 'pomodoro'} onclick={() => activeTab = 'pomodoro'}>{t('pomodoro.title')}</button>{/if}
-              {#if getSettings().showCurrency}<button class="tab-btn" class:active={activeTab === 'currency'} onclick={() => activeTab = 'currency'}>{t('currency.title')}</button>{/if}
-              {#if getSettings().showRss}<button class="tab-btn" class:active={activeTab === 'rss'} onclick={() => activeTab = 'rss'}>{t('rss.title')}</button>{/if}
-            </div>
-          {/if}
-          {#if activeTab === 'dials' || (!getSettings().showHoroscope && !getSettings().showTodo && !getSettings().showNotes && !getSettings().showPomodoro && !getSettings().showCurrency && !getSettings().showRss)}
-            <SpeedDial />
-          {:else if activeTab === 'horoscope'}<HoroscopeWidget />
-          {:else if activeTab === 'todo'}<TodoWidget />
-          {:else if activeTab === 'notes'}<NotesWidget />
-          {:else if activeTab === 'pomodoro'}<PomodoroWidget />
-          {:else if activeTab === 'currency'}<CurrencyWidget />
-          {:else if activeTab === 'rss'}<RssWidget />
-          {/if}
           {#if getSettings().showRecentSites}<RecentSites />{/if}
         </div>
       </main>
@@ -331,31 +296,15 @@ import { t, getLang } from './utils/i18n.svelte';
     </div>
     <SearchBox />
     {#if getSettings().showQuote}<QuoteWidget />{/if}
-    {#if getSettings().showHoroscope || getSettings().showTodo || getSettings().showNotes || getSettings().showPomodoro || getSettings().showCurrency || getSettings().showRss}
-      <div class="tab-bar">
-        <button class="tab-btn" class:active={activeTab === 'dials'} onclick={() => activeTab = 'dials'}>{t('tab.dials')}</button>
-        {#if getSettings().showHoroscope}<button class="tab-btn" class:active={activeTab === 'horoscope'} onclick={() => activeTab = 'horoscope'}>{t('horoscope.title')}</button>{/if}
-        {#if getSettings().showTodo}<button class="tab-btn" class:active={activeTab === 'todo'} onclick={() => activeTab = 'todo'}>{t('todo.title')}</button>{/if}
-        {#if getSettings().showNotes}<button class="tab-btn" class:active={activeTab === 'notes'} onclick={() => activeTab = 'notes'}>{t('note.title')}</button>{/if}
-        {#if getSettings().showPomodoro}<button class="tab-btn" class:active={activeTab === 'pomodoro'} onclick={() => activeTab = 'pomodoro'}>{t('pomodoro.title')}</button>{/if}
-        {#if getSettings().showCurrency}<button class="tab-btn" class:active={activeTab === 'currency'} onclick={() => activeTab = 'currency'}>{t('currency.title')}</button>{/if}
-        {#if getSettings().showRss}<button class="tab-btn" class:active={activeTab === 'rss'} onclick={() => activeTab = 'rss'}>{t('rss.title')}</button>{/if}
-      </div>
-    {/if}
-    {#if activeTab === 'dials' || (!getSettings().showHoroscope && !getSettings().showTodo && !getSettings().showNotes && !getSettings().showPomodoro && !getSettings().showCurrency && !getSettings().showRss)}
-      <SpeedDial />
-    {:else if activeTab === 'horoscope'}<HoroscopeWidget />
-    {:else if activeTab === 'todo'}<TodoWidget />
-    {:else if activeTab === 'notes'}<NotesWidget />
-    {:else if activeTab === 'pomodoro'}<PomodoroWidget />
-    {:else if activeTab === 'currency'}<CurrencyWidget />
-    {:else if activeTab === 'rss'}<RssWidget />
-    {/if}
+    <SpeedDial />
     {#if getSettings().showRecentSites}<RecentSites />{/if}
   {/if}
 
   <!-- 底部工具栏 -->
   <div class="toolbar">
+    <button class="btn-icon" onclick={() => showRss = !showRss} title={t('rss.title')}>
+      <i class="fa-solid fa-rss"></i>
+    </button>
     <button class="btn-icon" onclick={() => showWallpaperPicker = true} title={t('toolbar.wallpaper')}>
       <i class="fa-solid fa-image"></i>
     </button>
@@ -399,7 +348,6 @@ import { t, getLang } from './utils/i18n.svelte';
 
   <footer class="app-footer">
     <div class="footer-inner">
-      <!-- 第一行：版权 + 品牌 + 版本 -->
       <div class="footer-row footer-row-brand">
         {#if !getIsPro() || !getSettings().hideBranding}
         <div class="footer-brand">
@@ -423,7 +371,6 @@ import { t, getLang } from './utils/i18n.svelte';
           {/if}
         </div>
       </div>
-      <!-- 第二行：备案号 -->
       <div class="footer-row footer-row-beian">
         <a class="footer-link" href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
         <span class="footer-divider"></span>
@@ -432,7 +379,6 @@ import { t, getLang } from './utils/i18n.svelte';
           <a class="footer-link" href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">{t('footer.psbNumber')}</a>
         </span>
       </div>
-      <!-- 第三行：站内链接 -->
       <div class="footer-row footer-row-links">
         <a class="footer-link" href="{pg}about.html">{t('footer.about')}</a>
         <span class="footer-dot">·</span>
@@ -488,9 +434,20 @@ import { t, getLang } from './utils/i18n.svelte';
 {/if}
 
 {#if showAI}
-  <div class="ai-overlay">
-    <div class="ai-close-area" role="button" tabindex="0" onclick={() => showAI = false} onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') showAI = false; }}></div>
-    <AIWidget onclose={() => showAI = false} />
+  <div class="modal-overlay">
+    <div class="modal-close-area" role="button" tabindex="0" onclick={() => showAI = false} onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') showAI = false; }}></div>
+    <div class="modal-float-card">
+      <AIWidget onclose={() => showAI = false} />
+    </div>
+  </div>
+{/if}
+
+{#if showRss}
+  <div class="modal-overlay">
+    <div class="modal-close-area" role="button" tabindex="0" onclick={() => showRss = false} onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') showRss = false; }}></div>
+    <div class="modal-float-card">
+      <RssWidget onclose={() => showRss = false} />
+    </div>
   </div>
 {/if}
 
@@ -505,60 +462,21 @@ import { t, getLang } from './utils/i18n.svelte';
 
 <style>
   .app-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
     margin-bottom: 20px;
   }
 
-  .header-widgets {
+  .corner-widgets {
+    position: fixed;
+    top: 20px;
+    left: 20px;
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 90;
   }
-
-  /* Tab 导航栏 */
-  .tab-bar {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin: 4px auto 0;
-    width: calc(100% - 16px);
-    max-width: 1200px;
-    padding: 4px;
-    border-radius: 10px;
-    background: var(--card-bg, rgba(255,255,255,0.06));
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid var(--card-border, rgba(255,255,255,0.06));
-  }
-  .tab-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 14px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--text-color, #e2e8f0);
-    font-size: 13px;
-    opacity: 0.5;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .tab-btn:hover {
-    opacity: 0.8;
-    background: var(--hover-bg, rgba(255,255,255,0.08));
-  }
-  .tab-btn.active {
-    opacity: 1;
-    background: var(--accent-bg, rgba(59,130,246,0.15));
-    color: var(--accent-color, #3b82f6);
-    font-weight: 600;
+  .corner-widgets :global(.weather-widget),
+  .corner-widgets :global(.lunar-widget) {
+    width: 210px;
   }
 
   .toolbar {
@@ -619,11 +537,11 @@ import { t, getLang } from './utils/i18n.svelte';
     gap: 10px;
     font-size: 12px;
     color: var(--text-color, #1e293b);
-    opacity: 0.45;
+    opacity: 0.55;
     transition: opacity 0.3s;
   }
 
-  .footer-inner:hover { opacity: 0.7; }
+  .footer-inner:hover { opacity: 0.85; }
 
   .footer-row {
     display: flex;
@@ -648,8 +566,8 @@ import { t, getLang } from './utils/i18n.svelte';
     margin-left: 4px;
   }
 
-  .footer-link { color: var(--text-color, #1e293b); text-decoration: none; font-size: 11px; opacity: 0.5; transition: opacity 0.2s; }
-  .footer-link:hover { opacity: 1; }
+  .footer-link { color: var(--text-color, #1e293b); text-decoration: none; font-size: 11px; opacity: 0.65; transition: opacity 0.2s, color 0.2s; }
+  .footer-link:hover { opacity: 1; color: var(--primary-color, #3b82f6); }
   .footer-row-beian .footer-link { font-size: 11px; }
   .footer-psb { display: inline-flex; align-items: center; gap: 4px; }
   .footer-psb-icon { width: 14px; height: 14px; flex-shrink: 0; vertical-align: middle; }
@@ -658,14 +576,15 @@ import { t, getLang } from './utils/i18n.svelte';
     width: 1px;
     height: 10px;
     background: var(--text-color, #1e293b);
-    opacity: 0.15;
+    opacity: 0.2;
     border-radius: 1px;
     flex-shrink: 0;
   }
 
   .footer-dot {
-    opacity: 0.2;
+    opacity: 0.35;
     font-size: 10px;
+    color: var(--text-color, #1e293b);
   }
 
   .footer-pro-badge {
@@ -687,39 +606,124 @@ import { t, getLang } from './utils/i18n.svelte';
   }
 
   @media (max-width: 640px) {
-    .tab-bar {
-      width: calc(100% - 12px);
-    }
-    .tab-btn {
-      padding: 5px 10px;
-      font-size: 12px;
-    }
-
     .toolbar {
       bottom: 12px;
       right: 12px;
     }
 
-    .header-widgets {
-      gap: 8px;
+    .corner-widgets {
+      top: 12px;
+      left: 12px;
+      gap: 6px;
+    }
+    .corner-widgets:not(.mobile-expanded) {
+      flex-direction: column;
+      background: var(--card-bg, rgba(255,255,255,0.85));
+      border: 1px solid var(--card-border, rgba(0,0,0,0.08));
+      border-radius: 16px;
+      padding: 8px 14px;
+      gap: 0;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      cursor: pointer;
+      max-width: fit-content;
+      min-width: 80px;
+    }
+    .corner-widgets:not(.mobile-expanded) :global(.weather-widget),
+    .corner-widgets:not(.mobile-expanded) :global(.lunar-widget) {
+      width: auto;
+      padding: 0;
+      background: none;
+      border: none;
+      border-radius: 0;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      min-width: auto;
+      box-shadow: none;
+    }
+    .corner-widgets:not(.mobile-expanded) :global(.weather-widget:hover),
+    .corner-widgets:not(.mobile-expanded) :global(.lunar-widget:hover) {
+      transform: none;
+      box-shadow: none;
+    }
+    /* 天气：temp 和 desc 各占一行（隐藏图标、位置、详情、预报） */
+    .corner-widgets:not(.mobile-expanded) :global(.weather-main) {
+      flex-direction: column;
+      gap: 1px;
+      align-items: flex-start;
+    }
+    .corner-widgets:not(.mobile-expanded) :global(.weather-icon),
+    .corner-widgets:not(.mobile-expanded) :global(.weather-location),
+    .corner-widgets:not(.mobile-expanded) :global(.weather-details),
+    .corner-widgets:not(.mobile-expanded) :global(.weather-forecast) {
+      display: none !important;
+    }
+    .corner-widgets:not(.mobile-expanded) :global(.weather-info) {
+      display: contents;
+    }
+    .corner-widgets:not(.mobile-expanded) :global(.weather-temp) {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .corner-widgets:not(.mobile-expanded) :global(.weather-desc) {
+      font-size: 11px;
+      opacity: 0.65;
+      line-height: 1.2;
+    }
+    /* 天气行底部微分隔 */
+    .corner-widgets:not(.mobile-expanded) :global(.weather-widget) {
+      border-bottom: 1px solid var(--card-border, rgba(0,0,0,0.06));
+      padding-bottom: 4px;
+      margin-bottom: 3px;
+    }
+    /* 农历：仅显示月日 */
+    .corner-widgets:not(.mobile-expanded) :global(.lunar-main) {
+      flex-direction: column;
+      gap: 0;
+      align-items: flex-start;
+    }
+    .corner-widgets:not(.mobile-expanded) :global(.lunar-date) {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .corner-widgets:not(.mobile-expanded) :global(.lunar-year-chinese),
+    .corner-widgets:not(.mobile-expanded) :global(.lunar-ganzhi),
+    .corner-widgets:not(.mobile-expanded) :global(.lunar-special),
+    .corner-widgets:not(.mobile-expanded) :global(.lunar-detail) {
+      display: none !important;
+    }
+    .corner-widgets.mobile-expanded {
+      flex-direction: column;
+    }
+    .corner-widgets.mobile-expanded :global(.weather-widget),
+    .corner-widgets.mobile-expanded :global(.lunar-widget) {
+      width: 160px;
     }
 
-    .app-footer { padding: 32px 12px 20px; }
+    .app-footer { padding: 32px 12px 80px; }
     .footer-row-brand { flex-direction: column; gap: 6px; }
     .footer-row-links { gap: 4px; }
     .footer-link { font-size: 11px; }
   }
 
-  .ai-overlay {
+  .modal-overlay {
     position: fixed; inset: 0; z-index: 200;
-    display: flex; justify-content: flex-end;
+    display: flex; align-items: center; justify-content: center;
   }
-  .ai-close-area { flex: 1; cursor: pointer; }
+  .modal-close-area { position: absolute; inset: 0; cursor: pointer; background: rgba(0,0,0,0.3); }
+  .modal-float-card {
+    position: relative;
+    z-index: 1;
+    border-radius: 16px;
+    background: var(--bg-color, #0f172a);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.1);
+    overflow: hidden;
+  }
 
   /* ====== 布局模式 ====== */
-  /* 宽屏 */
-  :global(html[data-layout="wide"]) .app-header,
-  :global(html[data-layout="wide"]) .tab-bar {
+  :global(html[data-layout="wide"]) .app-header {
     max-width: 1200px !important;
   }
 
@@ -741,20 +745,6 @@ import { t, getLang } from './utils/i18n.svelte';
     gap: 20px;
     min-height: 60vh;
     min-width: 0;
-  }
-  .sidebar-left > :global(*) {
-    width: 100%;
-    max-width: 260px;
-  }
-  .sidebar-left :global(.header-widgets) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    width: 100%;
-  }
-  .sidebar-left :global(.header-widgets) > :global(*) {
-    width: 100%;
   }
   .sidebar-right {
     display: flex;

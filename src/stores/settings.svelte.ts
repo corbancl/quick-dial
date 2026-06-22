@@ -1,4 +1,4 @@
-import type { AppSettings, ClockStyle, ThemeStyle, NotesDisplayMode, TodoDisplayMode, ZodiacSign, QuoteType, LayoutMode } from '../types';
+import type { AppSettings, ClockStyle, ThemeStyle, QuoteType, LayoutMode } from '../types';
 import { DEFAULT_SETTINGS, isProTheme } from '../types';
 import { getIsPro } from './subscription.svelte';
 
@@ -45,22 +45,6 @@ export function setShowRecentSites(show: boolean): void {
   settings.showRecentSites = show;
 }
 
-export function setShowTodo(show: boolean): void {
-  settings.showTodo = show;
-}
-
-export function setShowNotes(show: boolean): void {
-  settings.showNotes = show;
-}
-
-export function setNotesDisplayMode(mode: NotesDisplayMode): void {
-  settings.notesDisplayMode = mode;
-}
-
-export function setTodoDisplayMode(mode: TodoDisplayMode): void {
-  settings.todoDisplayMode = mode;
-}
-
 export function setRecentSitesCount(count: number): void {
   settings.recentSitesCount = count;
 }
@@ -73,28 +57,12 @@ export function setShowAI(show: boolean): void {
   settings.showAI = show;
 }
 
-export function setShowHoroscope(show: boolean): void {
-  settings.showHoroscope = show;
-}
-
-export function setZodiacSign(sign: ZodiacSign): void {
-  settings.zodiacSign = sign;
-}
-
 export function setShowQuote(show: boolean): void {
   settings.showQuote = show;
 }
 
 export function setQuoteType(type: QuoteType): void {
   settings.quoteType = type;
-}
-
-export function setShowPomodoro(show: boolean): void {
-  settings.showPomodoro = show;
-}
-
-export function setShowCurrency(show: boolean): void {
-  settings.showCurrency = show;
 }
 
 export function setShowRss(show: boolean): void {

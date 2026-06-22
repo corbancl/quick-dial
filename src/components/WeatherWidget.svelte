@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fetchWeather, type WeatherData } from '../utils/weather';
 
-  let { expanded = false, ontoggle = () => {} }: { expanded?: boolean; ontoggle?: () => void } = $props();
+  let { expanded = false, ontoggle = () => {}, compact = false }: { expanded?: boolean; ontoggle?: () => void; compact?: boolean } = $props();
 
   let weather = $state<WeatherData | null>(null);
   let loading = $state(true);
@@ -34,6 +34,16 @@
     <div class="weather-skeleton"></div>
   </div>
 {:else if weather}
+  {#if compact}
+  <div class="weather-widget compact" onclick={ontoggle} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && ontoggle()}>
+    <div class="weather-main">
+      <div class="weather-info">
+        <div class="weather-temp">{weather.current.temperature}°</div>
+        <div class="weather-desc">{weather.current.weather}</div>
+      </div>
+    </div>
+  </div>
+  {:else}
   <div class="weather-widget" onclick={ontoggle} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && ontoggle()}>
     <div class="weather-main">
       <div class="weather-icon">
@@ -82,6 +92,7 @@
       </div>
     {/if}
   </div>
+  {/if}
 {/if}
 
 <style>
@@ -94,6 +105,33 @@
     cursor: pointer;
     transition: all 0.2s;
     user-select: none;
+  }
+
+  .weather-widget.compact {
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  .weather-widget.compact:hover {
+    transform: none;
+  }
+  .weather-widget.compact .weather-main {
+    flex-direction: column;
+    gap: 1px;
+    align-items: flex-start;
+  }
+  .weather-widget.compact .weather-temp {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .weather-widget.compact .weather-desc {
+    font-size: 11px;
+    opacity: 0.65;
+    line-height: 1.2;
   }
 
   .weather-widget:hover {

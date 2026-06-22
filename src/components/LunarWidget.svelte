@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fetchLunar, type LunarData } from '../utils/weather';
 
-  let { expanded = false, ontoggle = () => {} }: { expanded?: boolean; ontoggle?: () => void } = $props();
+  let { expanded = false, ontoggle = () => {}, compact = false }: { expanded?: boolean; ontoggle?: () => void; compact?: boolean } = $props();
 
   let lunar = $state<LunarData | null>(null);
   let loading = $state(true);
@@ -92,10 +92,14 @@
     <div class="lunar-skeleton"></div>
   </div>
 {:else if lunar}
-  <div class="lunar-widget" onclick={ontoggle} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && ontoggle()}>
+  <div class="lunar-widget" class:compact onclick={ontoggle} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && ontoggle()}>
     <div class="lunar-main">
       <!-- 农历日期 -->
-      <div class="lunar-date">{lunar.lunar.formatted}</div>
+      <div class="lunar-date">{compact ? lunar.lunar.formatted.replace(/^.*?年/, '') : lunar.lunar.formatted}</div>
+
+      {#if !compact}
+      <!-- 中国年（折叠模式下显示） -->
+      <div class="lunar-year-chinese">{lunar.lunar.year_chinese}</div>
       
       <!-- 干支 / 生肖 -->
       <div class="lunar-ganzhi">
@@ -120,9 +124,10 @@
           <span>{getNextSolarTerm()}</span>
         </div>
       {/if}
+      {/if}
     </div>
 
-    {#if expanded}
+    {#if expanded && !compact}
       <div class="lunar-detail">
         <!-- 今日宜忌 -->
         {#if lunar.almanac.yi.length > 0}
@@ -181,6 +186,26 @@
     justify-content: center;
   }
 
+  .lunar-widget.compact {
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  .lunar-widget.compact:hover {
+    transform: none;
+  }
+  .lunar-widget.compact .lunar-main {
+    gap: 0;
+  }
+  .lunar-widget.compact .lunar-date {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
   .lunar-skeleton {
     width: 100%;
     height: 40px;
@@ -213,6 +238,10 @@
     font-size: 12px;
     color: var(--text-color, #1e293b);
     opacity: 0.6;
+  }
+
+  .lunar-year-chinese {
+    display: none;
   }
 
   .ganzhi-item {

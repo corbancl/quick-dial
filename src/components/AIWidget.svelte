@@ -2,7 +2,6 @@
   import { t } from '../utils/i18n.svelte';
   import { getChatMessages, getChatConfig, isChatLoading, sendMessage, clearChat, setAIConfig, getCurrentProvider } from '../stores/chat.svelte';
   import { chatCompletion, BUILTIN_PROVIDERS, getProvider, CUSTOM_MODEL_VALUE } from '../utils/ai';
-  import { addNote } from '../stores/notes.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
 
   import { tick } from 'svelte';
@@ -70,17 +69,12 @@
     catch { /* noop */ }
   }
 
-  function saveToNotes(text: string) {
-    addNote(text);
-    showToast('ai.noteSaved');
-  }
-
   const messages = $derived(getChatMessages());
   const loading = $derived(isChatLoading());
   const provider = $derived(getCurrentProvider());
 </script>
 
-<div class="ai-sidebar">
+<div class="ai-panel">
   <!-- 头部 -->
   <div class="ai-header">
     <div class="ai-header-left" style="color:var(--text-color,#1e293b);">
@@ -124,7 +118,6 @@
               <span class="ai-time">{new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               {#if msg.role === 'assistant' && msg.text && msg.text !== t('ai.thinking')}
                 <button class="ai-bubble-btn" onclick={() => copyToClipboard(msg.text)} title={t('ai.copy')}>📋</button>
-                <button class="ai-bubble-btn" onclick={() => saveToNotes(msg.text)} title={t('ai.saveToNotes')}>📝</button>
               {/if}
             </div>
           </div>
@@ -227,15 +220,14 @@
 </div>
 
 <style>
-  .ai-sidebar {
-    width: 320px;
-    height: 100%;
+  .ai-panel {
+    width: 480px;
+    max-width: 95vw;
+    max-height: 82vh;
     display: flex;
     flex-direction: column;
-    background: var(--card-bg, rgba(255,255,255,0.95));
-    border-left: 1px solid var(--card-border, rgba(0,0,0,0.06));
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: var(--bg-color, #0f172a);
+    border-radius: 16px;
     font-size: 13px;
   }
 
@@ -407,4 +399,8 @@
     background: rgba(245,158,11,0.05);
   }
   .ai-locked-text { font-size: 12px; opacity: 0.4; }
+
+  @media (max-width: 540px) {
+    .ai-panel { width: 100vw; max-height: 100vh; border-radius: 0; }
+  }
 </style>

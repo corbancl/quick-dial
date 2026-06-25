@@ -272,8 +272,12 @@
 
   <!-- 右上角挂件 -->
   <div class="corner-widgets" class:mobile-expanded={mobileWidgetExpanded} onclick={() => mobileWidgetExpanded = !mobileWidgetExpanded} role="button" tabindex="0" onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') mobileWidgetExpanded = !mobileWidgetExpanded; }}>
-    <WeatherWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} compact={compactWidgets} />
-    <LunarWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} compact={compactWidgets} />
+    {#if getSettings().showWeather}
+      <WeatherWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} compact={compactWidgets} />
+    {/if}
+    {#if getSettings().showLunar}
+      <LunarWidget expanded={cardExpanded} ontoggle={() => cardExpanded = !cardExpanded} compact={compactWidgets} />
+    {/if}
   </div>
 
   <div class="app-container">

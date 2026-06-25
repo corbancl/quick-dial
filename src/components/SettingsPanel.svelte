@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowAI, setHideBranding, setRecentSitesCount, setOpenInNewTab, setThemeStyle, setShowQuote, setQuoteType, setShowRss, setLayout } from '../stores/settings.svelte';
+  import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowWeather, setShowLunar, setShowRecentSites, setShowAI, setHideBranding, setRecentSitesCount, setOpenInNewTab, setThemeStyle, setShowQuote, setQuoteType, setShowRss, setLayout } from '../stores/settings.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
   import { getAvailableEngines, getLockedEngines, getAllEngines } from '../utils/search';
   import { t, getLang, setLang } from '../utils/i18n.svelte';
@@ -196,6 +196,24 @@
         <label class="setting-label" for="show-weekday">{t('settings.showWeekday')}</label>
         <label class="toggle">
           <input id="show-weekday" type="checkbox" checked={getSettings().showWeekday} onchange={(e) => setShowWeekday((e.target as HTMLInputElement).checked)} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- 显示天气 -->
+      <div class="setting-item">
+        <label class="setting-label" for="show-weather">{t('settings.showWeather')}</label>
+        <label class="toggle">
+          <input id="show-weather" type="checkbox" checked={getSettings().showWeather} onchange={(e) => setShowWeather((e.target as HTMLInputElement).checked)} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- 显示农历 -->
+      <div class="setting-item">
+        <label class="setting-label" for="show-lunar">{t('settings.showLunar')}</label>
+        <label class="toggle">
+          <input id="show-lunar" type="checkbox" checked={getSettings().showLunar} onchange={(e) => setShowLunar((e.target as HTMLInputElement).checked)} />
           <span class="toggle-slider"></span>
         </label>
       </div>

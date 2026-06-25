@@ -76,6 +76,8 @@ export interface AppSettings {
   clockStyle: ClockStyle;
   showDate: boolean;
   showWeekday: boolean;
+  showWeather: boolean;
+  showLunar: boolean;
   showRecentSites: boolean;
   showQuote: boolean;
   quoteType: QuoteType;
@@ -150,6 +152,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   clockStyle: 'digital',
   showDate: true,
   showWeekday: true,
+  showWeather: true,
+  showLunar: true,
   showRecentSites: true,
   showQuote: true,
   quoteType: 'hitokoto',

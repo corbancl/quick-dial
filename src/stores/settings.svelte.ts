@@ -41,6 +41,14 @@ export function setShowWeekday(show: boolean): void {
   settings.showWeekday = show;
 }
 
+export function setShowWeather(show: boolean): void {
+  settings.showWeather = show;
+}
+
+export function setShowLunar(show: boolean): void {
+  settings.showLunar = show;
+}
+
 export function setShowRecentSites(show: boolean): void {
   settings.showRecentSites = show;
 }

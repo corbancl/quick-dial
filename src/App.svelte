@@ -13,7 +13,6 @@
   import AddDialModal from './components/AddDialModal.svelte';
   import StatisticsPanel from './components/StatisticsPanel.svelte';
   import SyncPanel from './components/SyncPanel.svelte';
-  import SubscribePanel from './components/SubscribePanel.svelte';
   import HelpPanel from './components/HelpPanel.svelte';
   import OnboardingGuide from './components/OnboardingGuide.svelte';
   import QuoteWidget from './components/QuoteWidget.svelte';
@@ -31,7 +30,6 @@
   import { getWallpaper, setWallpaper } from './stores/wallpaper.svelte';
   import { fetchRandomWallpaper } from './utils/weather';
   import { isLoggedIn } from './utils/sync';
-  import { checkSubscription } from './utils/payment';
   import { showToast } from './utils/toast.svelte';
   import { checkStorageSupport, loadData, saveData } from './utils/storage';
   import { registerShortcut, focusSearch } from './utils/keyboard';
@@ -49,7 +47,6 @@
   let showSettings = $state(false);
   let showStats = $state(false);
   let showSync = $state(false);
-  let showSubscribe = $state(false);
   let showHelp = $state(false);
   let showAI = $state(false);
   let showRss = $state(false);
@@ -103,11 +100,16 @@
   let proExpiryChecked = $state(false);
   $effect(() => {
     if (proExpiryChecked || !getIsPro() || !isLoggedIn()) return;
+    const token = localStorage.getItem('quick-dial-token');
     proxied: {
-      checkSubscription().then(s => {
+      if (!token) return;
+      fetch('https://sync.ruseo.cn/api/pay.php?action=status', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      }).then(r => r.json()).then(result => {
         proExpiryChecked = true;
-        if (!s.expireAt) return; // 终身
-        const daysLeft = Math.ceil((new Date(s.expireAt).getTime() - Date.now()) / 86400000);
+        const expireAt = result.data?.expire_at;
+        if (!expireAt) return; // 终身
+        const daysLeft = Math.ceil((new Date(expireAt).getTime() - Date.now()) / 86400000);
         if (daysLeft < 0) return; // 已过期
         if (daysLeft <= 7) {
           proDaysLeft = daysLeft;
@@ -144,10 +146,12 @@
   }
 
   const saved = loadData<AppData>();
+  // 先初始化设置，确保 themeStyle 正确
+  initSettings(saved?.settings);
+  // 再初始化主题，使用正确的 themeStyle
   if (saved && saved.version) {
     initDials({ dials: saved.dials || [], groups: saved.groups || [] });
     initTheme(saved.theme);
-    initSettings(saved.settings);
     initRecentSites(saved.recentSites || []);
     initChat({ messages: saved.chatMessages, config: saved.chatConfig });
     initRss(saved.rssData);
@@ -155,7 +159,6 @@
   } else {
     // 首次使用，确保主题初始化
     initTheme(undefined);
-    initSettings(undefined);
     // 创建默认分组和示例导航
     const defaultGroupId = ensureDefaultGroup();
 
@@ -302,9 +305,11 @@
 
   <!-- 底部工具栏 -->
   <div class="toolbar">
+    {#if getSettings().showRss}
     <button class="btn-icon" onclick={() => showRss = !showRss} title={t('rss.title')}>
       <i class="fa-solid fa-rss"></i>
     </button>
+    {/if}
     <button class="btn-icon" onclick={() => showWallpaperPicker = true} title={t('toolbar.wallpaper')}>
       <i class="fa-solid fa-image"></i>
     </button>
@@ -318,7 +323,7 @@
       <i class="fa-solid fa-cloud-arrow-up"></i>
     </button>
     {#if !getIsPro()}
-      <button class="btn-icon btn-upgrade" onclick={() => showSubscribe = true} title={t('toolbar.upgrade')}>
+      <button class="btn-icon btn-upgrade" onclick={() => window.open('https://www.cilacila.cn/account.html', '_blank')} title={t('toolbar.upgrade')}>
         <i class="fa-solid fa-crown"></i>
       </button>
     {/if}
@@ -414,7 +419,7 @@
 {/if}
 
 {#if showSettings}
-  <SettingsPanel onclose={() => showSettings = false} onsubscribe={() => { showSettings = false; showSubscribe = true; }} />
+  <SettingsPanel onclose={() => showSettings = false} />
 {/if}
 
 {#if showStats}
@@ -423,10 +428,6 @@
 
 {#if showSync}
   <SyncPanel onclose={() => showSync = false} />
-{/if}
-
-{#if showSubscribe}
-  <SubscribePanel onclose={() => showSubscribe = false} />
 {/if}
 
 {#if showHelp}

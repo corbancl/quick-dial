@@ -4,114 +4,102 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="favicon.png">
-<title>隐私政策 · 呲啦起始/title>
+<title>隐私政策 · 呲啦起始页官网</title>
 <style>
-  :root { --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #1e293b; --text2: #64748b; --accent: #3b82f6; --shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  :root { --bg: #06080d; --card: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.06); --text: #e2e8f0; --text2: rgba(226,232,240,0.5); --accent: #3b82f6; --accent2: #8b5cf6; --accent3: #06b6d4; --green: #22c55e; --red: #ef4444; --radius: 16px; --radius-sm: 10px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
-  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,250,252,0.92); border-bottom: 1px solid var(--border); }
-  .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 56px; }
-  .nav-logo { font-size: 11px; font-weight: 600; letter-spacing: 0px; text-decoration: none; color: var(--text2); line-height: 1.15; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; position: relative; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle at 20% 20%, rgba(59,130,246,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 60%, rgba(139,92,246,0.06) 0%, transparent 50%), radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 100% 100%, 24px 24px; mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%); }
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(6,8,13,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 1140px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 60px; }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .nav-logo-img { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
-  .nav-logo-txt { line-height: 1.15; }
-  .nav-logo .sub { display: block; font-size: 17px; font-weight: 800; color: var(--accent); letter-spacing: 0px; }
+  .nav-logo .brand { font-size: 16px; font-weight: 800; color: var(--text); line-height: 1.2; }
+  .nav-logo .cn { font-size: 10px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
   .nav-links { display: flex; gap: 24px; align-items: center; }
   .nav-links a { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
   .nav-links a:hover { color: var(--text); }
-  .nav-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: var(--accent); color: white; }
-  .nav-btn:hover { opacity: 0.9; }
+  .nav-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: linear-gradient(135deg, var(--accent), #2563eb); color: white; }
+  .nav-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59,130,246,0.3); }
   .nav-lang { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 16px; cursor: pointer; color: var(--text2); transition: all 0.2s; }
   .nav-lang:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-  .container { max-width: 720px; margin: 0 auto; padding: 120px 24px 60px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 40px 36px; }
+  .container { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 120px 24px 60px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 36px; backdrop-filter: blur(8px); }
   h1 { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
   .date { font-size: 13px; color: var(--text2); margin-bottom: 32px; }
-  h2 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; }
+  h2 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; color: var(--accent); }
   p { font-size: 14px; color: var(--text2); line-height: 1.9; margin-bottom: 8px; }
-  .back { display: inline-block; margin-top: 32px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; }
-  .back:hover { text-decoration: underline; }
-  /* Footer */
-  .footer {
-    text-align: center;
-    padding: 48px 24px 32px;
-    font-size: 13px;
-    color: var(--text2);
-    border-top: 1px solid var(--border);
-  }
-  .footer .footer-links {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 4px 20px;
-    margin-bottom: 14px;
-  }
-  .footer .footer-links a {
-    color: var(--accent);
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-  .footer .footer-links a:hover {
-    opacity: 0.75;
-    text-decoration: underline;
-  }
-  .footer .footer-filings {
-    font-size: 12px;
-    line-height: 2;
-    color: var(--text2);
-    opacity: 0.75;
-  }
-  .footer .footer-filings a {
-    color: var(--text2);
-    text-decoration: none;
-  }
-  .footer .footer-filings a:hover {
-    color: var(--accent);
-  }
-  .footer .footer-sep {
-    display: inline-block;
-    margin: 0 10px;
-    color: var(--border);
-  }
+  .back { display: inline-block; margin-top: 32px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; transition: opacity 0.2s; }
+  .back:hover { opacity: 0.8; }
+  .footer { position: relative; z-index: 1; text-align: center; padding: 48px 24px 32px; font-size: 13px; color: var(--text2); border-top: 1px solid var(--border); }
+  .footer .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 20px; margin-bottom: 14px; }
+  .footer .footer-links a { color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+  .footer .footer-links a:hover { opacity: 0.75; text-decoration: underline; }
+  .footer .footer-filings { font-size: 12px; line-height: 2; color: var(--text2); opacity: 0.75; }
+  .footer .footer-filings a { color: var(--text2); text-decoration: none; }
+  .footer .footer-filings a:hover { color: var(--accent); }
+  .footer .footer-sep { display: inline-block; margin: 0 10px; color: var(--border); }
   @media (max-width: 768px) { .container { padding: 100px 16px 40px; } .card { padding: 28px 20px; } .nav-links a { display: none; } }
-  @media (max-width: 640px) {
-    .footer { padding: 32px 16px 24px; font-size: 12px; }
-    .footer .footer-links { gap: 2px 14px; }
-  }
+  @media (max-width: 640px) { .footer { padding: 32px 16px 24px; font-size: 12px; } .footer .footer-links { gap: 2px 14px; } }
 </style>
 </head>
 <body>
 <nav class="nav">
   <div class="nav-inner">
-    <a href="./" class="nav-logo"><img src="favicon.png" class="nav-logo-img" alt="" /><span class="nav-logo-txt">Quick Dial<span class="sub">呲啦起始/span></span></a>
+    <a href="./" class="nav-logo">
+      <img src="favicon.png" class="nav-logo-img" alt="" />
+      <div>
+        <div class="brand">呲啦起始页</div>
+        <div class="cn">Quick Dial</div>
+      </div>
+    </a>
     <div class="nav-links">
       <a href="./#features">功能</a>
       <a href="./#pricing">价格</a>
       <a href="./#download">下载</a>
       <a href="./#faq">常见问题</a>
-      <a href="about.html">关于我们</a>
-      <button class="nav-btn" onclick="window.location.href='./'">返回首页</button>
-      <button class="nav-lang" onclick="qdToggleLang()" title="English">🌐</button>
+      <div id="nav-user" style="display:none;align-items:center;gap:12px">
+        <span id="nav-username" style="color:var(--text2);font-size:13px;font-weight:500"></span>
+        <button class="nav-btn" style="background:rgba(255,255,255,0.08);color:var(--text2)" onclick="handleLogout()">退出</button>
+      </div>
+      <button id="nav-login-btn" class="nav-btn" onclick="location.href='account.html'">登录</button>
+      <button class="nav-lang" onclick="qdToggleLang()" title="切换语言">🌐</button>
     </div>
   </div>
 </nav>
 <div class="container">
   <div class="card">
     <h1>隐私政策</h1>
-    <div class="date">更新日期02664/div>
-    <p>呲啦起始页（域名：cilacila.cn）高度重视用户的隐私保护，本隐私政策将向您说明本站的信息收集、使用及保护规则/p>
-    <h2>1. 信息收集范围</h2>
-    <p>本站不主动收集、不存储、不上传用户任何个人隐私信息，包括但不限于手机号、账号密码、地理位置、浏览记录、设备信息等。为优化网站访问体验、统计网站访问流量，本站仅通过正规统计工具获取全站匿名访问数据（仅用于网站优化、用户行为分析），所有数据均为匿名聚合数据，无法定位到单个用户个人信息/p>
-    <h2>2. 搜索数据说明</h2>
-    <p>本站搜索功能仅为用户提供跳转入口，用户所有搜索行为、搜索内容、搜索结果均在第三方正规搜索引擎页面完成。本站不保存、不抓取、不记录用户搜索关键词与浏览记录/p>
-    <h2>3. Cookie 使用说明</h2>
-    <p>本站仅使用少量本地Cookie用于保存用户个性化设置（如主题配色、搜索引擎偏好、组件开关设置），所有Cookie仅保存在用户本地浏览器，不会上传至服务器，不会收集任何隐私信息/p>
-    <h2>4. 第三方服务说/h2>
-    <p>本站部分功能依赖正规第三方公开服务（搜索引擎、天气接口、网站访问统计），第三方服务均遵循对应平台隐私规则，本站严格筛选合规第三方接口，保障用户访问安全/p>
-    <h2>5. 用户权利</h2>
-    <p>用户可随时在浏览器中清除本站本地缓存、Cookie及本地配置数据，完全自主掌控个人浏览数据/p>
-    <h2>6. 政策更新</h2>
-    <p>本站可根据运营需要适时更新本隐私政策，更新后将在页面公示，公示即生效/p>
-    <a href="./" class="back">返回首页</a>
+    <div class="date">最后更新：2026年6月1日</div>
+
+    <h2>数据存储</h2>
+    <p>Quick Dial 的所有使用数据（包括导航书签、主题设置、壁纸偏好、最近访问记录）均默认存储在您的浏览器本地 LocalStorage 中。我们不会将您的数据上传至任何服务器，除非您主动使用云同步功能（Pro 专属）。</p>
+
+    <h2>云同步</h2>
+    <p>Pro 用户可选择将数据同步至云端，实现跨设备访问。数据通过 HTTPS 加密传输，存储于阿里云服务器（位于中国大陆）。我们无法查看、也不会查看您的导航内容。数据仅以加密形式保留，用于为您提供同步服务。</p>
+
+    <h2>信息收集</h2>
+    <p>我们不收集任何个人身份信息。注册账号时仅需提供用户名和密码，无需手机号或邮箱。我们不会使用任何分析工具追踪您的使用行为，不会展示第三方广告，不会将您的数据出售、共享或提供给任何第三方。没有任何数据经纪商或广告网络能够获取您的信息。</p>
+
+    <h2>支付信息</h2>
+    <p>Pro 订阅支付由微信支付（财付通支付科技有限公司）和支付宝（支付宝（中国）网络技术有限公司）处理。我们不会存储您的支付卡号、银行账户或任何金融信息。支付过程完全在微信/支付宝的安全环境中完成，我们仅接收交易结果通知。</p>
+
+    <h2>Cookie 与追踪</h2>
+    <p>本扩展不使用任何 Cookie、像素标签或行为追踪技术。您的偏好设置完全通过浏览器 LocalStorage 管理，可随时通过浏览器设置清除。我们无法追踪您访问了哪些网站、搜索了什么内容。</p>
+
+    <h2>数据安全</h2>
+    <p>云同步数据在传输过程中使用 HTTPS/TLS 加密，在服务器端以隔离的数据库表存储。我们采取合理的技术措施保护您的数据安全，但请注意，没有任何互联网传输方式是完全安全的。</p>
+
+    <h2>儿童隐私</h2>
+    <p>Quick Dial 不面向 13 岁以下的儿童。我们不会故意收集儿童的个人信息。</p>
+
+    <h2>政策变更</h2>
+    <p>如果我们更新隐私政策，新版本将在本页面发布，同时更新页面上方的"最后更新"日期。重大变更将通过扩展内通知告知用户。</p>
+
+    <h2>联系我们</h2>
+    <p>如有隐私相关问题、数据删除请求或投诉，请发送邮件至 makabaka@cilacila.cn。我们将在 7 个工作日内回复。</p>
+
+    <a href="./" class="back">← 返回官网</a>
   </div>
 </div>
 <div class="footer">
@@ -121,14 +109,17 @@
     <a href="copyright.html">版权声明</a>
     <a href="contact.html">联系方式</a>
     <a href="guide.html">使用指南</a>
+    <a href="account.html">账户管理</a>
+    <a href="https://gitee.com/corbancc/quick-dial" target="_blank" rel="noopener">开源代码</a>
   </div>
   <div class="footer-filings">
-    &copy;2026 cilacila.cn 呲啦起始版权所br>
+    &copy;2026 cilacila.cn 呲啦起始页 版权所有<br>
     <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP701203023</a>
     <span class="footer-sep">|</span>
-    <img src="beian.png" alt="" style="width:14px;height:14px;vertical-align:middle;margin-right:2px;"><a href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">鲁公网安7098202000884/a>
+    <img src="beian.png" alt="" style="width:14px;height:14px;vertical-align:middle;margin-right:2px;"><a href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">鲁公网安7098202000884</a>
   </div>
 </div>
 <script src="lang.js"></script>
-<script src=theme.js></script></body>
+<script src="nav-auth.js"></script>
+</body>
 </html>

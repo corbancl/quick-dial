@@ -4,7 +4,7 @@ import { getTheme } from '../stores/theme.svelte';
 import { getSettings } from '../stores/settings.svelte';
 import { getRecentSites } from '../stores/recentSites.svelte';
 import { getChatMessages, getChatConfig } from '../stores/chat.svelte';
-import { getIsPro, setAuthToken, getAuthToken } from '../stores/subscription.svelte';
+import { getIsPro, setAuthToken, getAuthToken, updateTokenIfNew } from '../stores/subscription.svelte';
 
 const API_BASE = 'https://sync.ruseo.cn/api/sync.php';
 
@@ -104,7 +104,6 @@ function getLocalSnapshot(): AppData {
 }
 
 // ====== 上传 ======
-
 export async function uploadSync(): Promise<{ ok: boolean; msg: string }> {
   const token = getToken();
   if (!token) return { ok: false, msg: '未登录' };
@@ -122,6 +121,9 @@ export async function uploadSync(): Promise<{ ok: boolean; msg: string }> {
       body: JSON.stringify({ data, version: localVersion }),
     });
     const result = await res.json();
+
+    // Token 自动刷新
+    updateTokenIfNew(res, result);
 
     if (result.code === 200) {
       setLocalVersion(result.data.version);
@@ -145,7 +147,6 @@ export async function uploadSync(): Promise<{ ok: boolean; msg: string }> {
 }
 
 // ====== 下载 ======
-
 export async function downloadSync(): Promise<{ ok: boolean; msg: string; data?: AppData }> {
   const token = getToken();
   if (!token) return { ok: false, msg: '未登录' };
@@ -156,6 +157,9 @@ export async function downloadSync(): Promise<{ ok: boolean; msg: string; data?:
       headers: { 'Authorization': `Bearer ${token}` },
     });
     const result = await res.json();
+
+    // Token 自动刷新
+    updateTokenIfNew(res, result);
 
     if (result.code === 200) {
       setLocalVersion(result.data.version);

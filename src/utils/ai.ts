@@ -19,18 +19,6 @@ export interface AIProvider {
 export const CUSTOM_MODEL_VALUE = '__custom__';
 export const CUSTOM_MODEL_LABEL = '自定义 / Custom';
 
-// 内置 API Key（XOR+Base64 编码），仅用于默认 DeepSeek，不暴露在 UI
-const _K_SEED = 'quick-dial-seed';
-const _K_ENC = 'Ah5EBV8bUVkAWUtCUgEHRUNeWwlJVQgDWhwXVVAFSU1YBQ4=';
-function _decryptKey(): string {
-  const dec = atob(_K_ENC);
-  let key = '';
-  for (let i = 0; i < dec.length; i++) {
-    key += String.fromCharCode(dec.charCodeAt(i) ^ _K_SEED.charCodeAt(i % _K_SEED.length));
-  }
-  return key;
-}
-
 export const BUILTIN_PROVIDERS: AIProvider[] = [
   {
     id: 'deepseek', name: 'DeepSeek (默认)', nameEn: 'DeepSeek (Default)',
@@ -41,7 +29,7 @@ export const BUILTIN_PROVIDERS: AIProvider[] = [
       { label: CUSTOM_MODEL_LABEL, value: CUSTOM_MODEL_VALUE },
     ],
     defaultModel: 'deepseek-chat',
-    needKey: false,
+    needKey: true,
   },
   {
     id: 'deepseek-self', name: 'DeepSeek', nameEn: 'DeepSeek',
@@ -295,8 +283,7 @@ export async function chatCompletion(messages: ChatMessage[], config: AIConfig):
   // OpenAI-compatible (DeepSeek, Qwen, Kimi, GLM, etc.)
   const apiUrl = provider.baseUrl;
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  // needKey=false 的内置 provider 使用加密存储的 Key，用户不可见
-  const apiKey = config.apiKey || (!provider.needKey ? _decryptKey() : '');
+  const apiKey = config.apiKey;
   if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
 
   const reqMessages: any[] = [];

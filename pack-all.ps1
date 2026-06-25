@@ -2,7 +2,7 @@
 
 $dist = "m:\new\dist"
 $out = "m:\new\build"
-$version = "v1.0.6"
+$version = "v1.0.8"
 $keys = "m:\new\keys"
 
 # 清理旧输出

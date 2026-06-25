@@ -2,7 +2,6 @@
   import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowAI, setHideBranding, setRecentSitesCount, setOpenInNewTab, setThemeStyle, setShowQuote, setQuoteType, setShowRss, setLayout } from '../stores/settings.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
   import { getAvailableEngines, getLockedEngines, getAllEngines } from '../utils/search';
-  import { checkSubscription } from '../utils/payment';
   import { t, getLang, setLang } from '../utils/i18n.svelte';
   import type { ClockStyle, ThemeStyle, QuoteType } from '../types';
   import { isProTheme } from '../types';
@@ -10,10 +9,9 @@
 
   interface Props {
     onclose: () => void;
-    onsubscribe?: () => void;
   }
 
-  let { onclose, onsubscribe }: Props = $props();
+  let { onclose }: Props = $props();
 
   let closing = $state(false);
 
@@ -55,19 +53,29 @@
     applyCustomCss(customCss);
   });
 
-  // 订阅详细信息
+  // 订阅详细信息（从 syncProStatus 获取）
   let subPlan = $state('');
   let subExpire = $state('');
+
+  // 简易计划名映射
   function pn(p: string) {
-    return {monthly: t('pro.monthly'), yearly: t('pro.yearly'), lifetime: t('pro.lifetime'), free: 'Free'}[p] || p;
+    return {monthly: t('pro.monthly'), yearly: t('pro.yearly'), lifetime: t('pro.lifetime')}[p] || p;
   };
 
   $effect(() => {
     if (getIsPro()) {
-      checkSubscription().then(s => {
-        subPlan = s.plan;
-        subExpire = s.expireAt || '';
-      });
+      // 从后端同步订阅详情（plan + expireAt）
+      const token = localStorage.getItem('quick-dial-token');
+      if (token) {
+        fetch('https://sync.ruseo.cn/api/pay.php?action=status', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        }).then(r => r.json()).then(result => {
+          if (result.code === 200 && result.data) {
+            subPlan = result.data.plan || '';
+            subExpire = result.data.expire_at || '';
+          }
+        }).catch(() => {});
+      }
     }
   });
 
@@ -313,8 +321,8 @@
           {:else}
             <div class="sub-expire lifetime">{t('settings.lifetime')}</div>
           {/if}
-          {#if subPlan !== 'lifetime' && onsubscribe}
-            <button class="btn btn-outline btn-renew" onclick={onsubscribe}>{t('pro.renew')}</button>
+          {#if subPlan !== 'lifetime'}
+            <a class="btn btn-outline btn-renew" href="https://www.cilacila.cn/account" target="_blank" rel="noopener">{t('pro.renew')}</a>
           {/if}
         </div>
 
@@ -387,27 +395,12 @@
           </div>
         </div>
 
-        <div class="pro-pricing">
-          <div class="pricing-option">
-            <span class="pricing-price">¥9.9</span>
-            <span class="pricing-period">/月</span>
-          </div>
-          <div class="pricing-option recommended">
-            <span class="pricing-badge">推荐</span>
-            <span class="pricing-price">¥68</span>
-            <span class="pricing-period">/年</span>
-          </div>
-          <div class="pricing-option">
-            <span class="pricing-price">¥198</span>
-            <span class="pricing-period">终身</span>
-          </div>
+        <div class="pro-cta">
+          <p class="pro-cta-text">{t('pro.guideText')}</p>
+          <a class="btn btn-primary btn-website" href="https://www.cilacila.cn/account" target="_blank" rel="noopener">
+            {t('pro.guideBtn')}
+          </a>
         </div>
-
-        {#if onsubscribe}
-          <button class="btn btn-primary btn-subscribe" onclick={onsubscribe}>
-            {t('pro.upgrade')}
-          </button>
-        {/if}
       {/if}
 
     </div>
@@ -643,52 +636,31 @@
     font-weight: 700;
   }
 
-  .pro-pricing {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
+  .pro-cta {
+    margin-top: 14px;
+    text-align: center;
   }
 
-  .pricing-option {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 8px;
-    border: 1px solid var(--card-border, rgba(0,0,0,0.08));
-    border-radius: 10px;
-    background: var(--card-bg, rgba(255,255,255,0.5));
-    position: relative;
-  }
-
-  .pricing-option.recommended {
-    border-color: #3b82f6;
-    background: rgba(59, 130, 246, 0.06);
-  }
-
-  .pricing-badge {
-    position: absolute;
-    top: -8px;
-    font-size: 10px;
-    padding: 1px 8px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: white;
-    font-weight: 600;
-  }
-
-  .pricing-price {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-color, #1e293b);
-    line-height: 1;
-  }
-
-  .pricing-period {
-    font-size: 11px;
+  .pro-cta-text {
+    font-size: 12px;
     color: var(--text-color, #1e293b);
     opacity: 0.5;
-    margin-top: 2px;
+    margin-bottom: 10px;
+  }
+
+  .btn-website {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .btn-website:hover {
+    opacity: 0.9;
   }
 
   /* 自定义 CSS 独立卡片 */
@@ -731,14 +703,7 @@
   .sub-expire.lifetime { color: #a855f7; opacity: 1; font-weight: 600; }
   .btn-renew { font-size: 12px; padding: 8px 16px; }
 
-  .btn-subscribe {
-    width: 100%;
-    margin-top: 12px;
-    padding: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  }
+  
 
   @media (max-width: 640px) {
     .modal-panel {

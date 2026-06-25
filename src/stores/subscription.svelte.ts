@@ -7,8 +7,33 @@ let isPro = $state(false);
 let customEngines = $state<SearchEngine[]>([]);
 
 // 响应式 token 追踪，登录/退出时自动触发 Pro 同步（export getter 方式避免 Svelte state_invalid_export）
-let _authToken = $state<string | null>(localStorage.getItem('quick-dial-token'));
+// 兼容官网 token（qd-website-token）和扩展端 token（quick-dial-token）
+let _authToken = $state<string | null>(
+  localStorage.getItem('quick-dial-token') || localStorage.getItem('qd-website-token')
+);
 export function getAuthToken() { return _authToken; }
+
+/**
+ * 检查响应中的新 token，自动更新本地存储
+ * 后端在 token 快过期时会在响应头 X-New-Token 或响应体 new_token 中返回新 token
+ * 
+ * 使用方法：在每次 API 请求后调用此函数
+ *   const res = await fetch(...);
+ *   const result = await res.json();
+ *   updateTokenIfNew(res, result);
+ */
+export function updateTokenIfNew(res: Response, result?: any) {
+  // 优先检查响应头
+  const newTokenFromHeader = res.headers.get('X-New-Token');
+  if (newTokenFromHeader && newTokenFromHeader !== _authToken) {
+    setAuthToken(newTokenFromHeader);
+    return;
+  }
+  // 其次检查响应体
+  if (result?.new_token && result.new_token !== _authToken) {
+    setAuthToken(result.new_token);
+  }
+}
 
 function init() {
   // 页面加载时不预设 isPro（保持 false 默认），由 syncProStatus 异步验证
@@ -23,6 +48,16 @@ function init() {
 
   // 页面加载时，token 存在性由 App.svelte 的 $effect 触发 syncProStatus，无需在此重复调用
   // 移除旧代码中的直接调用，避免与 $effect 并发执行造成的竞态条件
+
+  // 监听官网支付成功事件（通过 localStorage 跨页面通信）
+  window.addEventListener('storage', (e: StorageEvent) => {
+    if (e.key === 'qd-pay-success' && e.newValue) {
+      // 官网支付成功，刷新 Pro 状态
+      syncProStatus();
+      // 清除标记
+      localStorage.removeItem('qd-pay-success');
+    }
+  });
 }
 init();
 
@@ -126,9 +161,13 @@ export function cleanupProFeatures() {
 /** 登录/退出时更新响应式 token，触发 $effect 重新同步 */
 export function setAuthToken(token: string | null) {
   if (token) {
+    // 同时保存到扩展端和官网 token key
     localStorage.setItem('quick-dial-token', token);
+    localStorage.setItem('qd-website-token', token);
   } else {
+    // 同时清除两个 token key
     localStorage.removeItem('quick-dial-token');
+    localStorage.removeItem('qd-website-token');
     // 退出登录立即清除 Pro 状态
     if (isPro) { isPro = false; cleanupProFeatures(); }
   }
@@ -140,6 +179,8 @@ export function setAuthToken(token: string | null) {
  * 
  * 带指数退避重试（最多 3 次），解决 web 端刷新时网络抖动导致误判为免费的问题。
  * 只有服务器明确返回"不是 Pro"才设为 false；网络错误/超时不改变当前状态。
+ * 
+ * Token 自动刷新：后端在 token 快过期时会在响应头 X-New-Token 或响应体 new_token 中返回新 token
  */
 export async function syncProStatus() {
   const token = _authToken;
@@ -161,14 +202,21 @@ export async function syncProStatus() {
       });
       clearTimeout(timeoutId);
 
+      // 检查是否有新 token（自动刷新）
+      const result = await res.json();
+      updateTokenIfNew(res, result);
+
       if (res.status === 401) {
-        // Token 无效 → 强制退出
-        isPro = false;
-        setAuthToken(null);
+        // Token 无效，但先检查是否已通过响应头刷新了 token
+        // 如果 updateTokenIfNew 已更新了 token，则 _authToken 已是新值，无需退出
+        if (!_authToken) {
+          // 确实没有新 token，才强制退出
+          isPro = false;
+          setAuthToken(null);
+        }
         return;
       }
 
-      const result = await res.json();
       if (result.code === 200) {
         const serverPro = result.data?.is_pro || false;
         isPro = serverPro;

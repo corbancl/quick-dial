@@ -4,92 +4,65 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="favicon.png">
-<title>版权声明 · 呲啦起始/title>
+<title>版权声明 · 呲啦起始页官网</title>
 <style>
-  :root { --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #1e293b; --text2: #64748b; --accent: #3b82f6; --shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  :root { --bg: #06080d; --card: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.06); --text: #e2e8f0; --text2: rgba(226,232,240,0.5); --accent: #3b82f6; --accent2: #8b5cf6; --accent3: #06b6d4; --green: #22c55e; --red: #ef4444; --radius: 16px; --radius-sm: 10px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
-  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,250,252,0.92); border-bottom: 1px solid var(--border); }
-  .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 56px; }
-  .nav-logo { font-size: 11px; font-weight: 600; letter-spacing: 0px; text-decoration: none; color: var(--text2); line-height: 1.15; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; position: relative; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle at 20% 20%, rgba(59,130,246,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 60%, rgba(139,92,246,0.06) 0%, transparent 50%), radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 100% 100%, 24px 24px; mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%); }
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(6,8,13,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 1140px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 60px; }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .nav-logo-img { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
-  .nav-logo-txt { line-height: 1.15; }
-  .nav-logo .sub { display: block; font-size: 17px; font-weight: 800; color: var(--accent); letter-spacing: 0px; }
+  .nav-logo .brand { font-size: 16px; font-weight: 800; color: var(--text); line-height: 1.2; }
+  .nav-logo .cn { font-size: 10px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
   .nav-links { display: flex; gap: 24px; align-items: center; }
   .nav-links a { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
   .nav-links a:hover { color: var(--text); }
-  .nav-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: var(--accent); color: white; }
-  .nav-btn:hover { opacity: 0.9; }
+  .nav-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: linear-gradient(135deg, var(--accent), #2563eb); color: white; }
+  .nav-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59,130,246,0.3); }
   .nav-lang { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 16px; cursor: pointer; color: var(--text2); transition: all 0.2s; }
   .nav-lang:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-  .container { max-width: 720px; margin: 0 auto; padding: 120px 24px 60px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 40px 36px; }
+  .container { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 120px 24px 60px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 36px; backdrop-filter: blur(8px); }
   h1 { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
-  h2 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; }
+  h2 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; color: var(--accent); }
   p { font-size: 14px; color: var(--text2); line-height: 1.9; margin-bottom: 8px; }
-  .back { display: inline-block; margin-top: 32px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; }
-  .back:hover { text-decoration: underline; }
-  /* Footer */
-  .footer {
-    text-align: center;
-    padding: 48px 24px 32px;
-    font-size: 13px;
-    color: var(--text2);
-    border-top: 1px solid var(--border);
-  }
-  .footer .footer-links {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 4px 20px;
-    margin-bottom: 14px;
-  }
-  .footer .footer-links a {
-    color: var(--accent);
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-  .footer .footer-links a:hover {
-    opacity: 0.75;
-    text-decoration: underline;
-  }
-  .footer .footer-filings {
-    font-size: 12px;
-    line-height: 2;
-    color: var(--text2);
-    opacity: 0.75;
-  }
-  .footer .footer-filings a {
-    color: var(--text2);
-    text-decoration: none;
-  }
-  .footer .footer-filings a:hover {
-    color: var(--accent);
-  }
-  .footer .footer-sep {
-    display: inline-block;
-    margin: 0 10px;
-    color: var(--border);
-  }
+  .back { display: inline-block; margin-top: 32px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; transition: opacity 0.2s; }
+  .back:hover { opacity: 0.8; }
+  .footer { position: relative; z-index: 1; text-align: center; padding: 48px 24px 32px; font-size: 13px; color: var(--text2); border-top: 1px solid var(--border); }
+  .footer .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 20px; margin-bottom: 14px; }
+  .footer .footer-links a { color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+  .footer .footer-links a:hover { opacity: 0.75; text-decoration: underline; }
+  .footer .footer-filings { font-size: 12px; line-height: 2; color: var(--text2); opacity: 0.75; }
+  .footer .footer-filings a { color: var(--text2); text-decoration: none; }
+  .footer .footer-filings a:hover { color: var(--accent); }
+  .footer .footer-sep { display: inline-block; margin: 0 10px; color: var(--border); }
   @media (max-width: 768px) { .container { padding: 100px 16px 40px; } .card { padding: 28px 20px; } .nav-links a { display: none; } }
-  @media (max-width: 640px) {
-    .footer { padding: 32px 16px 24px; font-size: 12px; }
-    .footer .footer-links { gap: 2px 14px; }
-  }
+  @media (max-width: 640px) { .footer { padding: 32px 16px 24px; font-size: 12px; } .footer .footer-links { gap: 2px 14px; } }
 </style>
 </head>
 <body>
 <nav class="nav">
   <div class="nav-inner">
-    <a href="./" class="nav-logo"><img src="favicon.png" class="nav-logo-img" alt="" /><span class="nav-logo-txt">Quick Dial<span class="sub">呲啦起始/span></span></a>
+    <a href="./" class="nav-logo">
+      <img src="favicon.png" class="nav-logo-img" alt="" />
+      <div>
+        <div class="brand">呲啦起始页</div>
+        <div class="cn">Quick Dial</div>
+      </div>
+    </a>
     <div class="nav-links">
       <a href="./#features">功能</a>
       <a href="./#pricing">价格</a>
       <a href="./#download">下载</a>
       <a href="./#faq">常见问题</a>
-      <a href="about.html">关于我们</a>
-      <button class="nav-btn" onclick="window.location.href='./'">返回首页</button>
-      <button class="nav-lang" onclick="qdToggleLang()" title="English">🌐</button>
+      <div id="nav-user" style="display:none;align-items:center;gap:12px">
+        <span id="nav-username" style="color:var(--text2);font-size:13px;font-weight:500"></span>
+        <button class="nav-btn" style="background:rgba(255,255,255,0.08);color:var(--text2)" onclick="handleLogout()">退出</button>
+      </div>
+      <button id="nav-login-btn" class="nav-btn" onclick="location.href='account.html'">登录</button>
+      <button class="nav-lang" onclick="qdToggleLang()" title="切换语言">🌐</button>
     </div>
   </div>
 </nav>
@@ -97,14 +70,14 @@
   <div class="card">
     <h1>版权声明</h1>
     <h2>1. 全站定位</h2>
-    <p>cilacila.cn（呲啦起始页）为个人非新闻类工具网站，全站内容以工具功能、网址导航、便民服务为主，无新闻采编、无资讯发布、无违规内容输出/p>
+    <p>cilacila.cn（呲啦起始页）为个人非新闻类工具网站，全站内容以工具功能、网址导航、便民服务为主，无新闻采编、无资讯发布、无违规内容输出。</p>
     <h2>2. 版权说明</h2>
-    <p>本站前端界面、功能设计、页面布局均为本站原创设计，受著作权法保护。未经本站书面授权，禁止任何个人或单位复制、盗用、仿制、二次篡改本站整体页面与功能代码/p>
-    <h2>3. 第三方资源说/h2>
-    <p>本站导航跳转的第三方网站、外部链接、第三方工具内容，版权归原平台所有，本站仅提供快捷访问入口，不享有任何第三方内容版权/p>
+    <p>本站前端界面、功能设计、页面布局均为本站原创设计，受著作权法保护。未经本站书面授权，禁止任何个人或单位复制、盗用、仿制、二次篡改本站整体页面与功能代码。</p>
+    <h2>3. 第三方资源说明</h2>
+    <p>本站导航跳转的第三方网站、外部链接、第三方工具内容，版权归原平台所有，本站仅提供快捷访问入口，不享有任何第三方内容版权。</p>
     <h2>4. 侵权反馈</h2>
-    <p>若本站内容存在版权争议，可通过联系方式及时沟通，本站将第一时间核查并整改、删除相关内容/p>
-    <a href="./" class="back">返回首页</a>
+    <p>若本站内容存在版权争议，可通过联系方式及时沟通，本站将第一时间核查并整改、删除相关内容。</p>
+    <a href="./" class="back">← 返回首页</a>
   </div>
 </div>
 <div class="footer">
@@ -114,14 +87,17 @@
     <a href="copyright.html">版权声明</a>
     <a href="contact.html">联系方式</a>
     <a href="guide.html">使用指南</a>
+    <a href="account.html">账户管理</a>
+    <a href="https://gitee.com/corbancc/quick-dial" target="_blank" rel="noopener">开源代码</a>
   </div>
   <div class="footer-filings">
-    &copy;2026 cilacila.cn 呲啦起始版权所br>
+    &copy;2026 cilacila.cn 呲啦起始页 版权所有<br>
     <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP701203023</a>
     <span class="footer-sep">|</span>
-    <img src="beian.png" alt="" style="width:14px;height:14px;vertical-align:middle;margin-right:2px;"><a href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">鲁公网安7098202000884/a>
+    <img src="beian.png" alt="" style="width:14px;height:14px;vertical-align:middle;margin-right:2px;"><a href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">鲁公网安7098202000884</a>
   </div>
 </div>
 <script src="lang.js"></script>
-<script src=theme.js></script></body>
+<script src="nav-auth.js"></script>
+</body>
 </html>

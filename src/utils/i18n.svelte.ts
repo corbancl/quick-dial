@@ -39,7 +39,7 @@ const zh: Dict = {
   'pro.monthly': '月度会员','pro.yearly': '年度会员','pro.lifetime': '终身会员','pro.expire': '到期：','pro.expireTip': 'Pro 将于 {days} 天后到期，请及时续费','pro.days': '天',
   'settings.engine': '默认搜索引擎',
   'theme.tech': '深色科技','theme.glass': '毛玻璃','theme.minimal': '极简扁平','theme.neu': '新拟态','theme.paper': '素纸暖调','theme.ocean': '深海幽蓝','theme.cyberpunk': '赛博朋克','theme.retro': '复古终端','theme.proRequired': '该主题为 Pro 专属，请升级后使用',
-  'pro.customFooterEg': '例如：我的公司','pro.customTitle': '自定义标题','pro.customTitleDesc': '替换浏览器标签页标题','pro.customTitleEg': '例如：我的起始页','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
+  'pro.customFooterEg': '例如：我的公司','pro.customTitle': '自定义标题','pro.customTitleDesc': '替换浏览器标签页标题','pro.customTitleEg': '例如：我的起始页','pro.guideText': '开通 Pro 解锁全部功能','pro.guideBtn': '访问官网开通 Pro','cat.social': '社交','cat.dev': '开发','cat.media': '媒体','cat.office': '办公','cat.study': '学习','cat.brand': '品牌',
   'pro.cssPlaceholder': '/* 在此输入自定义 CSS */',
   'icon.customUrl': '自定义图标 URL',
   'search.customTag': '自定义','search.locked': 'Pro 解锁','search.engineName': '引擎名称','search.engineUrl': '搜索URL（用{keyword}占位）','search.addEngine': '+ 添加自定义引擎',
@@ -55,6 +55,7 @@ const zh: Dict = {
   'settings.lifetime': '终身有效',
   'pro.featureSync': '云端数据同步','pro.featureWallpaper': '自定义上传壁纸',
   'toolbar.expand': '展开','toolbar.collapse': '折叠','toolbar.expandGroup': '展开分组','toolbar.collapseGroup': '折叠分组',
+  'toolbar.wallpaper': '壁纸设置','toolbar.ie': '导入/导出','toolbar.stats': '访问统计','toolbar.sync': '云同步','toolbar.upgrade': '升级 Pro','toolbar.settings': '设置','toolbar.help': '快捷键',
   'search.switchEngine': '切换搜索引擎',
   // 汇率换算
   'currency.title': '汇率换算','currency.amount': '金额','currency.base': '基准货币','currency.refresh': '刷新','currency.updated': '更新时间','settings.showCurrency': '显示汇率换算',

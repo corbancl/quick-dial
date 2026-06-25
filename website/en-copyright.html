@@ -3,93 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Copyright Notice - Quick Dial">
 <link rel="icon" type="image/png" href="favicon.png">
 <title>Copyright · Quick Dial</title>
 <style>
-  :root { --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #1e293b; --text2: #64748b; --accent: #3b82f6; --shadow: 0 1px 3px rgba(0,0,0,0.04); }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
-  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,250,252,0.92); border-bottom: 1px solid var(--border); }
-  .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 56px; }
-  .nav-logo { font-size: 11px; font-weight: 600; letter-spacing: 0px; text-decoration: none; color: var(--text2); line-height: 1.15; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-  .nav-logo-img { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
-  .nav-logo-txt { line-height: 1.15; }
-  .nav-logo .sub { display: block; font-size: 17px; font-weight: 800; color: var(--accent); letter-spacing: 0px; }
-  .nav-links { display: flex; gap: 24px; align-items: center; }
-  .nav-links a { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+  :root {
+    --bg: #06080d;
+    --bg2: #0a0f1a;
+    --card: rgba(255,255,255,0.025);
+    --card-hover: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(255,255,255,0.12);
+    --text: #e8edf4;
+    --text2: rgba(200,210,224,0.55);
+    --accent: #4f8fff;
+    --accent2: #7c5cfc;
+    --accent3: #38bdf8;
+    --green: #34d399;
+    --red: #f87171;
+    --glow-blue: rgba(79,143,255,0.15);
+    --glow-purple: rgba(124,92,252,0.12);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,143,255,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(124,92,252,0.04) 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='0.6' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");
+    background-size: auto, auto, 60px 60px;
+  }
+
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(6,8,13,0.78);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1140px; margin: 0 auto; padding: 0 28px;
+    display: flex; justify-content: space-between; align-items: center; height: 60px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text);
+  }
+  .nav-logo-img { width: 34px; height: 34px; border-radius: 9px; }
+  .nav-logo .brand { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+  .nav-logo .cn { font-size: 12px; font-weight: 500; color: var(--text2); }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { color: var(--text2); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color 0.2s; }
   .nav-links a:hover { color: var(--text); }
-  .nav-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: var(--accent); color: white; }
-  .nav-btn:hover { opacity: 0.9; }
-  .nav-lang { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 16px; cursor: pointer; color: var(--text2); transition: all 0.2s; }
-  .nav-lang:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-  .container { max-width: 720px; margin: 0 auto; padding: 120px 24px 60px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 40px 36px; }
-  h1 { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
-  h2 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; }
+  .nav-btn {
+    padding: 8px 20px; border-radius: 10px; font-size: 13px; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.25s;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; box-shadow: 0 2px 14px rgba(79,143,255,0.25);
+    font-family: var(--font);
+  }
+  .nav-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(79,143,255,0.35); }
+  .nav-lang {
+    background: none; border: 1px solid var(--border); border-radius: 10px;
+    width: 36px; height: 36px; font-size: 15px; cursor: pointer; color: var(--text2);
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  }
+  .nav-lang:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 120px 28px 60px; position: relative; z-index: 1; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 40px 36px;
+  }
+  h1 { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 8px; }
+  h2 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; color: var(--accent3); }
   p { font-size: 14px; color: var(--text2); line-height: 1.9; margin-bottom: 8px; }
-  .back { display: inline-block; margin-top: 32px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; }
-  .back:hover { text-decoration: underline; }
-  /* Footer */
-  .footer {
-    text-align: center;
-    padding: 48px 24px 32px;
-    font-size: 13px;
-    color: var(--text2);
-    border-top: 1px solid var(--border);
-  }
-  .footer .footer-links {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 4px 20px;
-    margin-bottom: 14px;
-  }
-  .footer .footer-links a {
-    color: var(--accent);
-    text-decoration: none;
+  .back {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 32px;
+    font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600;
     transition: opacity 0.2s;
   }
-  .footer .footer-links a:hover {
-    opacity: 0.75;
-    text-decoration: underline;
+  .back:hover { opacity: 0.75; }
+
+  .footer {
+    text-align: center; padding: 48px 28px; font-size: 13px; color: var(--text2);
+    border-top: 1px solid var(--border); position: relative; z-index: 1;
   }
-  .footer .footer-filings {
-    font-size: 12px;
-    line-height: 2;
-    color: var(--text2);
-    opacity: 0.75;
+  .footer a { color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+  .footer a:hover { opacity: 0.75; }
+  .footer-links {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 2px 18px; margin-bottom: 14px;
   }
-  .footer .footer-filings a {
-    color: var(--text2);
-    text-decoration: none;
-  }
-  .footer .footer-filings a:hover {
-    color: var(--accent);
-  }
-  .footer .footer-sep {
-    display: inline-block;
-    margin: 0 10px;
-    color: var(--border);
-  }
-  @media (max-width: 768px) { .container { padding: 100px 16px 40px; } .card { padding: 28px 20px; } .nav-links a { display: none; } }
-  @media (max-width: 640px) {
-    .footer { padding: 32px 16px 24px; font-size: 12px; }
-    .footer .footer-links { gap: 2px 14px; }
+  .footer-links a { color: var(--text2); }
+  .footer-links .sep { opacity: 0.25; user-select: none; }
+  .footer-filings { font-size: 12px; line-height: 2; opacity: 0.5; margin-top: 8px; }
+  .footer-filings a { color: var(--text2); }
+  .footer-filings img { width: 14px; height: 14px; vertical-align: middle; margin-right: 3px; }
+
+  @media (max-width: 768px) {
+    .container { padding: 100px 16px 40px; }
+    .card { padding: 28px 20px; }
+    .nav-links a { display: none; }
   }
 </style>
 </head>
 <body>
 <nav class="nav">
   <div class="nav-inner">
-    <a href="en.html" class="nav-logo"><img src="favicon.png" class="nav-logo-img" alt="" /><span class="nav-logo-txt">Quick Dial<span class="sub">Quick Dial</span></span></a>
+    <a href="en.html" class="nav-logo">
+      <img src="favicon.png" class="nav-logo-img" alt="" />
+      <div>
+        <div class="brand">Quick Dial</div>
+        <div class="cn">呲啦起始页</div>
+      </div>
+    </a>
     <div class="nav-links">
       <a href="en.html#features">Features</a>
       <a href="en.html#pricing">Pricing</a>
       <a href="en.html#download">Download</a>
       <a href="en.html#faq">FAQ</a>
-      <a href="en-about.html">About</a>
-      <button class="nav-btn" onclick="window.location.href='en.html'">Home</button>
-      <button class="nav-lang" onclick="qdToggleLang()" title="切换到中>🌐</button>
+      <button class="nav-btn" onclick="window.location.href='account.html'">Sign In</button>
+      <button class="nav-lang" onclick="qdToggleLang()" title="Switch Language">🌐</button>
     </div>
   </div>
 </nav>
@@ -104,24 +151,29 @@
     <p>Third-party websites, external links, and third-party tool content accessed through navigation on this site are copyrighted by their respective platforms. This site only provides quick access entry points and does not claim any copyright over third-party content.</p>
     <h2>4. Infringement Reports</h2>
     <p>If any content on this site involves copyright disputes, please contact us promptly through the provided contact information. We will verify and rectify or remove the relevant content as soon as possible.</p>
-    <a href="en.html" class="back">&larr; Back to Home</a>
+    <a href="en.html" class="back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Home
+    </a>
   </div>
 </div>
 <div class="footer">
   <div class="footer-links">
-    <a href="en-about.html">About</a>
-    <a href="en-privacy.html">Privacy</a>
-    <a href="en-copyright.html">Copyright</a>
-    <a href="en-contact.html">Contact</a>
-    <a href="en-guide.html">Guide</a>
+    <a href="en-about.html">About</a><span class="sep">|</span>
+    <a href="en-privacy.html">Privacy</a><span class="sep">|</span>
+    <a href="en-copyright.html">Copyright</a><span class="sep">|</span>
+    <a href="en-contact.html">Contact</a><span class="sep">|</span>
+    <a href="en-guide.html">Guide</a><span class="sep">|</span>
+    <a href="account.html">Account</a><span class="sep">|</span>
+    <a href="https://gitee.com/corbancc/quick-dial" target="_blank">Open Source</a>
   </div>
   <div class="footer-filings">
-    &copy;2026 cilacila.cn Quick Dial All Rights Reserved<br>
+    &copy;2026 cilacila.cn Quick Dial All rights reserved.<br>
     <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP701203023</a>
-    <span class="footer-sep">|</span>
-    <img src="beian.png" alt="" style="width:14px;height:14px;vertical-align:middle;margin-right:2px;"><a href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">鲁公网安7098202000884/a>
+    <span style="margin:0 6px;opacity:0.3;">|</span>
+    <img src="beian.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">鲁公网安7098202000884</a>
   </div>
 </div>
 <script src="lang.js"></script>
-<script src=theme.js></script></body>
+</body>
 </html>

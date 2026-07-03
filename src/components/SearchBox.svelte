@@ -1,6 +1,9 @@
 <script lang="ts">
   import { getSettings, setSearchEngine } from '../stores/settings.svelte';
   import { getAvailableEngines, getAllEngines, getLockedEngines, buildSearchUrl } from '../utils/search';
+  import { searchLocalDials } from '../utils/localSearch';
+  import { getDialsState } from '../stores/dials.svelte';
+  import LocalSearchPanel from './LocalSearchPanel.svelte';
   import { t } from '../utils/i18n.svelte';
   import { getIsPro, addCustomEngine, removeCustomEngine } from '../stores/subscription.svelte';
   import type { SearchEngine } from '../types';
@@ -11,8 +14,27 @@
   let customName = $state('');
   let customUrl = $state('');
   let inputEl: HTMLInputElement | undefined = $state();
+  let localSelectedIndex = $state(-1);
+
+  // 本地搜索结果（响应式）
+  let localResults = $derived.by(() => {
+    const kw = keyword.trim();
+    if (!kw) return [];
+    const state = getDialsState();
+    return searchLocalDials(kw, state.items, state.groups);
+  });
+
+  let showLocalPanel = $derived(localResults.length > 0 && keyword.trim() && !showEnginePicker);
 
   function handleSearch() {
+    // 如果有选中的本地结果，优先跳转
+    if (localSelectedIndex >= 0 && localSelectedIndex < localResults.length) {
+      const dial = localResults[localSelectedIndex].dial;
+      window.open(dial.url, '_blank', 'noopener,noreferrer');
+      keyword = '';
+      localSelectedIndex = -1;
+      return;
+    }
     const trimmed = keyword.trim();
     if (!trimmed) return;
     const engineId = getSettings().searchEngine;
@@ -32,7 +54,23 @@
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Enter') {
       handleSearch();
+    } else if (e.key === 'ArrowDown' && showLocalPanel) {
+      e.preventDefault();
+      localSelectedIndex = Math.min(localSelectedIndex + 1, localResults.length - 1);
+    } else if (e.key === 'ArrowUp' && showLocalPanel) {
+      e.preventDefault();
+      localSelectedIndex = localSelectedIndex <= 0 ? -1 : localSelectedIndex - 1;
+    } else if (e.key === 'Escape') {
+      keyword = '';
+      localSelectedIndex = -1;
+      inputEl?.blur();
     }
+  }
+
+  function handleLocalSelect(dial: { url: string }) {
+    window.open(dial.url, '_blank', 'noopener,noreferrer');
+    keyword = '';
+    localSelectedIndex = -1;
   }
 
   function handleAddCustom() {
@@ -103,6 +141,16 @@
     </button>
   </div>
 
+  {#if showLocalPanel}
+    <LocalSearchPanel
+      results={localResults}
+      selectedIndex={localSelectedIndex}
+      keyword={keyword.trim()}
+      engineName={currentEngine().name}
+      onselect={handleLocalSelect}
+    />
+  {/if}
+
   {#if showEnginePicker}
     <div class="engine-picker">
       {#each getAvailableEngines() as engine}
@@ -165,6 +213,11 @@
 {#if showEnginePicker}
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <div class="backdrop" onclick={() => { showEnginePicker = false; showCustomForm = false; }} role="button" tabindex="-1"></div>
+{/if}
+
+{#if showLocalPanel}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <div class="backdrop" onclick={() => { keyword = ''; localSelectedIndex = -1; }} role="button" tabindex="-1"></div>
 {/if}
 
 <style>

@@ -57,6 +57,8 @@ const zh: Dict = {
   'toolbar.expand': '展开','toolbar.collapse': '折叠','toolbar.expandGroup': '展开分组','toolbar.collapseGroup': '折叠分组',
   'toolbar.wallpaper': '壁纸设置','toolbar.ie': '导入/导出','toolbar.stats': '访问统计','toolbar.sync': '云同步','toolbar.upgrade': '升级 Pro','toolbar.settings': '设置','toolbar.help': '快捷键',
   'search.switchEngine': '切换搜索引擎',
+  'search.local': '本地导航',
+  'search.localHint': '按 Enter 使用 {engine} 搜索 "{keyword}"',
   // 汇率换算
   'currency.title': '汇率换算','currency.amount': '金额','currency.base': '基准货币','currency.refresh': '刷新','currency.updated': '更新时间','settings.showCurrency': '显示汇率换算',
   'top': '返回顶部',
@@ -133,6 +135,8 @@ const en: Dict = {
   'toolbar.wallpaper': 'Wallpaper','toolbar.ie': 'Import/Export','toolbar.stats': 'Stats','toolbar.sync': 'Cloud Sync','toolbar.upgrade': 'Upgrade','toolbar.settings': 'Settings','toolbar.help': 'Shortcuts',
   'toolbar.expand': 'Expand','toolbar.collapse': 'Collapse','toolbar.expandGroup': 'Expand','toolbar.collapseGroup': 'Collapse',
   'search.switchEngine': 'Switch Engine',
+  'search.local': 'Local Dials',
+  'search.localHint': 'Press Enter to search "{keyword}" with {engine}',
   // 汇率换算
   'currency.title': 'Currency','currency.amount': 'Amount','currency.base': 'Base','currency.refresh': 'Refresh','currency.updated': 'Updated','settings.showCurrency': 'Show Currency',
   'top': 'Back to Top',

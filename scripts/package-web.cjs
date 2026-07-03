@@ -4,7 +4,7 @@ const path = require('path');
 
 const websiteDir = 'M:/new/website';
 const packagesDir = 'M:/new/packages';
-const zipName = 'quick-dial-v1.0.8-web.zip';
+const zipName = 'quick-dial-v1.0.9-web.zip';
 
 // Use tar or a Node.js zip library... let's use the built-in approach
 // Windows has no zip command, use Node.js adm-zip? Or we can use Compress-Archive

@@ -10,8 +10,8 @@ console.log('Key extracted:', extKey ? extKey.substring(0, 20) + '...' : 'MISSIN
 const base = {
   "manifest_version": 3,
   "name": "呲啦起始页 - Quick Dial",
-  "version": "1.0.8",
-  "version_name": "1.0.8",
+  "version": "1.0.9",
+  "version_name": "1.0.9",
   "description": "极简无广告浏览器新标签页，支持自定义导航、多引擎搜索、天气农历、壁纸主题。替代原生标签页的最佳选择。",
   "author": "Quick Dial",
   "homepage_url": "https://www.cilacila.cn",

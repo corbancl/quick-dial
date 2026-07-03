@@ -116,6 +116,7 @@
   .method-tab.active { border-color: var(--accent); background: rgba(79,143,255,0.1); }
   .method-tab.wechat.active { border-color: #07c160; background: rgba(7,193,96,0.1); }
   .method-tab.alipay.active { border-color: #1677ff; background: rgba(22,119,255,0.1); }
+  .method-tab.creem.active { border-color: var(--accent3); background: rgba(56,189,248,0.1); }
   .method-icon { font-size: 24px; margin-bottom: 4px; }
   .method-name { font-size: 14px; font-weight: 600; color: var(--text); }
 
@@ -288,7 +289,7 @@
           <div class="plan-price">¥9.9<small>/月</small></div>
           <div class="plan-desc">适合短期体验</div>
         </div>
-        <div class="plan-card featured selected" data-plan="yearly" onclick="selectPlan('yearly')">
+        <div class="plan-card featured selected" data-plan="annual" onclick="selectPlan('annual')">
           <div class="plan-badge">推荐</div>
           <div class="plan-name">年度</div>
           <div class="plan-price">¥68<small>/年</small></div>
@@ -310,8 +311,12 @@
           <img src="alipay-pay.png" class="method-icon" style="width:32px;height:32px;margin-bottom:4px" alt="支付宝" />
           <div class="method-name">支付宝</div>
         </div>
+        <div class="method-tab creem" data-method="creem" onclick="selectMethod('creem')">
+          <svg class="method-icon" style="width:32px;height:32px;margin-bottom:4px" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="3" stroke="#38bdf8" stroke-width="1.5"/><line x1="2" y1="10" x2="22" y2="10" stroke="#38bdf8" stroke-width="1.5"/><circle cx="6" cy="16" r="1.5" fill="#38bdf8"/><text x="15" y="16" font-size="5" fill="#38bdf8" font-family="sans-serif">VISA</text></svg>
+          <div class="method-name">信用卡/PayPal</div>
+        </div>
       </div>
-      <button class="btn btn-gold" id="pay-btn" onclick="createPayOrder()" style="width:100%">
+      <button class="btn btn-gold" id="pay-btn" onclick="handlePay()" style="width:100%">
         💳 立即支付 ¥<span id="pay-btn-amount">68</span>
       </button>
       <div id="pay-msg"></div>
@@ -417,10 +422,10 @@
 const API = 'https://sync.ruseo.cn/api/account.php';
 const SYNC_API = 'https://sync.ruseo.cn/api/sync.php';
 const PAY_API = 'https://sync.ruseo.cn/api/pay.php';
-const PLANS = { monthly: { name: '月度', amount: 9.90, days: 30 }, yearly: { name: '年度', amount: 68, days: 365 }, lifetime: { name: '终身', amount: 198, days: null } };
+const PLANS = { monthly: { name: '月度', amount: 9.90, days: 30 }, annual: { name: '年度', amount: 68, days: 365 }, lifetime: { name: '终身', amount: 198, days: null } };
 let token = localStorage.getItem('qd-website-token') || localStorage.getItem('quick-dial-token') || '';
 let currentTab = 'login';
-let selPlan = 'yearly', selMethod = 'wechat', curOrderNo = '', curPlanName = '';
+let selPlan = 'annual', selMethod = 'wechat', curOrderNo = '', curPlanName = '';
 let payPollTimer, payPollTimes = 0, payTimeoutWarned = false;
 
 function toast(msg, type) {
@@ -645,6 +650,40 @@ function showPaySection() {
   setTimeout(() => {
     document.getElementById('pay-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 50);
+}
+
+function handlePay() {
+  if (selMethod === 'creem') {
+    creemCheckout(selPlan);
+  } else {
+    createPayOrder();
+  }
+}
+
+const CREEM_API = 'https://sync.ruseo.cn/api/creem.php';
+const CREEM_PRODUCTS = { monthly: 'prod_75ZGDqIoVjinGzwk1X49GP', annual: 'prod_2Edqc8ejD51AZQkzXN6YwD', lifetime: 'prod_3ch9YMjnVM3tH8ExxdKjzs' };
+
+async function creemCheckout(plan) {
+  const btn = document.getElementById('pay-btn');
+  btn.disabled = true; btn.textContent = '⏳ 跳转支付页面...';
+  setMsg('pay-msg','','');
+  try {
+    const r = await fetch(CREEM_API+'?action=checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: plan })
+    });
+    const d = await r.json();
+    if (d.checkout_url) {
+      window.location.href = d.checkout_url;
+    } else {
+      btn.disabled = false; btn.innerHTML = '💳 立即支付 ¥<span id="pay-btn-amount">'+PLANS[plan].amount+'</span>'; 
+      setMsg('pay-msg', d.error || d.detail?.error || '创建支付链接失败', 'error');
+    }
+  } catch(e) {
+    btn.disabled = false; btn.innerHTML = '💳 立即支付 ¥<span id="pay-btn-amount">'+PLANS[plan].amount+'</span>'; 
+    setMsg('pay-msg', '网络错误，请重试', 'error');
+  }
 }
 
 async function createPayOrder() {

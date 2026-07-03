@@ -18,7 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, "dist")
 PACKAGES = os.path.join(ROOT, "packages")
 KEYS = os.path.join(ROOT, "keys")
-VERSION = "1.0.8"
+VERSION = "1.0.9"
 
 # 浏览器配置
 BROWSERS = {

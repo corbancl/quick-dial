@@ -16,6 +16,10 @@ BUSINESS_PLAN.md
 *.zip
 *.crx
 *.xpi
+*.fpk
+
+# 发布包列表（本地生成，不提交）
+downloads/
 
 # 构建输出（仅提交源码）
 build/

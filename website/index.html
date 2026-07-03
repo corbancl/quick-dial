@@ -151,7 +151,7 @@
   .section-title p { color: var(--text2); font-size: 16px; max-width: 500px; margin: 0 auto; }
 
   /* ── Features ── */
-  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
   .feature-card {
     background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
     padding: 36px 32px; transition: all 0.35s cubic-bezier(0.23,1,0.32,1);
@@ -275,7 +275,7 @@
   @media (max-width: 768px) {
     .hero h1 { font-size: 37px; }
     .hero p { font-size: 16px; }
-    .features { grid-template-columns: 1fr; }
+    .features { grid-template-columns: repeat(2, 1fr); }
     .download-cards { grid-template-columns: 1fr; }
     .pricing-cards { flex-direction: column; align-items: center; }
     .price-card { max-width: 100%; }
@@ -283,6 +283,9 @@
     section { padding: 80px 16px; }
     .hero { padding-top: 140px; }
     .section-title h2 { font-size: 30px; }
+  }
+  @media (max-width: 480px) {
+    .features { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -319,7 +322,7 @@
 <!-- Hero -->
 <section class="hero reveal">
   <div class="container">
-    <div class="hero-tag"><span class="dot"></span>v1.0.8 正式版</div>
+    <div class="hero-tag"><span class="dot"></span>v1.0.9 正式版</div>
     <h1>每次打开浏览器<br>都是<span class="gradient">新的开始</span></h1>
     <p>替代浏览器原生标签页和臃肿导航站。极简设计、闪电速度、完全无广告。</p>
     <div class="hero-btns">
@@ -350,7 +353,7 @@
           </svg>
         </div>
         <h3>闪电搜索</h3>
-        <p>Google、百度、Bing、知乎、B站、GitHub……10+ 种引擎，Ctrl+K 聚焦，输入即搜。</p>
+        <p>Google、百度、Bing、知乎、B站、GitHub……14 种引擎，Ctrl+K 聚焦，输入即搜。输入关键词还会自动匹配本地导航，一键直达已保存的站点。</p>
       </div>
       <!-- 2. 快捷导航 -->
       <div class="feature-card reveal">
@@ -416,6 +419,18 @@
         <h3>隐私优先</h3>
         <p>所有数据本地存储，不上传、不追踪、无广告。你的数据只属于你。</p>
       </div>
+      <!-- 8. 本地导航搜索 -->
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background: linear-gradient(135deg, rgba(79,143,255,0.15), rgba(124,92,252,0.08)); border-color: rgba(79,143,255,0.2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <rect x="2" y="6" width="6" height="6" rx="1" opacity="0.5"/><rect x="2" y="14" width="6" height="6" rx="1" opacity="0.5"/>
+            <line x1="11" y1="7" x2="16" y2="7" opacity="0.4"/><line x1="11" y1="10" x2="14" y2="10" opacity="0.4"/>
+          </svg>
+        </div>
+        <h3>本地导航搜索</h3>
+        <p>在搜索框输入关键词，自动匹配已保存的导航卡片，前缀优先、高亮显示、键盘选择，无需打开搜索引擎即可直达常用站点。</p>
+      </div>
     </div>
   </section>
 
@@ -449,7 +464,7 @@
         <div class="price-desc">≈ ¥5.7/月，省 43%</div>
         <div class="price-features">
           <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>免费版全部功能</div>
-          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>12 种搜索引擎 + 自定义</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>全部 14 种搜索引擎</div>
           <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>无限导航分组</div>
           <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>自定义上传壁纸</div>
           <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>云端数据同步</div>
@@ -483,7 +498,7 @@
       <p>支持主流浏览器，手动安装约需 30 秒</p>
     </div>
     <div class="download-cards">
-      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.8-chrome.zip">
+      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.9-chrome.zip">
         <div class="dl-icon">
           <svg viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" stroke="#4f8fff" stroke-width="1.5"/>
@@ -495,7 +510,7 @@
         <h3>Chrome</h3>
         <p>1.63 MB · 手动安装</p>
       </a>
-      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.8-edge.zip">
+      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.9-edge.zip">
         <div class="dl-icon">
           <svg viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" stroke="#38bdf8" stroke-width="1.5"/>
@@ -506,7 +521,7 @@
         <h3>Edge</h3>
         <p>1.63 MB · 手动安装</p>
       </a>
-      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.8-firefox.zip">
+      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.9-firefox.zip">
         <div class="dl-icon">
           <svg viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" stroke="#f97316" stroke-width="1.5"/>
@@ -529,7 +544,7 @@
         <h3>网页版</h3>
         <p>点击在线体验/使用</p>
       </a>
-      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.8-offline.zip">
+      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.9-offline.zip">
         <div class="dl-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2.5"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
@@ -538,7 +553,7 @@
         <h3>离线版</h3>
         <p>1.63 MB · 无需网络</p>
       </a>
-      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.8.crx">
+      <a class="download-card reveal" href="/downloads/quick-dial-v1.0.9.crx">
         <div class="dl-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h5.34"/><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/>
@@ -547,7 +562,7 @@
         <h3>CRX</h3>
         <p>1.63 MB · 一键安装</p>
       </a>
-      <a class="download-card reveal" href="/downloads/quick-dial_v1.0.8_fnos.fpk">
+      <a class="download-card reveal" href="/downloads/quick-dial_v1.0.9_fnos.fpk">
         <div class="dl-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="2" width="20" height="8" rx="2"/><rect x="4" y="10" width="16" height="12" rx="2"/>
@@ -555,14 +570,15 @@
           </svg>
         </div>
         <h3>飞牛NAS</h3>
-        <p>856 KB · fpk 应用包</p>
+        <p>858 KB · fpk 应用包</p>
       </a>
     </div>
     <div style="max-width:640px;margin:36px auto 0;font-size:13px;color:var(--text2);text-align:center;line-height:2.2;">
       <strong>Chrome 安装：</strong>下载 zip → 解压 → chrome://extensions → 打开"开发者模式" → 加载已解压的扩展程序<br>
       <strong>Edge 安装：</strong>下载 zip → 解压 → edge://extensions → 打开"开发人员模式" → 加载解压缩的扩展<br>
       <strong>Firefox 安装：</strong>下载 zip → about:debugging → 此 Firefox → 临时载入附加组件 → 选择 manifest.json<br>
-      安装后打开新标签页即可使用
+      安装后打开新标签页即可使用<br>
+      <strong>国产浏览器：</strong>360极速/QQ浏览器/搜狗/UC/Brave/Vivaldi/Opera 等 Chromium 内核浏览器可直接使用 CRX 包安装，方式同 Chrome
     </div>
   </div>
 </section>
@@ -604,6 +620,7 @@
   <div class="footer-links">
     <a href="about.html">关于我们</a><span class="sep">|</span>
     <a href="privacy.html">隐私政策</a><span class="sep">|</span>
+    <a href="terms.html">服务条款</a><span class="sep">|</span>
     <a href="copyright.html">版权声明</a><span class="sep">|</span>
     <a href="contact.html">联系方式</a><span class="sep">|</span>
     <a href="guide.html">使用指南</a><span class="sep">|</span>

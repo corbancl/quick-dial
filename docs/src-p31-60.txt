@@ -1,0 +1,1500 @@
+ 7510      gap: 10px;
+ 7511      margin-bottom: 16px;
+ 7512    }
+ 7513  
+ 7514    .ie-message {
+ 7515      padding: 10px 14px;
+ 7516      background: rgba(34, 197, 94, 0.08);
+ 7517      color: #16a34a;
+ 7518      border-radius: 8px;
+ 7519      font-size: 13px;
+ 7520      margin-bottom: 16px;
+ 7521    }
+ 7522  
+ 7523    .ie-message.error {
+ 7524      background: rgba(239, 68, 68, 0.08);
+ 7525      color: #ef4444;
+ 7526    }
+ 7527  
+ 7528    .ie-hint {
+ 7529      font-size: 11px;
+ 7530      color: var(--text-color, #1e293b);
+ 7531      opacity: 0.45;
+ 7532      line-height: 1.6;
+ 7533      text-align: center;
+ 7534      margin-top: -4px;
+ 7535    }
+ 7536  
+ 7537    .ie-danger {
+ 7538      padding-top: 16px;
+ 7539      border-top: 1px solid var(--card-border, rgba(0,0,0,0.06));
+ 7540      margin-bottom: 16px;
+ 7541    }
+ 7542  
+ 7543    .btn-danger {
+ 7544      background: transparent;
+ 7545      color: #ef4444;
+ 7546      border: 1px solid rgba(239, 68, 68, 0.3);
+ 7547    }
+ 7548  
+ 7549    .btn-danger:hover {
+ 7550      background: rgba(239, 68, 68, 0.08);
+ 7551    }
+ 7552  </style>
+ 7553  <script lang="ts">
+ 7554    import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowRecentSites, setShowTodo, setRecentSitesCount, setOpenInNewTab } from '../stores/settings.svelte';
+ 7555    import { getIsPro } from '../stores/subscription.svelte';
+ 7556    import { checkSubscription } from '../utils/payment';
+ 7557    import { t, getLang, setLang } from '../utils/i18n.svelte';
+ 7558    import type { ClockStyle } from '../types';
+ 7559  
+ 7560    interface Props {
+ 7561      onclose: () => void;
+ 7562      onsubscribe?: () => void;
+ 7563    }
+ 7564  
+ 7565    let { onclose, onsubscribe }: Props = $props();
+ 7566  
+ 7567    let customCss = $state(localStorage.getItem('quick-dial-custom-css') || '');
+ 7568    let customCssTimeout: ReturnType<typeof setTimeout> | undefined;
+ 7569  
+ 7570    function handleCustomCssChange(e: Event) {
+ 7571      customCss = (e.target as HTMLTextAreaElement).value;
+ 7572      // 防抖保存
+ 7573      clearTimeout(customCssTimeout);
+ 7574      customCssTimeout = setTimeout(() => {
+ 7575        localStorage.setItem('quick-dial-custom-css', customCss);
+ 7576        applyCustomCss(customCss);
+ 7577      }, 400);
+ 7578    }
+ 7579  
+ 7580    function applyCustomCss(css: string) {
+ 7581      let styleEl = document.getElementById('qd-custom-css') as HTMLStyleElement | null;
+ 7582      if (!styleEl) {
+ 7583        styleEl = document.createElement('style');
+ 7584        styleEl.id = 'qd-custom-css';
+ 7585        document.head.appendChild(styleEl);
+ 7586      }
+ 7587      styleEl.textContent = css;
+ 7588    }
+ 7589  
+ 7590    // 初始化时应用已保存的自定义 CSS
+ 7591    $effect(() => {
+ 7592      applyCustomCss(customCss);
+ 7593    });
+ 7594  
+ 7595    // 订阅详细信息
+ 7596    let subPlan = $state('');
+ 7597    let subExpire = $state('');
+ 7598    function pn(p: string) {
+ 7599      return {monthly: t('pro.monthly'), yearly: t('pro.yearly'), lifetime: t('pro.lifetime'), free: 'Free'}[p] || p;
+ 7600    };
+ 7601  
+ 7602    $effect(() => {
+ 7603      if (getIsPro()) {
+ 7604        checkSubscription().then(s => {
+ 7605          subPlan = s.plan;
+ 7606          subExpire = s.expireAt || '';
+ 7607        });
+ 7608      }
+ 7609    });
+ 7610  
+ 7611    let overlayEl: HTMLDivElement | undefined = $state();
+ 7612    let contentEl: HTMLDivElement | undefined = $state();
+ 7613  
+ 7614    $effect(() => {
+ 7615      const o = overlayEl;
+ 7616      const c = contentEl;
+ 7617      if (!o) return;
+ 7618      function handleClick(e: MouseEvent) {
+ 7619        if (c && !c.contains(e.target as Node)) onclose();
+ 7620      }
+ 7621      function handleKey(e: KeyboardEvent) {
+ 7622        if (e.key === 'Escape') onclose();
+ 7623      }
+ 7624      o.addEventListener('click', handleClick);
+ 7625      document.addEventListener('keydown', handleKey);
+ 7626      return () => {
+ 7627        o.removeEventListener('click', handleClick);
+ 7628        document.removeEventListener('keydown', handleKey);
+ 7629      };
+ 7630    });
+ 7631  
+ 7632    function handleSearchEngineChange(e: Event) {
+ 7633      const select = e.target as HTMLSelectElement;
+ 7634      setSearchEngine(select.value);
+ 7635    }
+ 7636  
+ 7637    function handleClockStyleChange(e: Event) {
+ 7638      const select = e.target as HTMLSelectElement;
+ 7639      setClockStyle(select.value as ClockStyle);
+ 7640    }
+ 7641  </script>
+ 7642  
+ 7643  <div class="modal-overlay" bind:this={overlayEl}>
+ 7644    <div class="modal-content" bind:this={contentEl}>
+ 7645      <h3 class="modal-title">{t('settings.title')}</h3>
+ 7646  
+ 7647      <div class="settings-list">
+ 7648        <!-- 主题 -->
+ 7649        <div class="setting-item">
+ 7650          <div class="setting-info">
+ 7651            <span class="setting-label">{t('settings.theme')}</span>
+ 7652            <span class="setting-hint">{t('settings.themeHint')}</span>
+ 7653          </div>
+ 7654        </div>
+ 7655  
+ 7656        <!-- 搜索引擎 -->
+ 7657        <div class="setting-item">
+ 7658          <label class="setting-label" for="search-engine">{t('settings.engine')}</label>
+ 7659          <select id="search-engine" class="form-select" value={getSettings().searchEngine} onchange={handleSearchEngineChange}>
+ 7660            <option value="google">Google</option>
+ 7661            <option value="baidu">百度</option>
+ 7662            <option value="bing">Bing</option>
+ 7663            <option value="sogou">搜狗</option>
+ 7664            <option value="so">360搜索</option>
+ 7665            <option value="zhihu">知乎</option>
+ 7666          </select>
+ 7667        </div>
+ 7668  
+ 7669        <!-- 时钟样式 -->
+ 7670        <div class="setting-item">
+ 7671          <label class="setting-label" for="clock-style">{t('clock.styles')}</label>
+ 7672          <select id="clock-style" class="form-select" value={getSettings().clockStyle} onchange={handleClockStyleChange}>
+ 7673            <option value="digital">{t('clock.digital')}</option>
+ 7674            <option value="minimal">{t('clock.minimal')}</option>
+ 7675            <option value="classic">{t('clock.classic')}</option>
+ 7676            <option value="flip">{t('clock.flip')}</option>
+ 7677            <option value="neon">{t('clock.neon')}</option>
+ 7678            <option value="binary">{t('clock.binary')}</option>
+ 7679          </select>
+ 7680        </div>
+ 7681  
+ 7682        <!-- 语言 -->
+ 7683        <div class="setting-item">
+ 7684          <label class="setting-label" for="lang">Language / 语言</label>
+ 7685          <select id="lang" class="form-select" value={getLang()} onchange={(e) => { setLang((e.target as HTMLSelectElement).value as 'zh-CN' | 'en'); setTimeout(() => location.reload(), 100); }}>
+ 7686            <option value="zh-CN">中文</option>
+ 7687            <option value="en">English</option>
+ 7688          </select>
+ 7689        </div>
+ 7690  
+ 7691        <!-- 显示日期 -->
+ 7692        <div class="setting-item">
+ 7693          <label class="setting-label" for="show-date">{t('settings.showDate')}</label>
+ 7694          <label class="toggle">
+ 7695            <input id="show-date" type="checkbox" checked={getSettings().showDate} onchange={(e) => setShowDate((e.target as HTMLInputElement).checked)} />
+ 7696            <span class="toggle-slider"></span>
+ 7697          </label>
+ 7698        </div>
+ 7699  
+ 7700        <!-- 显示星期 -->
+ 7701        <div class="setting-item">
+ 7702          <label class="setting-label" for="show-weekday">{t('settings.showWeekday')}</label>
+ 7703          <label class="toggle">
+ 7704            <input id="show-weekday" type="checkbox" checked={getSettings().showWeekday} onchange={(e) => setShowWeekday((e.target as HTMLInputElement).checked)} />
+ 7705            <span class="toggle-slider"></span>
+ 7706          </label>
+ 7707        </div>
+ 7708  
+ 7709        <!-- 显示最近访问 -->
+ 7710        <div class="setting-item">
+ 7711          <label class="setting-label" for="show-recent">{t('settings.showRecent')}</label>
+ 7712          <label class="toggle">
+ 7713            <input id="show-recent" type="checkbox" checked={getSettings().showRecentSites} onchange={(e) => setShowRecentSites((e.target as HTMLInputElement).checked)} />
+ 7714            <span class="toggle-slider"></span>
+ 7715          </label>
+ 7716        </div>
+ 7717  
+ 7718        <!-- 显示待办清单 -->
+ 7719        <div class="setting-item">
+ 7720          <label class="setting-label" for="show-todo">{t('settings.showTodo')}</label>
+ 7721          <label class="toggle">
+ 7722            <input id="show-todo" type="checkbox" checked={getSettings().showTodo} onchange={(e) => setShowTodo((e.target as HTMLInputElement).checked)} />
+ 7723            <span class="toggle-slider"></span>
+ 7724          </label>
+ 7725        </div>
+ 7726  
+ 7727        <!-- 最近访问数量 -->
+ 7728        {#if getSettings().showRecentSites}
+ 7729          <div class="setting-item">
+ 7730            <label class="setting-label" for="recent-count">{t('settings.recentCount')}</label>
+ 7731            <input
+ 7732              id="recent-count"
+ 7733              class="form-input"
+ 7734              type="number"
+ 7735              min="3"
+ 7736              max="20"
+ 7737              value={getSettings().recentSitesCount}
+ 7738              onchange={(e) => setRecentSitesCount(parseInt((e.target as HTMLInputElement).value) || 10)}
+ 7739              style="width: 80px;"
+ 7740            />
+ 7741          </div>
+ 7742        {/if}
+ 7743  
+ 7744        <!-- 新标签页打开 -->
+ 7745        <div class="setting-item">
+ 7746          <label class="setting-label" for="open-new-tab">{t('settings.newTab')}</label>
+ 7747          <label class="toggle">
+ 7748            <input id="open-new-tab" type="checkbox" checked={getSettings().openInNewTab} onchange={(e) => setOpenInNewTab((e.target as HTMLInputElement).checked)} />
+ 7749            <span class="toggle-slider"></span>
+ 7750          </label>
+ 7751        </div>
+ 7752      </div>
+ 7753  
+ 7754      <!-- 自定义 CSS（独立卡片） -->
+ 7755      {#if getIsPro()}
+ 7756        <div class="card-section custom-css-card">
+ 7757          <div class="card-header">
+ 7758            <span class="card-icon">🎨</span>
+ 7759            <span class="card-title">{t('pro.customCss')}</span>
+ 7760          </div>
+ 7761          <p class="card-desc">{t('pro.customCssDesc')}</p>
+ 7762          <textarea id="custom-css" class="custom-css-input"
+ 7763            rows="6"
+ 7764            value={customCss}
+ 7765            oninput={handleCustomCssChange}
+ 7766            placeholder={t('pro.cssPlaceholder')}
+ 7767          ></textarea>
+ 7768        </div>
+ 7769      {/if}
+ 7770  
+ 7771      <!-- Pro 订阅 -->
+ 7772      <div class="pro-section">
+ 7773        <div class="pro-header">
+ 7774          <span class="pro-title">{t('pro.title')}</span>
+ 7775          {#if getIsPro()}
+ 7776            <span class="pro-status active">{t('pro.active')}</span>
+ 7777          {:else}
+ 7778            <span class="pro-status">{t('pro.inactive')}</span>
+ 7779          {/if}
+ 7780        </div>
+ 7781  
+ 7782        <!-- Pro 已激活：订阅信息 + 续费 -->
+ 7783        {#if getIsPro()}
+ 7784          <div class="sub-info">
+ 7785            <div class="sub-plan-name">{pn(subPlan)}</div>
+ 7786            {#if subExpire}
+ 7787              <div class="sub-expire">{t('pro.expire')}{subExpire.slice(0, 10)}</div>
+ 7788            {:else}
+ 7789              <div class="sub-expire lifetime">终身有效</div>
+ 7790            {/if}
+ 7791            {#if subPlan !== 'lifetime' && onsubscribe}
+ 7792              <button class="btn btn-outline btn-renew" onclick={onsubscribe}>{t('pro.renew')}</button>
+ 7793            {/if}
+ 7794          </div>
+ 7795  
+ 7796          <!-- 自定义底部文案 -->
+ 7797          <div class="card-section">
+ 7798            <div class="card-header">
+ 7799              <span class="card-icon">🏷️</span>
+ 7800              <span class="card-title">{t('pro.customTitle')}</span>
+ 7801            </div>
+ 7802            <p class="card-desc">{t('pro.customTitleDesc')}</p>
+ 7803            <div class="form-group" style="margin:0 0 12px 0">
+ 7804              <input class="form-input" id="custom-title" type="text"
+ 7805                value={localStorage.getItem('quick-dial-custom-title') || ''}
+ 7806                oninput={(e) => {
+ 7807                  const v = (e.target as HTMLInputElement).value;
+ 7808                  localStorage.setItem('quick-dial-custom-title', v);
+ 7809                  document.title = v || '呲啦起始页 - 极简无广告浏览器新标签页';
+ 7810                }}
+ 7811                placeholder={t('pro.customTitleEg')}
+ 7812                maxlength="50"
+ 7813              />
+ 7814            </div>
+ 7815          </div>
+ 7816  
+ 7817          <!-- 自定义底部文案 -->
+ 7818          <div class="card-section">
+ 7819            <div class="card-header">
+ 7820              <span class="card-icon">✏️</span>
+ 7821              <span class="card-title">{t('pro.customFooter')}</span>
+ 7822            </div>
+ 7823            <p class="card-desc">{t('pro.customFooterDesc')}</p>
+ 7824            <div class="form-group" style="margin:0">
+ 7825              <input class="form-input" id="custom-footer" type="text"
+ 7826                value={localStorage.getItem('quick-dial-custom-footer') || ''}
+ 7827                oninput={(e) => { localStorage.setItem('quick-dial-custom-footer', (e.target as HTMLInputElement).value); }}
+ 7828                placeholder={t('pro.customFooterEg')}
+ 7829                maxlength="40"
+ 7830              />
+ 7831            </div>
+ 7832          </div>
+ 7833        {:else}
+ 7834          <div class="pro-features">
+ 7835            <div class="pro-feature">
+ 7836              <span class="feature-check">✓</span>
+ 7837              <span>{t('pro.feature1')}</span>
+ 7838            </div>
+ 7839            <div class="pro-feature">
+ 7840              <span class="feature-check">✓</span>
+ 7841              <span>云端数据同步</span>
+ 7842            </div>
+ 7843            <div class="pro-feature">
+ 7844              <span class="feature-check">✓</span>
+ 7845              <span>自定义上传壁纸</span>
+ 7846            </div>
+ 7847            <div class="pro-feature">
+ 7848              <span class="feature-check">✓</span>
+ 7849              <span>{t('pro.feature4')}</span>
+ 7850            </div>
+ 7851          </div>
+ 7852  
+ 7853          <div class="pro-pricing">
+ 7854            <div class="pricing-option">
+ 7855              <span class="pricing-price">¥9.9</span>
+ 7856              <span class="pricing-period">/月</span>
+ 7857            </div>
+ 7858            <div class="pricing-option recommended">
+ 7859              <span class="pricing-badge">推荐</span>
+ 7860              <span class="pricing-price">¥68</span>
+ 7861              <span class="pricing-period">/年</span>
+ 7862            </div>
+ 7863            <div class="pricing-option">
+ 7864              <span class="pricing-price">¥198</span>
+ 7865              <span class="pricing-period">终身</span>
+ 7866            </div>
+ 7867          </div>
+ 7868  
+ 7869          {#if onsubscribe}
+ 7870            <button class="btn btn-primary btn-subscribe" onclick={onsubscribe}>
+ 7871              ⚡ 升级 Quick Dial Pro
+ 7872            </button>
+ 7873          {/if}
+ 7874        {/if}
+ 7875  
+ 7876      </div>
+ 7877  
+ 7878      <div class="form-actions">
+ 7879        <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
+ 7880      </div>
+ 7881    </div>
+ 7882  </div>
+ 7883  
+ 7884  <style>
+ 7885    .settings-list {
+ 7886      display: flex;
+ 7887      flex-direction: column;
+ 7888      gap: 12px;
+ 7889    }
+ 7890  
+ 7891    .setting-item {
+ 7892      display: flex;
+ 7893      align-items: center;
+ 7894      justify-content: space-between;
+ 7895      padding: 12px 0;
+ 7896      border-bottom: 1px solid var(--card-border, rgba(0,0,0,0.04));
+ 7897    }
+ 7898  
+ 7899    .setting-item:last-child {
+ 7900      border-bottom: none;
+ 7901    }
+ 7902  
+ 7903    .setting-label {
+ 7904      font-size: 14px;
+ 7905      color: var(--text-color, #1e293b);
+ 7906      margin: 0;
+ 7907    }
+ 7908  
+ 7909    .setting-info {
+ 7910      display: flex;
+ 7911      justify-content: space-between;
+ 7912      align-items: center;
+ 7913      width: 100%;
+ 7914    }
+ 7915  
+ 7916    .setting-hint {
+ 7917      font-size: 12px;
+ 7918      color: var(--text-color, #1e293b);
+ 7919      opacity: 0.4;
+ 7920    }
+ 7921  
+ 7922    /* Toggle Switch */
+ 7923    .toggle {
+ 7924      position: relative;
+ 7925      display: inline-block;
+ 7926      width: 44px;
+ 7927      height: 24px;
+ 7928      cursor: pointer;
+ 7929    }
+ 7930  
+ 7931    .toggle input {
+ 7932      opacity: 0;
+ 7933      width: 0;
+ 7934      height: 0;
+ 7935    }
+ 7936  
+ 7937    .toggle-slider {
+ 7938      position: absolute;
+ 7939      inset: 0;
+ 7940      background: rgba(0,0,0,0.1);
+ 7941      border-radius: 24px;
+ 7942      transition: background 0.2s;
+ 7943    }
+ 7944  
+ 7945    .toggle-slider::before {
+ 7946      content: '';
+ 7947      position: absolute;
+ 7948      width: 20px;
+ 7949      height: 20px;
+ 7950      left: 2px;
+ 7951      bottom: 2px;
+ 7952      background: white;
+ 7953      border-radius: 50%;
+ 7954      transition: transform 0.2s;
+ 7955      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+ 7956    }
+ 7957  
+ 7958    .toggle input:checked + .toggle-slider {
+ 7959      background: var(--primary-color, #4f46e5);
+ 7960    }
+ 7961  
+ 7962    .toggle input:checked + .toggle-slider::before {
+ 7963      transform: translateX(20px);
+ 7964    }
+ 7965  
+ 7966    .form-actions {
+ 7967      display: flex;
+ 7968      justify-content: flex-end;
+ 7969      margin-top: 16px;
+ 7970    }
+ 7971  
+ 7972    /* Pro Section */
+ 7973    .pro-section {
+ 7974      margin-top: 20px;
+ 7975      padding: 16px;
+ 7976      border: 1px solid var(--card-border, rgba(0,0,0,0.08));
+ 7977      border-radius: 14px;
+ 7978      background: linear-gradient(135deg, rgba(99, 102, 241, 0.04), rgba(168, 85, 247, 0.04));
+ 7979    }
+ 7980  
+ 7981    .pro-header {
+ 7982      display: flex;
+ 7983      align-items: center;
+ 7984      gap: 8px;
+ 7985      margin-bottom: 12px;
+ 7986    }
+ 7987  
+ 7988    .pro-title {
+ 7989      font-size: 15px;
+ 7990      font-weight: 700;
+ 7991      color: var(--text-color, #1e293b);
+ 7992      flex: 1;
+ 7993    }
+ 7994  
+ 7995    .pro-status {
+ 7996      font-size: 11px;
+ 7997      padding: 2px 8px;
+ 7998      border-radius: 10px;
+ 7999      background: rgba(0,0,0,0.06);
+ 8000      color: var(--text-color, #1e293b);
+ 8001      opacity: 0.5;
+ 8002    }
+ 8003  
+ 8004    .pro-status.active {
+ 8005      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.15));
+ 8006      color: #3b82f6;
+ 8007      opacity: 1;
+ 8008    }
+ 8009  
+ 8010    .pro-features {
+ 8011      display: flex;
+ 8012      flex-direction: column;
+ 8013      gap: 6px;
+ 8014      margin-bottom: 12px;
+ 8015    }
+ 8016  
+ 8017    .pro-feature {
+ 8018      display: flex;
+ 8019      align-items: center;
+ 8020      gap: 8px;
+ 8021      font-size: 12px;
+ 8022      color: var(--text-color, #1e293b);
+ 8023      opacity: 0.7;
+ 8024    }
+ 8025  
+ 8026    .feature-check {
+ 8027      color: #22c55e;
+ 8028      font-weight: 700;
+ 8029    }
+ 8030  
+ 8031    .pro-pricing {
+ 8032      display: flex;
+ 8033      gap: 8px;
+ 8034      margin-bottom: 14px;
+ 8035    }
+ 8036  
+ 8037    .pricing-option {
+ 8038      flex: 1;
+ 8039      display: flex;
+ 8040      flex-direction: column;
+ 8041      align-items: center;
+ 8042      padding: 10px 8px;
+ 8043      border: 1px solid var(--card-border, rgba(0,0,0,0.08));
+ 8044      border-radius: 10px;
+ 8045      background: var(--card-bg, rgba(255,255,255,0.5));
+ 8046      position: relative;
+ 8047    }
+ 8048  
+ 8049    .pricing-option.recommended {
+ 8050      border-color: #3b82f6;
+ 8051      background: rgba(59, 130, 246, 0.06);
+ 8052    }
+ 8053  
+ 8054    .pricing-badge {
+ 8055      position: absolute;
+ 8056      top: -8px;
+ 8057      font-size: 10px;
+ 8058      padding: 1px 8px;
+ 8059      border-radius: 8px;
+ 8060      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+ 8061      color: white;
+ 8062      font-weight: 600;
+ 8063    }
+ 8064  
+ 8065    .pricing-price {
+ 8066      font-size: 18px;
+ 8067      font-weight: 700;
+ 8068      color: var(--text-color, #1e293b);
+ 8069      line-height: 1;
+ 8070    }
+ 8071  
+ 8072    .pricing-period {
+ 8073      font-size: 11px;
+ 8074      color: var(--text-color, #1e293b);
+ 8075      opacity: 0.5;
+ 8076      margin-top: 2px;
+ 8077    }
+ 8078  
+ 8079    /* 自定义 CSS 独立卡片 */
+ 8080    .card-section {
+ 8081      border: 1px solid var(--card-border, rgba(0,0,0,0.08));
+ 8082      border-radius: 14px;
+ 8083      padding: 18px;
+ 8084      margin-bottom: 16px;
+ 8085      background: var(--card-bg, rgba(255,255,255,0.5));
+ 8086    }
+ 8087    .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+ 8088    .card-icon { font-size: 16px; }
+ 8089    .card-title { font-size: 14px; font-weight: 700; color: var(--text-color); }
+ 8090    .card-desc { font-size: 12px; color: var(--text-color); opacity: 0.4; margin-bottom: 12px; }
+ 8091  
+ 8092    .custom-css-input {
+ 8093      width: 100%;
+ 8094      padding: 12px;
+ 8095      border: 1px solid var(--card-border, rgba(0,0,0,0.08));
+ 8096      border-radius: 10px;
+ 8097      font-family: 'Fira Code', 'Consolas', monospace;
+ 8098      font-size: 13px;
+ 8099      line-height: 1.6;
+ 8100      background: var(--input-bg, rgba(0,0,0,0.02));
+ 8101      color: var(--text-color);
+ 8102      resize: vertical;
+ 8103      outline: none;
+ 8104    }
+ 8105    .custom-css-input:focus { border-color: #3b82f6; }
+ 8106  
+ 8107    /* 订阅信息 */
+ 8108    .sub-info {
+ 8109      background: var(--hover-bg, rgba(0,0,0,0.02));
+ 8110      border-radius: 12px;
+ 8111      padding: 16px;
+ 8112      margin-bottom: 12px;
+ 8113    }
+ 8114    .sub-plan-name { font-size: 16px; font-weight: 700; color: var(--text-color); margin-bottom: 4px; }
+ 8115    .sub-expire { font-size: 13px; color: var(--text-color); opacity: 0.5; margin-bottom: 10px; }
+ 8116    .sub-expire.lifetime { color: #a855f7; opacity: 1; font-weight: 600; }
+ 8117    .btn-renew { font-size: 12px; padding: 8px 16px; }
+ 8118  
+ 8119    .btn-subscribe {
+ 8120      width: 100%;
+ 8121      margin-top: 12px;
+ 8122      padding: 12px;
+ 8123      font-size: 15px;
+ 8124      font-weight: 600;
+ 8125      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+ 8126    }
+ 8127  </style>
+ 8128  <script lang="ts">
+ 8129  import { t } from '../utils/i18n.svelte';
+ 8130    import { getClickCounts, getTotalClicks, clearClickCounts } from '../stores/recentSites.svelte';
+ 8131  
+ 8132    interface Props {
+ 8133      onclose: () => void;
+ 8134    }
+ 8135  
+ 8136    let { onclose }: Props = $props();
+ 8137  
+ 8138    let overlayEl: HTMLDivElement | undefined = $state();
+ 8139    let contentEl: HTMLDivElement | undefined = $state();
+ 8140  
+ 8141    $effect(() => {
+ 8142      const o = overlayEl;
+ 8143      const c = contentEl;
+ 8144      if (!o) return;
+ 8145      function handleClick(e: MouseEvent) {
+ 8146        if (c && !c.contains(e.target as Node)) onclose();
+ 8147      }
+ 8148      function handleKey(e: KeyboardEvent) {
+ 8149        if (e.key === 'Escape') onclose();
+ 8150      }
+ 8151      o.addEventListener('click', handleClick);
+ 8152      document.addEventListener('keydown', handleKey);
+ 8153      return () => {
+ 8154        o.removeEventListener('click', handleClick);
+ 8155        document.removeEventListener('keydown', handleKey);
+ 8156      };
+ 8157    });
+ 8158  
+ 8159    function getTopSites(): { url: string; count: number }[] {
+ 8160      const counts = getClickCounts();
+ 8161      return Object.entries(counts)
+ 8162        .sort(([, a], [, b]) => b - a)
+ 8163        .slice(0, 10)
+ 8164        .map(([url, count]) => ({ url, count }));
+ 8165    }
+ 8166  
+ 8167    function formatUrl(url: string): string {
+ 8168      try {
+ 8169        return new URL(url).hostname;
+ 8170      } catch {
+ 8171        return url;
+ 8172      }
+ 8173    }
+ 8174  
+ 8175    function exportCSV() {
+ 8176      const counts = getClickCounts();
+ 8177      const rows = Object.entries(counts).sort(([,a],[,b]) => b - a);
+ 8178      let csv = '网站,点击次数\n';
+ 8179      for (const [url, count] of rows) {
+ 8180        csv += `"${url}",${count}\n`;
+ 8181      }
+ 8182      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+ 8183      const a = document.createElement('a');
+ 8184      a.href = URL.createObjectURL(blob);
+ 8185      a.download = 'quick-dial-stats-' + new Date().toISOString().slice(0, 10) + '.csv';
+ 8186      a.click();
+ 8187      URL.revokeObjectURL(a.href);
+ 8188    }
+ 8189  </script>
+ 8190  
+ 8191  <div class="modal-overlay" bind:this={overlayEl}>
+ 8192    <div class="modal-content" bind:this={contentEl}>
+ 8193      <h3 class="modal-title">{t('stats.title')}</h3>
+ 8194  
+ 8195      <div class="stats-summary">
+ 8196        <div class="stat-item">
+ 8197          <span class="stat-value">{getTotalClicks()}</span>
+ 8198          <span class="stat-label">{t('stats.total')}</span>
+ 8199        </div>
+ 8200        <div class="stat-item">
+ 8201          <span class="stat-value">{Object.keys(getClickCounts()).length}</span>
+ 8202          <span class="stat-label">{t('stats.sites')}</span>
+ 8203        </div>
+ 8204      </div>
+ 8205  
+ 8206      {#if getTopSites().length > 0}
+ 8207        <div class="stats-list">
+ 8208          <h4 class="stats-subtitle">{t('stats.ranking')}</h4>
+ 8209          {#each getTopSites() as site, i}
+ 8210            <div class="stats-row">
+ 8211              <span class="stats-rank">{i + 1}</span>
+ 8212              <span class="stats-url">{formatUrl(site.url)}</span>
+ 8213              <span class="stats-count">{site.count} 次</span>
+ 8214            </div>
+ 8215          {/each}
+ 8216        </div>
+ 8217      {:else}
+ 8218        <p class="stats-empty">{t('stats.empty')}</p>
+ 8219      {/if}
+ 8220  
+ 8221      <div class="form-actions">
+ 8222        <button class="btn btn-secondary" onclick={exportCSV}>{t('stats.export')}</button>
+ 8223        <button class="btn btn-secondary" onclick={() => { clearClickCounts(); }}>{t('stats.clear')}</button>
+ 8224        <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
+ 8225      </div>
+ 8226    </div>
+ 8227  </div>
+ 8228  
+ 8229  <style>
+ 8230    .stats-summary {
+ 8231      display: flex;
+ 8232      gap: 16px;
+ 8233      margin-bottom: 16px;
+ 8234    }
+ 8235    .stat-item {
+ 8236      flex: 1;
+ 8237      text-align: center;
+ 8238      padding: 12px;
+ 8239      background: var(--hover-bg, rgba(0,0,0,0.04));
+ 8240      border-radius: 10px;
+ 8241    }
+ 8242    .stat-value {
+ 8243      display: block;
+ 8244      font-size: 24px;
+ 8245      font-weight: 700;
+ 8246      color: var(--primary-color, #3b82f6);
+ 8247    }
+ 8248    .stat-label {
+ 8249      font-size: 12px;
+ 8250      color: var(--text-color, #1e293b);
+ 8251      opacity: 0.5;
+ 8252    }
+ 8253    .stats-list { margin-top: 8px; }
+ 8254    .stats-subtitle { font-size: 13px; margin-bottom: 8px; opacity: 0.5; }
+ 8255    .stats-row {
+ 8256      display: flex;
+ 8257      align-items: center;
+ 8258      gap: 8px;
+ 8259      padding: 6px 0;
+ 8260      border-bottom: 1px solid var(--card-border, rgba(0,0,0,0.04));
+ 8261    }
+ 8262    .stats-rank { width: 20px; font-size: 12px; font-weight: 600; opacity: 0.4; text-align: center; }
+ 8263    .stats-url { flex: 1; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+ 8264    .stats-count { font-size: 12px; opacity: 0.5; }
+ 8265    .stats-empty { text-align: center; padding: 20px; opacity: 0.4; font-size: 13px; }
+ 8266    .form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+ 8267  </style>
+ 8268  <script lang="ts">
+ 8269  import { t } from '../utils/i18n.svelte';
+ 8270    import { getShortcuts } from '../utils/keyboard';
+ 8271  
+ 8272    interface Props {
+ 8273      onclose: () => void;
+ 8274    }
+ 8275  
+ 8276    let { onclose }: Props = $props();
+ 8277  
+ 8278    let overlayEl: HTMLDivElement | undefined = $state();
+ 8279    let contentEl: HTMLDivElement | undefined = $state();
+ 8280    const shortcuts = getShortcuts();
+ 8281  
+ 8282    $effect(() => {
+ 8283      const o = overlayEl;
+ 8284      const c = contentEl;
+ 8285      if (!o) return;
+ 8286      function handleClick(e: MouseEvent) {
+ 8287        if (c && !c.contains(e.target as Node)) onclose();
+ 8288      }
+ 8289      function handleKey(e: KeyboardEvent) {
+ 8290        if (e.key === 'Escape' || e.key === '?') onclose();
+ 8291      }
+ 8292      o.addEventListener('click', handleClick);
+ 8293      document.addEventListener('keydown', handleKey);
+ 8294      return () => {
+ 8295        o.removeEventListener('click', handleClick);
+ 8296        document.removeEventListener('keydown', handleKey);
+ 8297      };
+ 8298    });
+ 8299  </script>
+ 8300  
+ 8301  <div class="modal-overlay" bind:this={overlayEl}>
+ 8302    <div class="modal-content" bind:this={contentEl}>
+ 8303      <h3 class="modal-title">⌨️ {t('help.title')}</h3>
+ 8304      <div class="shortcut-list">
+ 8305        {#each shortcuts as s}
+ 8306          <div class="shortcut-row">
+ 8307            <kbd class="shortcut-key">{s.key}</kbd>
+ 8308            <span class="shortcut-desc">{t(s.description)}</span>
+ 8309          </div>
+ 8310        {/each}
+ 8311      </div>
+ 8312      <p class="help-tip">{t('help.tip')}</p>
+ 8313    </div>
+ 8314  </div>
+ 8315  
+ 8316  <style>
+ 8317    .shortcut-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+ 8318    .shortcut-row { display: flex; align-items: center; gap: 12px; }
+ 8319    .shortcut-key {
+ 8320      display: inline-block;
+ 8321      padding: 4px 10px;
+ 8322      font-size: 12px;
+ 8323      font-family: monospace;
+ 8324      font-weight: 600;
+ 8325      background: var(--hover-bg, rgba(0,0,0,0.04));
+ 8326      border: 1px solid var(--card-border);
+ 8327      border-radius: 6px;
+ 8328      color: var(--text-color);
+ 8329      min-width: 120px;
+ 8330      text-align: center;
+ 8331    }
+ 8332    .shortcut-desc { font-size: 14px; color: var(--text-color); opacity: 0.7; }
+ 8333    .help-tip { text-align: center; font-size: 12px; opacity: 0.35; margin-top: 8px; }
+ 8334  </style>
+ 8335  <script lang="ts">
+ 8336  import { t, setLang, getLang } from '../utils/i18n.svelte';
+ 8337  
+ 8338    let { oncomplete }: { oncomplete?: () => void } = $props();
+ 8339  
+ 8340    interface Step {
+ 8341      title: string;
+ 8342      desc: string;
+ 8343      icon: string;
+ 8344    }
+ 8345  
+ 8346    const steps = $derived([
+ 8347      { title: t('onboard.step1Title'), desc: t('onboard.step1Desc'), icon: '🔍' },
+ 8348      { title: t('onboard.step2Title'), desc: t('onboard.step2Desc'), icon: '📌' },
+ 8349      { title: t('onboard.step3Title'), desc: t('onboard.step3Desc'), icon: '🎨' },
+ 8350      { title: t('onboard.step4Title'), desc: t('onboard.step4Desc'), icon: '🌐' },
+ 8351    ]);
+ 8352  
+ 8353    let show = $state(false);
+ 8354    let current = $state(0);
+ 8355    let dismissed = $state(false);
+ 8356  
+ 8357    $effect(() => {
+ 8358      if (localStorage.getItem('qd-onboarded')) return;
+ 8359      setTimeout(() => show = true, 300);
+ 8360    });
+ 8361  
+ 8362    function next() {
+ 8363      if (current < steps.length - 1) {
+ 8364        current++;
+ 8365      } else {
+ 8366        dismiss();
+ 8367      }
+ 8368    }
+ 8369  
+ 8370    function dismiss() {
+ 8371      show = false;
+ 8372      dismissed = true;
+ 8373      localStorage.setItem('qd-onboarded', '1');
+ 8374      oncomplete?.();
+ 8375    }
+ 8376  
+ 8377    function dotClick(i: number) {
+ 8378      current = i;
+ 8379    }
+ 8380  
+ 8381    function pickLang(lang: 'zh-CN' | 'en') {
+ 8382      setLang(lang);
+ 8383    }
+ 8384  </script>
+ 8385  
+ 8386  {#if show && !dismissed}
+ 8387    <div class="onboard-overlay">
+ 8388      <div class="onboard-card">
+ 8389        <!-- Logo -->
+ 8390        <div class="onboard-brand">
+ 8391          <span class="onboard-logo">⚡</span>
+ 8392          <h1 class="onboard-name">呲啦起始页</h1>
+ 8393          <p class="onboard-tagline">Quick Dial</p>
+ 8394        </div>
+ 8395  
+ 8396        <!-- Step content -->
+ 8397        <span class="onboard-icon">{steps[current].icon}</span>
+ 8398        <h2 class="onboard-title">{steps[current].title}</h2>
+ 8399        <p class="onboard-desc">{steps[current].desc}</p>
+ 8400  
+ 8401        <div class="onboard-dots">
+ 8402          {#each steps as _, i}
+ 8403            <button class="onboard-dot" class:active={current === i} onclick={() => dotClick(i)} aria-label="第{i + 1}步"></button>
+ 8404          {/each}
+ 8405        </div>
+ 8406  
+ 8407        <div class="onboard-actions">
+ 8408          <button class="onboard-btn skip" onclick={dismiss}>{t('onboard.skip')}</button>
+ 8409          <button class="onboard-btn primary" onclick={next}>
+ 8410            {current < steps.length - 1 ? t('onboard.next') : t('onboard.start')}
+ 8411          </button>
+ 8412        </div>
+ 8413  
+ 8414        <!-- Language switcher at bottom -->
+ 8415        <div class="onboard-lang">
+ 8416          <button class:active={getLang() === 'zh-CN'} onclick={() => pickLang('zh-CN')}>中文</button>
+ 8417          <button class:active={getLang() === 'en'} onclick={() => pickLang('en')}>English</button>
+ 8418        </div>
+ 8419      </div>
+ 8420    </div>
+ 8421  {/if}
+ 8422  
+ 8423  <style>
+ 8424    .onboard-overlay {
+ 8425      position: fixed;
+ 8426      inset: 0;
+ 8427      z-index: 9999;
+ 8428      background: var(--bg-color, #f8fafc);
+ 8429      display: flex;
+ 8430      align-items: center;
+ 8431      justify-content: center;
+ 8432      animation: fadeIn 0.4s ease;
+ 8433    }
+ 8434    .onboard-card {
+ 8435      text-align: center;
+ 8436      max-width: 380px;
+ 8437      width: 90%;
+ 8438      padding: 48px 32px 32px;
+ 8439      animation: slideUp 0.5s ease;
+ 8440    }
+ 8441    .onboard-brand {
+ 8442      margin-bottom: 32px;
+ 8443    }
+ 8444    .onboard-logo {
+ 8445      font-size: 56px;
+ 8446      display: block;
+ 8447      margin-bottom: 8px;
+ 8448    }
+ 8449    .onboard-name {
+ 8450      font-size: 28px;
+ 8451      font-weight: 800;
+ 8452      color: var(--text-color, #1e293b);
+ 8453      letter-spacing: -1px;
+ 8454    }
+ 8455    .onboard-tagline {
+ 8456      font-size: 13px;
+ 8457      color: var(--accent, #3b82f6);
+ 8458      font-weight: 600;
+ 8459      letter-spacing: 2px;
+ 8460      text-transform: uppercase;
+ 8461    }
+ 8462    .onboard-icon { font-size: 64px; display: block; margin: 20px 0 12px; }
+ 8463    .onboard-title { font-size: 20px; font-weight: 700; color: var(--text-color); margin-bottom: 8px; }
+ 8464    .onboard-desc { font-size: 14px; color: var(--text-color); opacity: 0.55; line-height: 1.7; max-width: 280px; margin: 0 auto 28px; }
+ 8465    .onboard-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; }
+ 8466    .onboard-dot {
+ 8467      width: 8px; height: 8px; border-radius: 50%; border: none;
+ 8468      background: var(--card-border, #e2e8f0); cursor: pointer; padding: 0; transition: all 0.3s;
+ 8469    }
+ 8470    .onboard-dot.active { background: #3b82f6; width: 24px; border-radius: 4px; }
+ 8471    .onboard-actions { display: flex; justify-content: space-between; gap: 12px; }
+ 8472    .onboard-btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+ 8473    .onboard-btn.primary { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+ 8474    .onboard-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+ 8475    .onboard-btn.skip { background: var(--hover-bg, rgba(0,0,0,0.04)); color: var(--text-color); opacity: 0.6; }
+ 8476    .onboard-btn.skip:hover { opacity: 1; }
+ 8477    .onboard-lang { margin-top: 28px; display: flex; justify-content: center; gap: 4px; }
+ 8478    .onboard-lang button {
+ 8479      padding: 6px 16px; border-radius: 20px; border: 1px solid var(--card-border, #e2e8f0);
+ 8480      background: none; font-size: 12px; cursor: pointer; color: var(--text-color); opacity: 0.5; transition: all 0.2s;
+ 8481    }
+ 8482    .onboard-lang button.active { opacity: 1; background: var(--accent, #3b82f6); color: white; border-color: var(--accent); }
+ 8483  
+ 8484    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+ 8485    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+ 8486  </style>
+ 8487  <script lang="ts">
+ 8488  import { t } from '../utils/i18n.svelte';
+ 8489    import { getUsername } from '../utils/sync';
+ 8490    import { PLANS, createOrder, generateQRCodeSVG } from '../utils/payment';
+ 8491    import type { PlanInfo } from '../utils/payment';
+ 8492  
+ 8493    interface Props {
+ 8494      onclose: () => void;
+ 8495    }
+ 8496  
+ 8497    let { onclose }: Props = $props();
+ 8498  
+ 8499    let selectedPlan = $state('yearly');
+ 8500    let payMethod = $state<'wechat' | 'alipay'>('wechat');
+ 8501    let status = $state('');
+ 8502    let statusOk = $state(true);
+ 8503    let loading = $state(false);
+ 8504    let qrCode = $state('');
+ 8505    let orderInfo = $state<{ plan: string; amount: number } | null>(null);
+ 8506    let showQr = $state(false);
+ 8507  
+ 8508    let overlayEl: HTMLDivElement | undefined = $state();
+ 8509    let contentEl: HTMLDivElement | undefined = $state();
+ 8510  
+ 8511    $effect(() => {
+ 8512      const o = overlayEl;
+ 8513      const c = contentEl;
+ 8514      if (!o) return;
+ 8515      function handleClick(e: MouseEvent) {
+ 8516        if (c && !c.contains(e.target as Node)) onclose();
+ 8517      }
+ 8518      function handleKey(e: KeyboardEvent) {
+ 8519        if (e.key === 'Escape') onclose();
+ 8520      }
+ 8521      o.addEventListener('click', handleClick);
+ 8522      document.addEventListener('keydown', handleKey);
+ 8523      return () => {
+ 8524        o.removeEventListener('click', handleClick);
+ 8525        document.removeEventListener('keydown', handleKey);
+ 8526      };
+ 8527    });
+ 8528  
+ 8529    async function handlePay() {
+ 8530      loading = true;
+ 8531      status = '';
+ 8532      qrCode = '';
+ 8533      showQr = false;
+ 8534  
+ 8535      const result = await createOrder(selectedPlan, payMethod);
+ 8536      if (result.ok) {
+ 8537        if (result.qrCode) {
+ 8538          qrCode = generateQRCodeSVG(result.qrCode);
+ 8539          orderInfo = { plan: result.plan || selectedPlan, amount: result.amount || 0 };
+ 8540          showQr = true;
+ 8541          status = '请使用' + (payMethod === 'wechat' ? '微信' : '支付宝') + '扫码支付';
+ 8542          statusOk = true;
+ 8543        } else if (result.payUrl) {
+ 8544          // 支付宝 page_pay 兜底
+ 8545          window.open(result.payUrl, '_blank');
+ 8546          status = '已在新窗口打开支付页面';
+ 8547          statusOk = true;
+ 8548        } else {
+ 8549          status = '获取支付链接失败';
+ 8550          statusOk = false;
+ 8551        }
+ 8552      } else {
+ 8553        status = result.msg;
+ 8554        statusOk = false;
+ 8555      }
+ 8556      loading = false;
+ 8557    }
+ 8558  
+ 8559    function getPlanPrice(plan: PlanInfo): string {
+ 8560      return '¥' + plan.amount.toFixed(plan.amount === Math.floor(plan.amount) ? 0 : 2);
+ 8561    }
+ 8562  </script>
+ 8563  
+ 8564  <div class="modal-overlay" bind:this={overlayEl}>
+ 8565    <div class="modal-content subscribe-modal" bind:this={contentEl}>
+ 8566      <h3 class="modal-title">⚡ {t('sub.title')}</h3>
+ 8567  
+ 8568      {#if showQr}
+ 8569        ...
+ 8570        <!-- 支付二维码 -->
+ 8571        <div class="qr-section">
+ 8572          <p class="qr-hint">使用 {payMethod === 'wechat' ? '微信' : '支付宝'} 扫码支付</p>
+ 8573          {#if qrCode}
+ 8574            <img class="qr-img" src={qrCode} alt="支付二维码" />
+ 8575          {/if}
+ 8576          {#if orderInfo}
+ 8577            <div class="qr-info">
+ 8578              <span>{PLANS.find(p => p.id === orderInfo.plan)?.name}套餐</span>
+ 8579              <span class="qr-amount">¥{orderInfo.amount.toFixed(2)}</span>
+ 8580            </div>
+ 8581          {/if}
+ 8582          <p class="qr-tip">{t('sub.paidRefresh')}</p>
+ 8583        </div>
+ 8584        <div class="form-actions">
+ 8585          <button class="btn btn-secondary" onclick={() => showQr = false}>返回</button>
+ 8586          <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
+ 8587        </div>
+ 8588      {:else}
+ 8589        <!-- 选择套餐 -->
+ 8590        <p class="subscribe-user">👤 {getUsername()}</p>
+ 8591  
+ 8592        <div class="plan-list">
+ 8593          {#each PLANS as plan}
+ 8594            <label class="plan-card" class:selected={selectedPlan === plan.id}>
+ 8595              <input type="radio" name="plan" value={plan.id} bind:group={selectedPlan} hidden />
+ 8596              {#if plan.id === 'yearly'}
+ 8597                <span class="plan-badge">推荐</span>
+ 8598              {/if}
+ 8599              <span class="plan-name">{plan.name}</span>
+ 8600              <span class="plan-price">{getPlanPrice(plan)}</span>
+ 8601              <span class="plan-period">{plan.days ? `/${plan.days}天` : '永久'}</span>
+ 8602            </label>
+ 8603          {/each}
+ 8604        </div>
+ 8605  
+ 8606        <!-- 支付方式 -->
+ 8607        <div class="pay-methods">
+ 8608          <label class="pay-method" class:selected={payMethod === 'wechat'}>
+ 8609            <input type="radio" name="method" value="wechat" bind:group={payMethod} hidden />
+ 8610            <span class="pay-icon">💚</span>
+ 8611            <span>微信支付</span>
+ 8612          </label>
+ 8613          <label class="pay-method" class:selected={payMethod === 'alipay'}>
+ 8614            <input type="radio" name="method" value="alipay" bind:group={payMethod} hidden />
+ 8615            <span class="pay-icon">💙</span>
+ 8616            <span>支付宝</span>
+ 8617          </label>
+ 8618        </div>
+ 8619  
+ 8620        <div class="form-actions">
+ 8621          <button class="btn btn-primary btn-pay" onclick={handlePay} disabled={loading}>
+ 8622            {loading ? t('sub.creating') : t('sub.pay')}
+ 8623          </button>
+ 8624          <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
+ 8625        </div>
+ 8626      {/if}
+ 8627  
+ 8628      {#if status}
+ 8629        <p class="pay-status" class:ok={statusOk} class:error={!statusOk}>{status}</p>
+ 8630      {/if}
+ 8631    </div>
+ 8632  </div>
+ 8633  
+ 8634  <style>
+ 8635    .subscribe-modal { max-width: 420px; }
+ 8636  
+ 8637    .subscribe-user {
+ 8638      font-size: 14px;
+ 8639      margin-bottom: 12px;
+ 8640      opacity: 0.7;
+ 8641    }
+ 8642  
+ 8643    .plan-list {
+ 8644      display: flex;
+ 8645      gap: 8px;
+ 8646      margin-bottom: 16px;
+ 8647    }
+ 8648  
+ 8649    .plan-card {
+ 8650      flex: 1;
+ 8651      display: flex;
+ 8652      flex-direction: column;
+ 8653      align-items: center;
+ 8654      padding: 14px 8px;
+ 8655      border: 2px solid var(--card-border, rgba(0,0,0,0.08));
+ 8656      border-radius: 12px;
+ 8657      cursor: pointer;
+ 8658      position: relative;
+ 8659      transition: border-color 0.2s;
+ 8660      background: var(--card-bg, rgba(255,255,255,0.5));
+ 8661    }
+ 8662  
+ 8663    .plan-card.selected {
+ 8664      border-color: #3b82f6;
+ 8665      background: rgba(59, 130, 246, 0.04);
+ 8666    }
+ 8667  
+ 8668    .plan-badge {
+ 8669      position: absolute;
+ 8670      top: -10px;
+ 8671      font-size: 10px;
+ 8672      padding: 2px 8px;
+ 8673      border-radius: 8px;
+ 8674      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+ 8675      color: white;
+ 8676      font-weight: 600;
+ 8677    }
+ 8678  
+ 8679    .plan-name {
+ 8680      font-size: 13px;
+ 8681      font-weight: 600;
+ 8682      color: var(--text-color);
+ 8683      margin-bottom: 4px;
+ 8684    }
+ 8685  
+ 8686    .plan-price {
+ 8687      font-size: 22px;
+ 8688      font-weight: 700;
+ 8689      color: var(--text-color);
+ 8690      line-height: 1;
+ 8691    }
+ 8692  
+ 8693    .plan-period {
+ 8694      font-size: 11px;
+ 8695      color: var(--text-color);
+ 8696      opacity: 0.4;
+ 8697      margin-top: 2px;
+ 8698    }
+ 8699  
+ 8700    .pay-methods {
+ 8701      display: flex;
+ 8702      gap: 8px;
+ 8703      margin-bottom: 16px;
+ 8704    }
+ 8705  
+ 8706    .pay-method {
+ 8707      flex: 1;
+ 8708      display: flex;
+ 8709      align-items: center;
+ 8710      justify-content: center;
+ 8711      gap: 6px;
+ 8712      padding: 12px;
+ 8713      border: 2px solid var(--card-border, rgba(0,0,0,0.08));
+ 8714      border-radius: 10px;
+ 8715      cursor: pointer;
+ 8716      font-size: 14px;
+ 8717      transition: border-color 0.2s;
+ 8718    }
+ 8719  
+ 8720    .pay-method.selected {
+ 8721      border-color: #3b82f6;
+ 8722    }
+ 8723  
+ 8724    .pay-icon { font-size: 16px; }
+ 8725  
+ 8726    .btn-pay {
+ 8727      padding: 12px 24px;
+ 8728      font-size: 15px;
+ 8729      font-weight: 600;
+ 8730    }
+ 8731  
+ 8732    .qr-section {
+ 8733      text-align: center;
+ 8734      padding: 16px 0;
+ 8735    }
+ 8736  
+ 8737    .qr-hint {
+ 8738      font-size: 14px;
+ 8739      margin-bottom: 12px;
+ 8740      color: var(--text-color);
+ 8741      opacity: 0.7;
+ 8742    }
+ 8743  
+ 8744    .qr-img {
+ 8745      width: 200px;
+ 8746      height: 200px;
+ 8747      border-radius: 12px;
+ 8748      border: 2px solid var(--card-border);
+ 8749      background: white;
+ 8750      padding: 8px;
+ 8751    }
+ 8752  
+ 8753    .qr-info {
+ 8754      display: flex;
+ 8755      justify-content: center;
+ 8756      align-items: center;
+ 8757      gap: 12px;
+ 8758      margin-top: 12px;
+ 8759      font-size: 14px;
+ 8760      color: var(--text-color);
+ 8761    }
+ 8762  
+ 8763    .qr-amount {
+ 8764      font-size: 20px;
+ 8765      font-weight: 700;
+ 8766      color: #ef4444;
+ 8767    }
+ 8768  
+ 8769    .qr-tip {
+ 8770      font-size: 12px;
+ 8771      color: var(--text-color);
+ 8772      opacity: 0.4;
+ 8773      margin-top: 12px;
+ 8774    }
+ 8775  
+ 8776    .pay-status {
+ 8777      font-size: 12px;
+ 8778      padding: 8px 12px;
+ 8779      border-radius: 8px;
+ 8780      margin-top: 8px;
+ 8781    }
+ 8782  
+ 8783    .pay-status.ok {
+ 8784      background: rgba(34, 197, 94, 0.1);
+ 8785      color: #16a34a;
+ 8786    }
+ 8787  
+ 8788    .pay-status.error {
+ 8789      background: rgba(239, 68, 68, 0.08);
+ 8790      color: #ef4444;
+ 8791    }
+ 8792  
+ 8793    .form-actions {
+ 8794      display: flex;
+ 8795      justify-content: flex-end;
+ 8796      gap: 8px;
+ 8797      margin-top: 12px;
+ 8798    }
+ 8799  </style>
+ 8800  <script lang="ts">
+ 8801  import { t } from '../utils/i18n.svelte';
+ 8802    import { getIsPro, syncProStatus } from '../stores/subscription.svelte';
+ 8803    import { isLoggedIn, getUsername, login, register, logout, uploadSync, downloadSync, getLastSyncTime } from '../utils/sync';
+ 8804    import { loadData, saveData } from '../utils/storage';
+ 8805    import { showToast } from '../utils/toast.svelte';
+ 8806  
+ 8807    interface Props {
+ 8808      onclose: () => void;
+ 8809    }
+ 8810  
+ 8811    let { onclose }: Props = $props();
+ 8812  
+ 8813    let username = $state('');
+ 8814    let password = $state('');
+ 8815    let isLogin = $state(true);
+ 8816    let status = $state('');
+ 8817    let statusOk = $state(true);
+ 8818    let loading = $state(false);
+ 8819  
+ 8820    let overlayEl: HTMLDivElement | undefined = $state();
+ 8821    let contentEl: HTMLDivElement | undefined = $state();
+ 8822  
+ 8823    $effect(() => {
+ 8824      const o = overlayEl;
+ 8825      const c = contentEl;
+ 8826      if (!o) return;
+ 8827      function handleClick(e: MouseEvent) {
+ 8828        if (c && !c.contains(e.target as Node)) onclose();
+ 8829      }
+ 8830      function handleKey(e: KeyboardEvent) {
+ 8831        if (e.key === 'Escape') onclose();
+ 8832      }
+ 8833      o.addEventListener('click', handleClick);
+ 8834      document.addEventListener('keydown', handleKey);
+ 8835      return () => {
+ 8836        o.removeEventListener('click', handleClick);
+ 8837        document.removeEventListener('keydown', handleKey);
+ 8838      };
+ 8839    });
+ 8840  
+ 8841    async function handleAuth() {
+ 8842      if (!username.trim() || !password.trim()) {
+ 8843        status = t('sync.fillRequired');
+ 8844        statusOk = false;
+ 8845        return;
+ 8846      }
+ 8847      loading = true;
+ 8848      status = '';
+ 8849      const result = isLogin ? await login(username.trim(), password) : await register(username.trim(), password);
+ 8850      if (result.ok) {
+ 8851        syncProStatus();
+ 8852        showToast(isLogin ? t('sync.loginOk') : t('sync.registerOk'), 'success');
+ 8853        onclose();
+ 8854        return;
+ 8855      }
+ 8856      loading = false;
+ 8857      status = result.msg;
+ 8858      statusOk = result.ok;
+ 8859    }
+ 8860  
+ 8861    async function handleUpload() {
+ 8862      loading = true;
+ 8863      status = '';
+ 8864      const result = await uploadSync();
+ 8865      loading = false;
+ 8866      status = result.msg;
+ 8867      statusOk = result.ok;
+ 8868    }
+ 8869  
+ 8870    async function handleDownload() {
+ 8871      loading = true;
+ 8872      status = '';
+ 8873      const result = await downloadSync();
+ 8874      if (result.ok && result.data) {
+ 8875        saveData(result.data as any);
+ 8876        // 同步自定义 CSS
+ 8877        if (result.data.customCss !== undefined) {
+ 8878          localStorage.setItem('quick-dial-custom-css', result.data.customCss);
+ 8879          let styleEl = document.getElementById('qd-custom-css') as HTMLStyleElement | null;
+ 8880          if (!styleEl) {
+ 8881            styleEl = document.createElement('style');
+ 8882            styleEl.id = 'qd-custom-css';
+ 8883            document.head.appendChild(styleEl);
+ 8884          }
+ 8885          styleEl.textContent = result.data.customCss;
+ 8886        }
+ 8887        // 同步自定义标题
+ 8888        if (result.data.customTitle !== undefined) {
+ 8889          localStorage.setItem('quick-dial-custom-title', result.data.customTitle);
+ 8890          document.title = result.data.customTitle || '';
+ 8891        }
+ 8892        // 同步自定义底部
+ 8893        if (result.data.customFooter !== undefined) {
+ 8894          localStorage.setItem('quick-dial-custom-footer', result.data.customFooter);
+ 8895        }
+ 8896        status = t('sync.downloaded');
+ 8897        statusOk = true;
+ 8898        setTimeout(() => window.location.reload(), 3000);
+ 8899      } else {
+ 8900        status = result.msg;
+ 8901        statusOk = false;
+ 8902      }
+ 8903      loading = false;
+ 8904    }
+ 8905  
+ 8906    function handleLogout() {
+ 8907      logout();
+ 8908      showToast(t('sync.logout'), 'info');
+ 8909      onclose();
+ 8910    }
+ 8911  
+ 8912    function formatTime(iso: string | null): string {
+ 8913      if (!iso) return t('sync.never');
+ 8914      try {
+ 8915        const d = new Date(iso);
+ 8916        return d.toLocaleString('zh-CN');
+ 8917      } catch { return iso; }
+ 8918    }
+ 8919  </script>
+ 8920  
+ 8921  <div class="modal-overlay" bind:this={overlayEl}>
+ 8922    <div class="modal-content" bind:this={contentEl}>
+ 8923      <h3 class="modal-title">☁️ {t('sync.title')}</h3>
+ 8924  
+ 8925      {#if isLoggedIn()}
+ 8926        <!-- 已{t('sync.login')} -->
+ 8927        <p class="sync-notice">💡 {t('sync.manual')}</p>
+ 8928        <div class="sync-status">
+ 8929          <span class="sync-user">👤 {getUsername()}</span>
+ 8930          <span class="sync-time">{t('sync.syncTime')}：{formatTime(getLastSyncTime())}</span>
+ 8931        </div>
+ 8932  
+ 8933        {#if getIsPro()}
+ 8934          <div class="sync-actions">
+ 8935            <button class="btn btn-primary" onclick={handleUpload} disabled={loading}>
+ 8936              {loading ? t('sync.syncing') : '📤 ' + t('sync.upload')}
+ 8937            </button>
+ 8938            <button class="btn btn-secondary" onclick={handleDownload} disabled={loading}>
+ 8939              {'📥 ' + t('sync.download')}
+ 8940            </button>
+ 8941          </div>
+ 8942        {:else}
+ 8943          <p class="sync-pro-only">⚠️ {t('sync.proReq')}</p>
+ 8944        {/if}
+ 8945  
+ 8946        <div class="form-actions">
+ 8947          <button class="btn btn-secondary" onclick={handleLogout}>{t('sync.logout')}</button>
+ 8948          <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
+ 8949        </div>
+ 8950      {:else}
+ 8951        <!-- {t('sync.login')}/{t('sync.register')} -->
+ 8952        <div class="form-group">
+ 8953          <label class="form-label" for="sync-username">{t('sync.user')}</label>
+ 8954          <input id="sync-username" class="form-input" type="text" bind:value={username} placeholder={t('sync.plUser')} />
+ 8955        </div>
+ 8956        <div class="form-group">
+ 8957          <label class="form-label" for="sync-password">{t('sync.password')}</label>
+ 8958          <input id="sync-password" class="form-input" type="password" bind:value={password} placeholder={t('sync.plPwd')} onkeydown={(e) => e.key === 'Enter' && handleAuth()} />
+ 8959        </div>
+ 8960  
+ 8961        <div class="form-actions">
+ 8962          <button class="btn btn-primary" onclick={handleAuth} disabled={loading}>
+ 8963            {loading ? t('sync.processing') : (isLogin ? t('sync.login') : t('sync.register'))}
+ 8964          </button>
+ 8965          <button class="btn btn-secondary" onclick={onclose}>{t('common.close')}</button>
+ 8966        </div>
+ 8967  
+ 8968        <p class="auth-switch">
+ 8969          {#if isLogin}
+ 8970            {t('sync.noAccount')}<button class="link-btn" onclick={() => { isLogin = false; status = ''; }}>{t('sync.goRegister')}</button>
+ 8971          {:else}
+ 8972            {t('sync.hasAccount')}<button class="link-btn" onclick={() => { isLogin = true; status = ''; }}>{t('sync.goLogin')}</button>
+ 8973          {/if}
+ 8974        </p>
+ 8975      {/if}
+ 8976  
+ 8977      {#if status}
+ 8978        <p class="sync-status-msg" class:ok={statusOk} class:error={!statusOk}>
+ 8979          {status}
+ 8980        </p>
+ 8981      {/if}
+ 8982    </div>
+ 8983  </div>
+ 8984  
+ 8985  <style>
+ 8986    .sync-status {
+ 8987      display: flex;
+ 8988      flex-direction: column;
+ 8989      gap: 4px;
+ 8990      margin-bottom: 16px;
+ 8991      padding: 12px;
+ 8992      background: var(--hover-bg);
+ 8993      border-radius: 10px;
+ 8994    }
+ 8995    .sync-user { font-size: 14px; font-weight: 600; }
+ 8996    .sync-time { font-size: 12px; opacity: 0.5; }
+ 8997    .sync-notice { font-size: 12px; opacity: 0.5; margin-bottom: 12px; line-height: 1.6; }
+ 8998    .sync-actions { display: flex; gap: 8px; margin-bottom: 16px; }
+ 8999    .sync-actions .btn { flex: 1; }
+ 9000    .sync-pro-only { text-align: center; padding: 20px; opacity: 0.5; font-size: 13px; line-height: 1.8; }
+ 9001    .auth-switch { text-align: center; font-size: 13px; color: var(--text-color); opacity: 0.5; margin-top: 12px; }
+ 9002    .link-btn { background: none; border: none; color: #3b82f6; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; }
+ 9003    .sync-status-msg { font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-top: 8px; }
+ 9004    .sync-status-msg.ok { background: rgba(34, 197, 94, 0.1); color: #16a34a; }
+ 9005    .sync-status-msg.error { background: rgba(239, 68, 68, 0.08); color: #ef4444; }
+ 9006    .form-group { margin-bottom: 12px; }
+ 9007    .form-label { display: block; font-size: 13px; margin-bottom: 4px; opacity: 0.7; }
+ 9008    .form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+ 9009  </style>

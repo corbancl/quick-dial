@@ -1,0 +1,156 @@
+/* ====== Quick Dial 主题增强 ====== */
+
+/* 毛玻璃：强化模糊效果 */
+[data-theme-style="glass"] .search-box,
+[data-theme-style="glass"] .dial-card,
+[data-theme-style="glass"] .todo-widget,
+[data-theme-style="glass"] .notes-panel {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* 毛玻璃：导航卡片 hover */
+[data-theme-style="glass"] .dial-card:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(147, 197, 253, 0.4);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.12);
+}
+
+/* 深色科技：导航卡片 hover 蓝光 */
+[data-theme-style="tech"] .dial-card:hover {
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 0 20px rgba(59, 130, 246, 0.12);
+}
+
+/* 新拟态：导航卡片 */
+[data-theme-style="neu"] .dial-card {
+  box-shadow: 5px 5px 10px #c9ced4, -5px -5px 10px #ffffff;
+  border: none;
+}
+[data-theme-style="neu"] .dial-card:hover {
+  box-shadow: 2px 2px 4px #c9ced4, -2px -2px 4px #ffffff;
+  transform: none;
+}
+[data-theme-style="neu"] .dial-card:active {
+  box-shadow: inset 3px 3px 6px #c9ced4, inset -3px -3px 6px #ffffff;
+}
+
+/* 新拟态：搜索框 */
+[data-theme-style="neu"] .search-box {
+  box-shadow: 6px 6px 12px #c9ced4, -6px -6px 12px #ffffff;
+  border: none !important;
+}
+[data-theme-style="neu"] .search-box:focus-within {
+  box-shadow: inset 3px 3px 6px #c9ced4, inset -3px -3px 6px #ffffff;
+}
+
+/* 新拟态：小组件 (Todo/Notes) */
+[data-theme-style="neu"] .todo-widget,
+[data-theme-style="neu"] .notes-panel {
+  box-shadow: 4px 4px 8px #c9ced4, -4px -4px 8px #ffffff;
+}
+
+/* 新拟态：go 按钮 */
+[data-theme-style="neu"] .go-btn {
+  box-shadow: 3px 3px 6px #c9ced4, -3px -3px 6px #ffffff !important;
+  background: #e8edf2 !important;
+  color: #64748b !important;
+}
+[data-theme-style="neu"] .go-btn:hover {
+  box-shadow: 2px 2px 4px #c9ced4, -2px -2px 4px #ffffff !important;
+}
+
+/* 极简：hover 更轻 */
+[data-theme-style="minimal"] .dial-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-color: #e2e8f0;
+}
+
+/* ====== 素纸暖调 (paper) ====== */
+[data-theme-style="paper"] .dial-card {
+  border-radius: 4px;
+  border: 1px solid #d9cec3;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+[data-theme-style="paper"] .dial-card:hover {
+  border-color: #8b6914;
+  box-shadow: 0 2px 8px rgba(139, 105, 20, 0.12);
+  transform: translateY(-1px);
+}
+[data-theme-style="paper"] .search-box {
+  border: 1px solid #d9cec3;
+  background: #fffdf7;
+}
+[data-theme-style="paper"] .go-btn {
+  background: #8b6914 !important;
+  color: #fffdf7 !important;
+}
+
+/* ====== 深海幽蓝 (ocean) ====== */
+[data-theme-style="ocean"] .dial-card {
+  border: 1px solid rgba(74, 144, 226, 0.18);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+[data-theme-style="ocean"] .dial-card:hover {
+  border-color: rgba(74, 144, 226, 0.5);
+  box-shadow: 0 4px 20px rgba(74, 144, 226, 0.15), 0 0 30px rgba(74, 144, 226, 0.06);
+  transform: translateY(-2px);
+}
+[data-theme-style="ocean"] .go-btn {
+  background: linear-gradient(135deg, #4a90e2, #357abd) !important;
+}
+[data-theme-style="ocean"] .search-box {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ====== 赛博朋克 (cyberpunk) ====== */
+[data-theme-style="cyberpunk"] .dial-card {
+  border: 1px solid rgba(200, 80, 255, 0.18);
+  box-shadow: 0 0 10px rgba(200, 80, 255, 0.06);
+}
+[data-theme-style="cyberpunk"] .dial-card:hover {
+  border-color: rgba(200, 80, 255, 0.6);
+  box-shadow: 0 0 20px rgba(200, 80, 255, 0.2), 0 0 40px rgba(200, 80, 255, 0.08);
+  transform: translateY(-2px);
+}
+[data-theme-style="cyberpunk"] .go-btn {
+  background: linear-gradient(135deg, #c850ff, #a020f0) !important;
+}
+[data-theme-style="cyberpunk"] .search-box {
+  box-shadow: 0 0 15px rgba(200, 80, 255, 0.1);
+}
+[data-theme-style="cyberpunk"] .search-box:focus-within {
+  box-shadow: 0 0 25px rgba(200, 80, 255, 0.2);
+}
+
+/* ====== 复古终端 (retro) ====== */
+[data-theme-style="retro"] .dial-card {
+  border: 1px solid #1a4d1a;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: 'Courier New', 'Fira Code', 'JetBrains Mono', monospace;
+  transition: border-color 0.15s, background 0.15s;
+}
+[data-theme-style="retro"] .dial-card:hover {
+  border-color: #33ff33;
+  box-shadow: 0 0 12px rgba(51, 255, 51, 0.15);
+  background: rgba(51, 255, 51, 0.03);
+}
+[data-theme-style="retro"] .search-box {
+  border: 1px solid #1a4d1a;
+  border-radius: 0;
+  font-family: 'Courier New', 'Fira Code', monospace;
+  background: #0c0c0c;
+}
+[data-theme-style="retro"] .go-btn {
+  background: #0c0c0c !important;
+  color: #33ff33 !important;
+  border: 1px solid #33ff33 !important;
+  border-radius: 0;
+  font-family: 'Courier New', monospace;
+}
+[data-theme-style="retro"] .go-btn:hover {
+  background: #33ff33 !important;
+  color: #0c0c0c !important;
+}
+

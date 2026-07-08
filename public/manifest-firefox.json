@@ -11,9 +11,9 @@
   },
   "action": {
     "default_icon": {
-      "16": "js.png",
-      "48": "js.png",
-      "128": "js.png"
+      "16": "icons/icon.svg",
+      "48": "icons/icon.svg",
+      "128": "icons/icon.svg"
     },
     "default_title": "Quick Dial"
   },
@@ -36,14 +36,17 @@
     ]
   },
   "icons": {
-    "16": "js.png",
-    "48": "js.png",
-    "128": "js.png"
+    "16": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "128": "icons/icon.svg"
   },
   "browser_specific_settings": {
     "gecko": {
       "id": "quickdial@cilacila.cn",
-      "strict_min_version": "109.0"
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   }
 }

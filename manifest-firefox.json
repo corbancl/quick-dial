@@ -23,9 +23,7 @@
       "id": "quickdial@cilacila.cn",
       "strict_min_version": "109.0",
       "data_collection_permissions": {
-        "required": false,
-        "optional": [],
-        "disclaimer": "This extension does not collect any user data."
+        "required": ["none"]
       }
     }
   },

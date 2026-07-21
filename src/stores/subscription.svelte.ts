@@ -257,3 +257,55 @@ export function removeCustomEngine(id: string) {
   customEngines = customEngines.filter(e => e.id !== id);
   persist();
 }
+
+/**
+ * 轮询检测 Pro 激活，绕过跨域 localStorage 限制。
+ *
+ * 背景：官网（www.cilacila.cn）支付成功后通过 localStorage 写入 qd-pay-success，
+ * 但起始页运行在 cilacila.cn（或浏览器扩展），localStorage 按源隔离，
+ * storage 事件无法跨域传递，导致起始页永远收不到"支付成功"通知。
+ *
+ * 方案：用户在起始页点击"升级 Pro"打开官网支付页时，调用本函数启动轮询，
+ * 每隔数秒主动查询 pay.php?action=status，一旦服务器返回 is_pro=true 即刷新状态。
+ *
+ * @param onActivated 检测到 Pro 由 false 变 true 时触发一次（用于 toast 提示）
+ */
+let proPollingTimer: ReturnType<typeof setInterval> | null = null;
+let proPollingCount = 0;
+const PRO_POLLING_MAX = 30; // 最多轮询 30 次（约 90 秒）
+
+export function startProPolling(onActivated?: () => void) {
+  if (proPollingTimer) return; // 已在轮询，避免重复
+  proPollingCount = 0;
+
+  const tick = async () => {
+    proPollingCount++;
+    const wasPro = isPro;
+    await syncProStatus();
+
+    if (isPro && !wasPro) {
+      // 本次会话内由未激活变为已激活
+      onActivated?.();
+      stopProPolling();
+      return;
+    }
+    if (isPro) {
+      // 已经是 Pro（例如刷新后已生效），无需提示，停止轮询
+      stopProPolling();
+      return;
+    }
+    if (proPollingCount >= PRO_POLLING_MAX) {
+      stopProPolling();
+    }
+  };
+
+  tick(); // 立即查一次
+  proPollingTimer = setInterval(tick, 3000);
+}
+
+export function stopProPolling() {
+  if (proPollingTimer) {
+    clearInterval(proPollingTimer);
+    proPollingTimer = null;
+  }
+}

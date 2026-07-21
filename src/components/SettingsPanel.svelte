@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getSettings, setSearchEngine, setClockStyle, setShowDate, setShowWeekday, setShowWeather, setShowLunar, setShowRecentSites, setShowAI, setHideBranding, setRecentSitesCount, setOpenInNewTab, setThemeStyle, setShowQuote, setQuoteType, setShowRss, setLayout } from '../stores/settings.svelte';
-  import { getIsPro } from '../stores/subscription.svelte';
+  import { getIsPro, startProPolling } from '../stores/subscription.svelte';
+  import { showToast } from '../utils/toast.svelte';
   import { getAvailableEngines, getLockedEngines, getAllEngines } from '../utils/search';
   import { t, getLang, setLang } from '../utils/i18n.svelte';
   import type { ClockStyle, ThemeStyle, QuoteType } from '../types';
@@ -415,7 +416,7 @@
 
         <div class="pro-cta">
           <p class="pro-cta-text">{t('pro.guideText')}</p>
-          <a class="btn btn-primary btn-website" href="https://www.cilacila.cn/account" target="_blank" rel="noopener">
+          <a class="btn btn-primary btn-website" href="https://www.cilacila.cn/account" target="_blank" rel="noopener" onclick={() => startProPolling(() => showToast('Pro 已激活', 'success'))}>
             {t('pro.guideBtn')}
           </a>
         </div>

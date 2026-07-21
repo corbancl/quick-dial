@@ -26,7 +26,7 @@
   import { initChat, getChatMessages, getChatConfig } from './stores/chat.svelte';
   import { initRss, getRssData } from './stores/rss.svelte';
   import { initQuote } from './stores/quote.svelte';
-  import { getIsPro, syncProStatus, getAuthToken } from './stores/subscription.svelte';
+  import { getIsPro, syncProStatus, getAuthToken, startProPolling } from './stores/subscription.svelte';
   import { getWallpaper, setWallpaper } from './stores/wallpaper.svelte';
   import { fetchRandomWallpaper } from './utils/weather';
   import { isLoggedIn } from './utils/sync';
@@ -327,7 +327,7 @@
       <i class="fa-solid fa-cloud-arrow-up"></i>
     </button>
     {#if !getIsPro()}
-      <button class="btn-icon btn-upgrade" onclick={() => window.open('https://www.cilacila.cn/account.html', '_blank')} title={t('toolbar.upgrade')}>
+      <button class="btn-icon btn-upgrade" onclick={() => { window.open('https://www.cilacila.cn/account.html', '_blank'); startProPolling(() => showToast('Pro 已激活', 'success')); }} title={t('toolbar.upgrade')}>
         <i class="fa-solid fa-crown"></i>
       </button>
     {/if}

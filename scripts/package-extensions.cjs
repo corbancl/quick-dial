@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Quick Dial 浏览器扩展打包脚本 (v1.0.9)
+ * Quick Dial 浏览器扩展打包脚本 (v1.0.10)
  * 使用 adm-zip 替代 PowerShell Compress-Archive，确保 zip 内路径使用正斜杠 /
  * 产物：
  *   1. Chrome 提交包 (zip)
@@ -19,7 +19,7 @@ const ROOT = 'M:/new';
 const DIST = path.join(ROOT, 'dist');
 const PACKAGES = path.join(ROOT, 'packages');
 const KEYS = path.join(ROOT, 'keys');
-const VERSION = '1.0.9';
+const VERSION = '1.0.10';
 
 const BROWSERS = {
   chrome: { manifest_src: 'manifest.json', label: 'Chrome' },

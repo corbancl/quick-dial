@@ -53,6 +53,25 @@
   let showAddDial = $state(false);
   let addDialPrefill = $state({ title: '', url: '' });
   let customFooter = $state(localStorage.getItem('quick-dial-custom-footer') || '');
+
+  // 插件端底部自定义（由 PHP 注入 window.PLUGIN_FOOTER）
+  let pluginFooterLinks = $state(null as {text:string,url:string}[] | null);
+  let pluginFooterCopyright = $state('');
+  let pluginFooterIcpText = $state('');
+  let pluginFooterIcpUrl = $state('');
+  let pluginFooterPsbText = $state('');
+  let pluginFooterPsbUrl = $state('');
+  $effect(() => {
+    const pf = (window as any).PLUGIN_FOOTER;
+    if (pf) {
+      if (pf.links) pluginFooterLinks = pf.links;
+      if (pf.copyright) pluginFooterCopyright = pf.copyright;
+      if (pf.icpText) pluginFooterIcpText = pf.icpText;
+      if (pf.icpUrl) pluginFooterIcpUrl = pf.icpUrl;
+      if (pf.psbText) pluginFooterPsbText = pf.psbText;
+      if (pf.psbUrl) pluginFooterPsbUrl = pf.psbUrl;
+    }
+  });
   let cardExpanded = $state(false);
   let mobileWidgetExpanded = $state(false);
   let isMobile = $state(window.innerWidth <= 640);
@@ -359,13 +378,11 @@
     <div class="footer-inner">
       <div class="footer-row footer-row-brand">
         {#if !getIsPro() || !getSettings().hideBranding}
-        <div class="footer-brand">
           <span class="footer-logo"></span>
           <span class="footer-name">{t('footer.domain')}</span>
-          {#if isLoggedIn() && getIsPro() && customFooter}
-            <span class="footer-custom">{customFooter}</span>
-          {/if}
-        </div>
+        {/if}
+        {#if isLoggedIn() && getIsPro() && customFooter}
+          <span class="footer-custom" class:no-sep={getIsPro() && getSettings().hideBranding}>{customFooter}</span>
         {/if}
         <div class="footer-meta">
           <span class="footer-version">{VERSION}</span>
@@ -381,22 +398,47 @@
         </div>
       </div>
       <div class="footer-row footer-row-beian">
-        <a class="footer-link" href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
+        <span class="footer-psb">
+          <img class="footer-psb-icon" src="/preview.jpg" alt="ICP备案图标" width="14" height="14" />
+          {#if pluginFooterIcpText}
+            <a class="footer-link" href={pluginFooterIcpUrl || '#'} target="_blank" rel="noopener">{pluginFooterIcpText}</a>
+          {:else}
+            <a class="footer-link" href="https://beian.miit.gov.cn" target="_blank" rel="noopener">鲁ICP备17012030号-23</a>
+          {/if}
+        </span>
         <span class="footer-divider"></span>
         <span class="footer-psb">
           <img class="footer-psb-icon" src="/psb-icon.png" alt="网安备案图标" width="14" height="14" />
-          <a class="footer-link" href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">{t('footer.psbNumber')}</a>
+          {#if pluginFooterPsbText}
+            <a class="footer-link" href={pluginFooterPsbUrl || '#'} target="_blank" rel="noopener">{pluginFooterPsbText}</a>
+          {:else}
+            <a class="footer-link" href="https://beian.mps.gov.cn/#/query/webSearch?code=37098202000884" target="_blank" rel="noopener">{t('footer.psbNumber')}</a>
+          {/if}
         </span>
       </div>
       <div class="footer-row footer-row-links">
-        <a class="footer-link" href="{pg}about.html">{t('footer.about')}</a>
-        <span class="footer-dot">·</span>
-        <a class="footer-link" href="{pg}privacy.html">{t('footer.privacy')}</a>
-        <span class="footer-dot">·</span>
-        <a class="footer-link" href="{pg}copyright.html">{t('footer.copyright')}</a>
-        <span class="footer-dot">·</span>
-        <a class="footer-link" href="{pg}contact.html">{t('footer.contact')}</a>
+        {#if pluginFooterLinks}
+          {#each pluginFooterLinks as link, i}
+            {#if link.text && link.url}
+              <a class="footer-link" href={link.url}>{link.text}</a>
+              {#if i < pluginFooterLinks.filter(l => l.text && l.url).length - 1}
+                <span class="footer-dot">·</span>
+              {/if}
+            {/if}
+          {/each}
+        {:else}
+          <a class="footer-link" href="{pg}about.html">{t('footer.about')}</a>
+          <span class="footer-dot">·</span>
+          <a class="footer-link" href="{pg}privacy.html">{t('footer.privacy')}</a>
+          <span class="footer-dot">·</span>
+          <a class="footer-link" href="{pg}copyright.html">{t('footer.copyright')}</a>
+          <span class="footer-dot">·</span>
+          <a class="footer-link" href="{pg}contact.html">{t('footer.contact')}</a>
+        {/if}
       </div>
+      {#if pluginFooterCopyright}
+        <div class="footer-row" style="opacity:0.55;font-size:11px">{pluginFooterCopyright}</div>
+      {/if}
     </div>
   </footer>
 </div>
@@ -570,6 +612,7 @@
     border-left: 1px solid var(--text-color, #1e293b);
     margin-left: 4px;
   }
+  .footer-custom.no-sep { border-left: none; padding-left: 0; margin-left: 0; }
 
   .footer-link { color: var(--text-color, #1e293b); text-decoration: none; font-size: 11px; opacity: 0.65; transition: opacity 0.2s, color 0.2s; }
   .footer-link:hover { opacity: 1; color: var(--primary-color, #3b82f6); }

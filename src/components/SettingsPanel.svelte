@@ -341,7 +341,9 @@
             <div class="sub-expire lifetime">{t('settings.lifetime')}</div>
           {/if}
           {#if subPlan !== 'lifetime'}
-            <a class="btn btn-outline btn-renew" href="https://www.cilacila.cn/account" target="_blank" rel="noopener">{t('pro.renew')}</a>
+            <a class="btn btn-outline btn-renew" href="https://www.cilacila.cn/account.html" target="_blank" rel="noopener" onclick={() => startProPolling(() => showToast('Pro 已激活', 'success'))}>
+              <span class="btn-ico">↻</span>{t('pro.renew')}
+            </a>
           {/if}
         </div>
 
@@ -416,7 +418,7 @@
 
         <div class="pro-cta">
           <p class="pro-cta-text">{t('pro.guideText')}</p>
-          <a class="btn btn-primary btn-website" href="https://www.cilacila.cn/account" target="_blank" rel="noopener" onclick={() => startProPolling(() => showToast('Pro 已激活', 'success'))}>
+          <a class="btn btn-primary btn-website" href="https://www.cilacila.cn/account.html" target="_blank" rel="noopener" onclick={() => startProPolling(() => showToast('Pro 已激活', 'success'))}>
             {t('pro.guideBtn')}
           </a>
         </div>
@@ -720,7 +722,19 @@
   .sub-plan-name { font-size: 16px; font-weight: 700; color: var(--text-color); margin-bottom: 4px; }
   .sub-expire { font-size: 13px; color: var(--text-color); opacity: 0.5; margin-bottom: 10px; }
   .sub-expire.lifetime { color: #a855f7; opacity: 1; font-weight: 600; }
-  .btn-renew { font-size: 12px; padding: 8px 16px; }
+  .btn-renew {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
+  }
+  .btn-renew .btn-ico { font-size: 15px; line-height: 1; }
 
   
 

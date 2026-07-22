@@ -224,6 +224,16 @@ body {
   background: var(--card-border, rgba(0,0,0,0.08));
 }
 
+.btn-outline {
+  background: transparent;
+  color: var(--primary-color, #3b82f6);
+  border: 1.5px solid var(--primary-color, #3b82f6);
+}
+.btn-outline:hover {
+  background: rgba(59, 130, 246, 0.08);
+  transform: translateY(-1px);
+}
+
 .btn-danger {
   background: #ef4444;
   color: white;

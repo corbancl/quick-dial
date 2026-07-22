@@ -1,7 +1,7 @@
 {
-  "version": "1.0.10",
+  "version": "1.0.11",
   "buildDate": "2026-07-21",
-  "downloadUrl": "https://github.com/corbancl/quick-dial/releases/tag/v1.0.10",
+  "downloadUrl": "https://github.com/corbancl/quick-dial/releases/tag/v1.0.11",
   "platforms": {
     "web": "https://cilacila.cn",
     "fnos": "https://github.com/corbancl/quick-dial/releases/latest"

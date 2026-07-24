@@ -178,8 +178,37 @@
   } else {
     // 首次使用，确保主题初始化
     initTheme(undefined);
-    // 创建默认分组和示例导航
-    const defaultGroupId = ensureDefaultGroup();
+
+    // 插件端：站长预设默认导航卡片
+    const pd = (window as any).PLUGIN_DEFAULTS;
+    if (pd && pd.dials && Array.isArray(pd.dials) && pd.dials.length > 0) {
+      const defaultGroupId = ensureDefaultGroup();
+      const groups: Array<{ id: string; name: string; sortOrder: number; isCollapsed: boolean }> = [];
+      const dials: Array<{ id: string; title: string; url: string; icon: string; groupId: string; sortOrder: number; createdAt: number }> = [];
+      let dialSort = 0;
+      for (const grp of pd.dials) {
+        if (!grp.group || !grp.items) continue;
+        const gid = generateId();
+        groups.push({ id: gid, name: String(grp.group).slice(0, 10), sortOrder: groups.length, isCollapsed: false });
+        for (const item of grp.items || []) {
+          const title = String(item.title || '').slice(0, 10);
+          const url = String(item.url || '');
+          if (!title || !url) continue;
+          dials.push({
+            id: generateId(),
+            title,
+            url,
+            icon: String(item.icon || '') || (() => { try { return `https://sync.ruseo.cn/api/favicon.php?domain=${new URL(url).hostname}`; } catch { return ''; } })(),
+            groupId: gid,
+            sortOrder: dialSort++,
+            createdAt: Date.now() + dialSort,
+          });
+        }
+      }
+      initDials({ dials, groups });
+    } else {
+      // 创建默认分组和示例导航
+      const defaultGroupId = ensureDefaultGroup();
 
     // 常用分组 - 热门网站
     const fav = (domain: string) => `https://sync.ruseo.cn/api/favicon.php?domain=${domain}`;
@@ -219,6 +248,7 @@
 
     // 飞牛NAS：自动发现已安装应用
     discoverFnosApps();
+  }
   }
 
   // 保存右键菜单添加的导航

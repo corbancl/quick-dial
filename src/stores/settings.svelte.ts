@@ -6,6 +6,10 @@ let settings = $state<AppSettings>({ ...DEFAULT_SETTINGS });
 
 export function initSettings(data: AppSettings | undefined): void {
   settings = { ...DEFAULT_SETTINGS, ...data };
+  // V1.1 起 sidebar 布局下线，历史用户自动迁移到 centered
+  if (settings.layout === 'sidebar') {
+    settings.layout = 'centered';
+  }
   // 非 Pro 用户回退 Pro 专属主题
   if (isProTheme(settings.themeStyle) && !getIsPro()) {
     settings.themeStyle = 'tech';

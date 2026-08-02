@@ -16,6 +16,31 @@
   let inputEl: HTMLInputElement | undefined = $state();
   let localSelectedIndex = $state(-1);
 
+  // Pro 搜索历史
+  const SH_KEY = 'quick-dial-search-history';
+  const SH_MAX = 10;
+  let searchHistory = $state<string[]>(loadHistory());
+  let showHistory = $state(false);
+
+  function loadHistory(): string[] {
+    try { return JSON.parse(localStorage.getItem(SH_KEY) || '[]'); } catch { return []; }
+  }
+  function recordHistory(kw: string) {
+    if (!getIsPro()) return;
+    const k = kw.trim();
+    if (!k) return;
+    const next = [k, ...searchHistory.filter((h) => h !== k)].slice(0, SH_MAX);
+    searchHistory = next;
+    localStorage.setItem(SH_KEY, JSON.stringify(next));
+  }
+  function applyHistory(kw: string) {
+    keyword = kw;
+    showHistory = false;
+    const url = buildSearchUrl(getSettings().searchEngine, kw);
+    window.open(url, '_blank', 'noopener,noreferrer');
+    keyword = '';
+  }
+
   // 本地搜索结果（响应式）
   let localResults = $derived.by(() => {
     const kw = keyword.trim();
@@ -25,6 +50,7 @@
   });
 
   let showLocalPanel = $derived(localResults.length > 0 && keyword.trim() && !showEnginePicker);
+  let showHistoryPanel = $derived(showHistory && getIsPro() && searchHistory.length > 0 && !keyword.trim() && !showLocalPanel && !showEnginePicker);
 
   function handleSearch() {
     // 如果有选中的本地结果，优先跳转
@@ -37,6 +63,7 @@
     }
     const trimmed = keyword.trim();
     if (!trimmed) return;
+    recordHistory(trimmed);
     const engineId = getSettings().searchEngine;
     const url = buildSearchUrl(engineId, trimmed);
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -63,6 +90,7 @@
     } else if (e.key === 'Escape') {
       keyword = '';
       localSelectedIndex = -1;
+      showHistory = false;
       inputEl?.blur();
     }
   }
@@ -129,6 +157,8 @@
       type="text"
       bind:value={keyword}
       onkeydown={handleKeydown}
+      onfocus={() => showHistory = true}
+      onblur={() => setTimeout(() => showHistory = false, 150)}
       placeholder={t('search.placeholder')}
       class="search-input"
     />
@@ -149,6 +179,15 @@
       engineName={currentEngine().name}
       onselect={handleLocalSelect}
     />
+  {/if}
+
+  {#if showHistoryPanel}
+    <div class="history-panel">
+      <div class="history-head">{t('search.history')}</div>
+      {#each searchHistory as h}
+        <button class="history-item" onclick={() => applyHistory(h)}>{h}</button>
+      {/each}
+    </div>
   {/if}
 
   {#if showEnginePicker}
@@ -218,6 +257,11 @@
 {#if showLocalPanel}
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <div class="backdrop" onclick={() => { keyword = ''; localSelectedIndex = -1; }} role="button" tabindex="-1"></div>
+{/if}
+
+{#if showHistoryPanel}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <div class="backdrop" onclick={() => showHistory = false} role="button" tabindex="-1"></div>
 {/if}
 
 <style>
@@ -452,6 +496,41 @@
   .btn-custom-save {
     background: var(--primary-color, #4f46e5);
     color: white;
+  }
+
+  .history-panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--card-bg, rgba(255,255,255,0.95));
+    border: 1px solid var(--card-border, rgba(0,0,0,0.08));
+    border-radius: 12px;
+    padding: 4px;
+    backdrop-filter: blur(12px);
+    z-index: 10;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  }
+  .history-head {
+    font-size: 11px;
+    opacity: 0.4;
+    padding: 4px 12px 6px;
+  }
+  .history-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-color, #1e293b);
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .history-item:hover {
+    background: var(--hover-bg, rgba(0,0,0,0.04));
   }
 
   .backdrop {

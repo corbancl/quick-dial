@@ -18,6 +18,7 @@ export interface DialGroup {
   name: string;
   sortOrder: number;
   isCollapsed: boolean;
+  icon?: string; // 分组图标：自建国标 id / fa- 类 / 图片 url / emoji
 }
 
 // ====== 搜索引擎 ======

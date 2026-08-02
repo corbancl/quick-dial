@@ -187,7 +187,7 @@
     max-height: 82vh;
     display: flex;
     flex-direction: column;
-    background: var(--bg-color, #0f172a);
+    background: var(--card-bg, #ffffff);
     border-radius: 16px;
     font-size: 13px;
   }

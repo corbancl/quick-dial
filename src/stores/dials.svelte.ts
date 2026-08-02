@@ -2,6 +2,7 @@
   import { generateId } from '../types';
   import { t } from '../utils/i18n.svelte';
 import { getIsPro } from './subscription.svelte';
+import { DEFAULT_GROUP_ICON } from '../utils/groupIcons';
 
 export const FREE_GROUP_LIMIT = 3;
 
@@ -44,6 +45,7 @@ export function addGroup(name: string): DialGroup | null {
     name,
     sortOrder: state.groups.length,
     isCollapsed: false,
+    icon: DEFAULT_GROUP_ICON,
   };
   state.groups = [...state.groups, newGroup];
   return newGroup;

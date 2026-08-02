@@ -2,6 +2,8 @@
 import { t } from '../utils/i18n.svelte';
   import { getDialsState, addGroup, updateGroup, removeGroup, reorderGroups, FREE_GROUP_LIMIT } from '../stores/dials.svelte';
   import { getIsPro } from '../stores/subscription.svelte';
+  import GroupIcon from './GroupIcon.svelte';
+  import GroupIconPicker from './GroupIconPicker.svelte';
 
   interface Props {
     oncancel: () => void;
@@ -32,6 +34,8 @@ import { t } from '../utils/i18n.svelte';
 
   let newGroupName = $state('');
   let limitReached = $state(false);
+  let iconTarget = $state<string | null>(null);
+  function openIconPicker(id: string) { iconTarget = id; }
 
   function handleAddGroup() {
     const name = newGroupName.trim();
@@ -129,6 +133,9 @@ import { t } from '../utils/i18n.svelte';
           ondragover={handleGroupDragOver}
           ondrop={(e) => handleGroupDrop(e, group.id)}
         >
+          <button class="group-icon-btn" onclick={() => openIconPicker(group.id)} title="选择图标" aria-label="选择图标">
+            <GroupIcon icon={group.icon} size={20} />
+          </button>
           <span class="drag-handle" title="拖拽排序"><i class="fa-solid fa-grip-vertical"></i></span>
           <input
             class="group-name-input"
@@ -145,6 +152,15 @@ import { t } from '../utils/i18n.svelte';
         </div>
       {/each}
     </div>
+
+    {#if iconTarget}
+      {@const target = getDialsState().groups.find(g => g.id === iconTarget)}
+      <GroupIconPicker
+        value={target?.icon || ''}
+        onselect={(icon: string) => { if (iconTarget) updateGroup(iconTarget, { icon }); iconTarget = null; }}
+        onclose={() => iconTarget = null}
+      />
+    {/if}
 
     <!-- 分组上限提示 -->
     {#if limitReached}
@@ -200,6 +216,22 @@ import { t } from '../utils/i18n.svelte';
     background: var(--hover-bg, rgba(0,0,0,0.06));
   }
 
+  .group-icon-btn {
+    flex: none;
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    border: 1px solid color-mix(in srgb, var(--text-color, #1e293b) 14%, transparent);
+    background: transparent;
+    color: var(--text-color, #1e293b);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .group-icon-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
   .drag-handle {
     cursor: grab;
     color: var(--text-color, #1e293b);

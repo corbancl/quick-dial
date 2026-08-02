@@ -6,6 +6,8 @@ import { t } from '../utils/i18n.svelte';
   import DialGroup from './DialGroup.svelte';
   import AddDialModal from './AddDialModal.svelte';
   import GroupManage from './GroupManage.svelte';
+  import GroupIcon from './GroupIcon.svelte';
+  import { isGroupCollapsed, toggleGroupCollapse, getActiveGroup, setActiveGroup } from '../stores/groupUI.svelte';
 
   let showAddModal = $state(false);
   let showGroupManage = $state(false);
@@ -146,18 +148,7 @@ import { t } from '../utils/i18n.svelte';
     }));
   });
 
-  // 分组折叠状态（Tab 模式下控制）
-  let collapsedGroups = $state(new Set<string>());
-
-  function toggleGroupCollapse(groupId: string) {
-    const next = new Set(collapsedGroups);
-    if (next.has(groupId)) {
-      next.delete(groupId);
-    } else {
-      next.add(groupId);
-    }
-    collapsedGroups = next;
-  }
+  // 分组折叠/高亮状态提升到共享 store（groupUI.svelte），供共享联动
 
   const hasGroups = $derived(grouped.length > 0);
 </script>
@@ -171,7 +162,7 @@ import { t } from '../utils/i18n.svelte';
   {#if hasGroups}
     <div class="group-tabs" role="tablist" aria-label={t('group.manage')}>
       {#each grouped as { group, dials } (group.id)}
-        {@const collapsed = collapsedGroups.has(group.id)}
+        {@const collapsed = isGroupCollapsed(group.id)}
         <button
           class="group-tab"
           class:collapsed
@@ -180,6 +171,7 @@ import { t } from '../utils/i18n.svelte';
           onclick={() => toggleGroupCollapse(group.id)}
         >
           <span class="tab-chevron" class:collapsed></span>
+          <GroupIcon icon={group.icon} size={16} />
           <span class="tab-name">{t(group.name)}</span>
           <span class="tab-count">{dials.length}</span>
         </button>
@@ -194,7 +186,7 @@ import { t } from '../utils/i18n.svelte';
         {group}
         {dials}
         hideHeader={true}
-        forceCollapsed={collapsedGroups.has(group.id)}
+        forceCollapsed={isGroupCollapsed(group.id)}
         onedit={(dial) => openEditDial(dial)}
         ondelete={(id) => handleDeleteDial(id)}
         onadd={(groupId) => openAddDial(groupId)}
@@ -270,7 +262,6 @@ import { t } from '../utils/i18n.svelte';
   :global(html[data-layout="sidebar"]) .speed-dial {
     max-width: 100%;
   }
-
   /* ── 水平分组标签栏 ── */
   .group-tabs {
     display: flex;

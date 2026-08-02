@@ -19,7 +19,7 @@ const ROOT = 'M:/new';
 const DIST = path.join(ROOT, 'dist');
 const PACKAGES = path.join(ROOT, 'packages');
 const KEYS = path.join(ROOT, 'keys');
-const VERSION = '1.0.10';
+const VERSION = (() => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'public/version.json'), 'utf8')).version; } catch { return '1.0.10'; } })();
 
 const BROWSERS = {
   chrome: { manifest_src: 'manifest.json', label: 'Chrome' },

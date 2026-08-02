@@ -32,7 +32,7 @@ const zh: Dict = {
   'group.limit': '{current}/{max} 个分组 · Pro 无限',
   'group.add': '添加分组','group.done': '完成','group.addBtn': '添加',
   'wp.local': '上传本地图片','wp.url': '输入图片链接','wp.apply': '应用','wp.placeholder': '输入图片链接...',
-  'sync.never': '从未同步','sync.fillRequired': '请填写用户名和密码','sync.loginOk': '登录成功','sync.registerOk': '注册成功','sync.syncing': '同步中...','sync.plUser': '至少2个字符','sync.plPwd': '至少6位','sync.processing': '处理中...','sync.proReq': '云同步需 Pro，去设置升级',
+  'sync.never': '从未同步','sync.fillRequired': '请填写用户名和密码','sync.loginOk': '登录成功','sync.registerOk': '注册成功','sync.syncing': '同步中...','sync.plUser': '至少2个字符','sync.plPwd': '至少6位','sync.processing': '处理中...','sync.proReq': '云同步需 Pro，去设置升级','sync.auto': '自动同步','sync.autoDesc': '开启后数据自动备份到云端','sync.autoOn': '已开启自动同步','sync.autoOff': '已关闭自动同步','sync.freeHint': '免费用户可手动同步，升级 Pro 解锁自动同步',
   'ie.success': '操作成功','ie.exportOk': '导出成功','ie.importOk': '导入成功','ie.imported': '成功导入','ie.skipped': '跳过重复','ie.groups': '个分组','ie.merged': '合并','ie.importedN': '成功导入 {count} 个书签至 {groups} 个分组','ie.extraMerged': '，超出 {extra} 个文件夹自动归入默认收藏','ie.cleared': '已清空数据','ie.invalidFile': '无效的备份文件格式','ie.invalidUrl': 'URL 格式不正确','ie.noBookmark': '未找到有效的书签','ie.allExist': '书签已全部存在','ie.failed': '操作失败',
   'dial.addToGroup': '添加到本组',
   'pro.monthly': '月度会员','pro.yearly': '年度会员','pro.lifetime': '终身会员','pro.expire': '到期：','pro.expireTip': 'Pro 将于 {days} 天后到期，请及时续费','pro.days': '天',
@@ -72,7 +72,9 @@ const zh: Dict = {
   // RSS
   'rss.title': 'RSS 订阅','rss.add': '添加 RSS 源','rss.refresh': '刷新','rss.markAllRead': '全部已读','rss.readMore': '阅读原文','rss.empty': '暂无文章','rss.noFeed': '暂无订阅源，点击上方按钮添加','rss.invalid': '无效的 RSS 地址','rss.limit': '免费版最多 5 个 RSS 源','settings.showRss': '显示 RSS 订阅',
   // Layout
-  'layout.title': '页面布局','layout.centered': '居中','layout.wide': '宽屏','layout.sidebar': '侧栏',
+  'layout.title': '页面布局','layout.centered': '居中','layout.wide': '宽屏','layout.sidebar': '侧栏','group.iconTitle': '选择分组图标',
+  'search.history': '最近搜索',
+  'pro.motion': '高级动效','pro.motionDesc': '更细腻的卡片悬浮浮起与转场微交互',
 };
 
 const en: Dict = {
@@ -104,7 +106,7 @@ const en: Dict = {
   'group.limit': '{current}/{max} groups · Pro unlimited',
   'group.add': 'Add Group','group.done': 'Done','group.addBtn': 'Add',
   'wp.local': 'Upload Image','wp.url': 'Image URL','wp.apply': 'Apply','wp.placeholder': 'Paste image URL...',
-  'sync.never': 'Never synced','sync.fillRequired': 'Fill username and password','sync.loginOk': 'Login OK','sync.registerOk': 'Registered','sync.syncing': 'Syncing...','sync.plUser': 'Min 2 chars','sync.plPwd': 'Min 6 chars','sync.processing': 'Processing...','sync.proReq': 'Cloud sync requires Pro',
+  'sync.never': 'Never synced','sync.fillRequired': 'Fill username and password','sync.loginOk': 'Login OK','sync.registerOk': 'Registered','sync.syncing': 'Syncing...','sync.plUser': 'Min 2 chars','sync.plPwd': 'Min 6 chars','sync.processing': 'Processing...','sync.proReq': 'Cloud sync requires Pro','sync.auto': 'Auto Sync','sync.autoDesc': 'Auto-backup to cloud when enabled','sync.autoOn': 'Auto sync enabled','sync.autoOff': 'Auto sync disabled','sync.freeHint': 'Free users sync manually; upgrade to Pro for auto sync',
   'dial.addToGroup': 'Add to Group',
   'pro.monthly': 'Monthly','pro.yearly': 'Yearly','pro.lifetime': 'Lifetime','pro.expire': 'Expires: ','pro.expireTip': 'Pro expires in {days} days, please renew','pro.days': 'd',
   'settings.engine': 'Default Engine',
@@ -148,7 +150,9 @@ const en: Dict = {
   // RSS
   'rss.title': 'RSS Feeds','rss.add': 'Add RSS Feed','rss.refresh': 'Refresh','rss.markAllRead': 'Mark All Read','rss.readMore': 'Read More','rss.empty': 'No articles','rss.noFeed': 'No feeds yet, add one above','rss.invalid': 'Invalid RSS URL','rss.limit': 'Free: max 5 feeds','settings.showRss': 'Show RSS Feeds',
   // Layout
-  'layout.title': 'Page Layout','layout.centered': 'Centered','layout.wide': 'Wide','layout.sidebar': 'Sidebar',
+  'layout.title': 'Page Layout','layout.centered': 'Centered','layout.wide': 'Wide','layout.sidebar': 'Sidebar','group.iconTitle': 'Choose Group Icon',
+  'search.history': 'Recent Searches',
+  'pro.motion': 'Advanced Motion','pro.motionDesc': 'Refined card lift and transition micro-interactions',
 };
 
 let currentLang = $state<Lang>((localStorage.getItem('qd-lang') as Lang) || 'zh-CN');
@@ -170,17 +174,20 @@ export function getLang(): Lang {
   return currentLang;
 }
 
+/** 默认浏览器标签页标题（未设置自定义标题时使用） */
+export function getDefaultTitle(): string {
+  return currentLang === 'zh-CN'
+    ? '呲啦起始页 - 极简无广告浏览器新标签页'
+    : 'Quick Dial - Clean, Ad-Free Browser New Tab';
+}
+
 export function setLang(lang: Lang) {
   currentLang = lang;
   _v++;
   localStorage.setItem('qd-lang', lang);
   document.documentElement.setAttribute('lang', lang);
   const ct = localStorage.getItem('quick-dial-custom-title');
-  document.title = ct
-    ? ct
-    : (lang === 'zh-CN'
-      ? '呲啦起始页 - 极简无广告浏览器新标签页'
-      : 'Quick Dial - Clean, Ad-Free Browser New Tab');
+  document.title = ct ? ct : getDefaultTitle();
 }
 
 // 初始化 - read from localStorage directly to avoid state_referenced_locally warning

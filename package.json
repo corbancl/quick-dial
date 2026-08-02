@@ -1,6 +1,6 @@
 {
   "name": "quick-dial",
-  "version": "1.0.12",
+  "version": "1.0.14",
   "description": "Quick Dial - 极简无广告浏览器新标签页",
   "type": "module",
   "scripts": {
@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "build:fnos": "node scripts/build-fnos.js",
-    "build:all": "npm run build && npm run build:fnos"
+    "build:all": "npm run build && npm run build:fnos",
+    "version:sync": "node scripts/sync-version.cjs",
+    "version:check": "node scripts/sync-version.cjs --check"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.2.0",

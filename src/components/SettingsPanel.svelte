@@ -3,10 +3,11 @@
   import { getIsPro, startProPolling } from '../stores/subscription.svelte';
   import { showToast } from '../utils/toast.svelte';
   import { getAvailableEngines, getLockedEngines, getAllEngines } from '../utils/search';
-  import { t, getLang, setLang } from '../utils/i18n.svelte';
+  import { t, getLang, setLang, getDefaultTitle } from '../utils/i18n.svelte';
   import type { ClockStyle, ThemeStyle, QuoteType } from '../types';
   import { isProTheme } from '../types';
   import { applyThemeStyle } from '../utils/theme';
+  import { getProMotion, setProMotion } from '../utils/motion';
 
   interface Props {
     onclose: () => void;
@@ -28,6 +29,13 @@
 
   let customCss = $state(localStorage.getItem('quick-dial-custom-css') || '');
   let customCssTimeout: ReturnType<typeof setTimeout> | undefined;
+
+  // Pro 高级动效开关
+  let proMotion = $state(getProMotion());
+  function handleProMotionChange(e: Event) {
+    proMotion = (e.target as HTMLInputElement).checked;
+    setProMotion(proMotion);
+  }
 
   function handleCustomCssChange(e: Event) {
     customCss = (e.target as HTMLTextAreaElement).value;
@@ -94,7 +102,7 @@
   }
 
   // 从 DOM 读取实际主题（比 getSettings() 快照更可靠）
-  let currentThemeStyle = $state(document.documentElement.getAttribute('data-theme-style') as ThemeStyle || getSettings().themeStyle || 'tech');
+  let currentThemeStyle = $state<string>(document.documentElement.getAttribute('data-theme-style') as string || getSettings().themeStyle || 'tech');
 
   function handleThemeStyleChange(e: Event) {
     const select = e.target as HTMLSelectElement;
@@ -122,7 +130,7 @@
     <div class="modal-body">
 
     <div class="settings-list">
-      <!-- UI 主题风格 -->
+      <!-- 外观主题（颜色主题） -->
       <div class="setting-item">
         <label class="setting-label" for="theme-style">{t('settings.theme')}</label>
         <select id="theme-style" class="form-select" value={currentThemeStyle} onchange={handleThemeStyleChange}>
@@ -360,7 +368,7 @@
               oninput={(e) => {
                 const v = (e.target as HTMLInputElement).value;
                 localStorage.setItem('quick-dial-custom-title', v);
-                document.title = v || '呲啦起始页 - 极简无广告浏览器新标签页';
+                document.title = v || getDefaultTitle();
               }}
               placeholder={t('pro.customTitleEg')}
               maxlength="50"
@@ -396,6 +404,18 @@
           </label>
         </div>
         <p class="card-desc" style="margin-top:4px">{t('pro.hideBrandingDesc')}</p>
+
+        <!-- 高级动效 (Pro) -->
+        <div class="setting-item">
+          <label class="setting-label" for="pro-motion">
+            {t('pro.motion')}
+          </label>
+          <label class="toggle">
+            <input id="pro-motion" type="checkbox" checked={proMotion} onchange={handleProMotionChange} />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <p class="card-desc" style="margin-top:4px">{t('pro.motionDesc')}</p>
       {:else}
         <div class="pro-features">
           <div class="pro-feature">

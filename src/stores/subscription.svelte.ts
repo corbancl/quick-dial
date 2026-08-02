@@ -1,10 +1,13 @@
 import type { SearchEngine } from '../types';
 import { generateId, DEFAULT_SEARCH_ENGINES } from '../types';
+import { getDefaultTitle } from '../utils/i18n.svelte';
 
 const STORAGE_KEY = 'quick-dial-subscription';
 
 let isPro = $state(false);
 let customEngines = $state<SearchEngine[]>([]);
+// 自动同步开关（仅 Pro 生效），持久化到 localStorage
+let autoSync = $state(false);
 
 // 响应式 token 追踪，登录/退出时自动触发 Pro 同步（export getter 方式避免 Svelte state_invalid_export）
 // 兼容官网 token（qd-website-token）和扩展端 token（quick-dial-token）
@@ -49,6 +52,9 @@ function init() {
   // 页面加载时，token 存在性由 App.svelte 的 $effect 触发 syncProStatus，无需在此重复调用
   // 移除旧代码中的直接调用，避免与 $effect 并发执行造成的竞态条件
 
+  // 读取自动同步开关
+  autoSync = localStorage.getItem('quick-dial-auto-sync') === '1';
+
   // 监听官网支付成功事件（通过 localStorage 跨页面通信）
   window.addEventListener('storage', (e: StorageEvent) => {
     if (e.key === 'qd-pay-success' && e.newValue) {
@@ -70,6 +76,11 @@ function persist() {
 
 export function getIsPro() { return isPro; }
 export function getCustomEngines() { return customEngines; }
+export function getAutoSync() { return autoSync; }
+export function setAutoSync(v: boolean) {
+  autoSync = v;
+  localStorage.setItem('quick-dial-auto-sync', v ? '1' : '0');
+}
 
 /** Pro 被取消时清理 Pro 专属功能 */
 export function cleanupProFeatures() {
@@ -79,10 +90,7 @@ export function cleanupProFeatures() {
   // 2. 重置文档标题
   try {
     localStorage.removeItem('quick-dial-custom-title');
-    const lang = localStorage.getItem('qd-lang') || 'zh-CN';
-    document.title = lang === 'zh-CN'
-      ? '呲啦起始页 - 极简无广告浏览器新标签页'
-      : 'Quick Dial - Clean, Ad-Free Browser New Tab';
+    document.title = getDefaultTitle();
   } catch { /* ignore */ }
 
   // 3. 清除自定义 CSS

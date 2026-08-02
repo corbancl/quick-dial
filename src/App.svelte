@@ -20,16 +20,16 @@
   import RssWidget from './components/RssWidget.svelte';
 
   import { initDials, getDialsState, ensureDefaultGroup, addDial } from './stores/dials.svelte';
-  import { initTheme, getTheme } from './stores/theme.svelte';
+  import { initTheme, getTheme, setThemeMode } from './stores/theme.svelte';
   import { initSettings, getSettings, setSearchEngine } from './stores/settings.svelte';
   import { initRecentSites, getRecentSites } from './stores/recentSites.svelte';
   import { initChat, getChatMessages, getChatConfig } from './stores/chat.svelte';
   import { initRss, getRssData } from './stores/rss.svelte';
   import { initQuote } from './stores/quote.svelte';
-  import { getIsPro, syncProStatus, getAuthToken, startProPolling } from './stores/subscription.svelte';
+  import { getIsPro, syncProStatus, getAuthToken, startProPolling, getAutoSync } from './stores/subscription.svelte';
   import { getWallpaper, setWallpaper } from './stores/wallpaper.svelte';
   import { fetchRandomWallpaper } from './utils/weather';
-  import { isLoggedIn } from './utils/sync';
+  import { isLoggedIn, uploadSync } from './utils/sync';
   import { showToast } from './utils/toast.svelte';
   import { checkStorageSupport, loadData, saveData } from './utils/storage';
   import { registerShortcut, focusSearch } from './utils/keyboard';
@@ -37,6 +37,8 @@
   import { getContextAdd } from './utils/contextMenu';
   import { t, getLang } from './utils/i18n.svelte';
   import { discoverFnosApps } from './utils/fnos';
+  import { isGroupCollapsed, toggleGroupCollapse, getActiveGroup, setActiveGroup } from './stores/groupUI.svelte';
+  import { tick } from 'svelte';
   import type { AppData } from './types';
 
   const VERSION = __VERSION__;
@@ -154,7 +156,22 @@
     return () => clearInterval(interval);
   });
 
-  // 布局模式同步到 document 属性
+  // Pro 自动同步：开启后定时把本地数据上传云端（数据无变化则跳过，避免刷版本号/日志）
+  $effect(() => {
+    const enabled = getAutoSync();
+    const token = getAuthToken();
+    if (!enabled || !token || !getIsPro()) return;
+    const tick = async () => {
+      try { await uploadSync(false, 'auto'); } catch { /* 静默 */ }
+    };
+    tick();
+    const interval = setInterval(tick, 3 * 60 * 1000);
+    const onVisible = () => { if (document.visibilityState === 'visible') tick(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => { clearInterval(interval); document.removeEventListener('visibilitychange', onVisible); };
+  });
+
+  // 布局模式同步到 document 属性（居中/宽屏依赖 data-layout 属性做差异化样式）
   $effect(() => {
     document.documentElement.setAttribute('data-layout', getSettings().layout);
   });
@@ -429,7 +446,7 @@
       </div>
       <div class="footer-row footer-row-beian">
         <span class="footer-psb">
-          <img class="footer-psb-icon" src="/preview.jpg" alt="ICP备案图标" width="14" height="14" />
+          <img class="footer-psb-icon" src="./preview.jpg" alt="ICP备案图标" width="14" height="14" />
           {#if pluginFooterIcpText}
             <a class="footer-link" href={pluginFooterIcpUrl || '#'} target="_blank" rel="noopener">{pluginFooterIcpText}</a>
           {:else}
@@ -438,7 +455,7 @@
         </span>
         <span class="footer-divider"></span>
         <span class="footer-psb">
-          <img class="footer-psb-icon" src="/psb-icon.png" alt="网安备案图标" width="14" height="14" />
+          <img class="footer-psb-icon" src="./psb-icon.png" alt="网安备案图标" width="14" height="14" />
           {#if pluginFooterPsbText}
             <a class="footer-link" href={pluginFooterPsbUrl || '#'} target="_blank" rel="noopener">{pluginFooterPsbText}</a>
           {:else}
@@ -614,7 +631,8 @@
     gap: 10px;
     font-size: 12px;
     color: var(--text-color, #1e293b);
-    opacity: 0.55;
+    opacity: 0.85;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.55);
     transition: opacity 0.3s;
   }
 
@@ -644,7 +662,7 @@
   }
   .footer-custom.no-sep { border-left: none; padding-left: 0; margin-left: 0; }
 
-  .footer-link { color: var(--text-color, #1e293b); text-decoration: none; font-size: 11px; opacity: 0.65; transition: opacity 0.2s, color 0.2s; }
+  .footer-link { color: var(--text-color, #1e293b); text-decoration: none; font-size: 11px; opacity: 0.9; transition: opacity 0.2s, color 0.2s; }
   .footer-link:hover { opacity: 1; color: var(--primary-color, #3b82f6); }
   .footer-row-beian .footer-link { font-size: 11px; }
   .footer-psb { display: inline-flex; align-items: center; gap: 4px; }
@@ -795,7 +813,7 @@
     position: relative;
     z-index: 1;
     border-radius: 16px;
-    background: var(--bg-color, #0f172a);
+    background: var(--card-bg, #ffffff);
     box-shadow: 0 16px 48px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.1);
     overflow: hidden;
   }

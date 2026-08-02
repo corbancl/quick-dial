@@ -2,6 +2,7 @@
 import { t } from '../utils/i18n.svelte';
   import type { DialItem, DialGroup as DialGroupType } from '../types';
   import DialCard from './DialCard.svelte';
+  import GroupIcon from './GroupIcon.svelte';
 
   interface Props {
     group: DialGroupType;
@@ -41,12 +42,13 @@ import { t } from '../utils/i18n.svelte';
   }
 </script>
 
-<div class="dial-group">
+<div class="dial-group" id={'group-' + group.id}>
   {#if !hideHeader}
     <div class="group-header">
       <button class="group-toggle" onclick={toggleCollapse} title={isCollapsed ? t('toolbar.expandGroup') : t('toolbar.collapseGroup')} aria-label={isCollapsed ? t('toolbar.expandGroup') : t('toolbar.collapseGroup')}>
         <span class="chevron" class:collapsed={isCollapsed}></span>
       </button>
+      <GroupIcon icon={group.icon} size={18} />
       <span class="group-name">{t(group.name)}</span>
       <span class="group-count">{dials.length}</span>
       <div class="group-actions">

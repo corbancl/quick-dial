@@ -4,7 +4,7 @@ const fs = require('fs');
 
 const ROOT = path.join(__dirname, '..');
 const SRC = path.join(ROOT, 'quickdial-emlog', 'quickdial'); // 顶层 quickdial/
-const OUT = path.join(ROOT, 'packages', 'quickdial-emlog-v1.0.15.zip');
+const OUT = path.join(ROOT, 'packages', 'quickdial-emlog-v1.0.16.zip');
 
 if (!fs.existsSync(SRC)) { console.error('源目录不存在: ' + SRC); process.exit(1); }
 

@@ -227,8 +227,10 @@ function plugin_setting() {
 
     // 保存底部配置
     if (Input::postStrVar('save_footer', '') === '1') {
-        $ftTexts  = Input::postStrVar('ft_text', []);
-        $ftUrls   = Input::postStrVar('ft_url',  []);
+        // 注意：ft_text / ft_url 是数组型字段，必须用 postStrArray，
+        // postStrVar 对数组会返回默认值（空数组），导致保存后链接空白。
+        $ftTexts  = Input::postStrArray('ft_text', []);
+        $ftUrls   = Input::postStrArray('ft_url',  []);
         $links    = [];
         for ($i = 0; $i < 4; $i++) {
             $links[] = [
@@ -247,10 +249,11 @@ function plugin_setting() {
 
     // 保存导航卡片
     if (Input::postStrVar('save_dials', '') === '1') {
-        $groups    = Input::postStrVar('dial_groups', []);
-        $titlesAll = Input::postStrVar('dial_title', []);
-        $urlsAll   = Input::postStrVar('dial_url',   []);
-        $iconsAll  = Input::postStrVar('dial_icon',  []);
+        // dial_* 均为数组型字段，必须用 postStrArray（postStrVar 会拒数组返回空）
+        $groups    = Input::postStrArray('dial_groups', []);
+        $titlesAll = Input::postStrArray('dial_title', []);
+        $urlsAll   = Input::postStrArray('dial_url',   []);
+        $iconsAll  = Input::postStrArray('dial_icon',  []);
 
         $result = [];
         foreach ($groups as $gi => $gname) {

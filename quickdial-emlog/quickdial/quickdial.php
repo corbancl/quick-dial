@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: 呲啦起始页 (Quick Dial)
- * Version: 1.0.15
+ * Version: 1.0.16
  * Description: 为 Emlog 博客增加与网页端 / 扩展端 / 飞牛 NAS 端完全一致的独立起始页（导航面板）。直接复用官方网页端构建产物，四端界面与功能完全相同。
  * Author: 澄曜
  * Author URL: https://www.emlog.net/profiles/8e47bcb4

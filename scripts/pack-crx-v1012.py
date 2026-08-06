@@ -7,7 +7,7 @@ DIST = os.path.join(ROOT, "dist")
 PACKAGES = os.path.join(ROOT, "packages")
 PEM = os.path.join(ROOT, "keys", "dist.pem")
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-VERSION = "1.0.13"
+VERSION = "1.0.16"
 
 crx_tmp = os.path.join(PACKAGES, "tmp_crx")
 if os.path.exists(crx_tmp):
@@ -30,7 +30,7 @@ with open(os.path.join(crx_tmp, "manifest.json"), encoding="utf-8") as f:
 print("manifest version:", m.get("version"))
 print("manifest name:", m.get("name"))
 print("background:", m.get("background"))
-assert m.get("version") == VERSION, "版本号不是 %s" % VERSION
+assert m.get("version") == VERSION, "版本号不是 %s" % VERSION  # 1.0.16
 
 r = subprocess.run([
     CHROME, "--headless", "--disable-gpu",

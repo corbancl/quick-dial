@@ -1,0 +1,3 @@
+#!/bin/bash
+# Native 应用：无需手动操作
+exit 0

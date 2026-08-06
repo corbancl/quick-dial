@@ -5,6 +5,7 @@
 
   interface Props {
     dial: DialItem;
+    group?: string;
     onedit: (dial: DialItem) => void;
     ondelete: (id: string) => void;
     ondragstart: (e: DragEvent, id: string) => void;
@@ -13,7 +14,7 @@
     ondragend: () => void;
   }
 
-  let { dial, onedit, ondelete, ondragstart, ondragover, ondrop, ondragend }: Props = $props();
+  let { dial, group, onedit, ondelete, ondragstart, ondragover, ondrop, ondragend }: Props = $props();
 
   let iconError = $state(false);
 
@@ -35,7 +36,7 @@
   }
 
   function handleClick() {
-    addRecentSite(dial.url, dial.title);
+    addRecentSite(dial.url, dial.title, group);
     if (getSettings().openInNewTab) {
       window.open(dial.url, '_blank', 'noopener,noreferrer');
     } else {

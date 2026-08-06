@@ -1,9 +1,9 @@
 {
-  "version": "1.0.14",
-  "buildDate": "2026-07-30",
+  "version": "1.0.15",
+  "buildDate": "2026-08-06",
   "downloadUrl": "https://www.cilacila.cn/",
   "platforms": {
     "web": "https://cilacila.cn",
-    "fnos": "https://www.cilacila.cn/downloads/quick-dial_v1.0.13_fnos.fpk"
+    "fnos": "https://www.cilacila.cn/downloads/quick-dial_v1.0.15_fnos.fpk"
   }
 }

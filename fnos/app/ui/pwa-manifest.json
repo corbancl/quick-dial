@@ -1,0 +1,14 @@
+{
+  "name": "呲啦起始页 - Quick Dial",
+  "short_name": "呲啦起始页",
+  "description": "极简无广告浏览器新标签页",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "icons": [
+    { "src": "js.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "js.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "js.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

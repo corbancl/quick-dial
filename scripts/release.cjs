@@ -15,6 +15,7 @@
  */
 const { execSync, spawnSync } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 
@@ -52,18 +53,26 @@ function countFiles(dir) {
 function syncEndpoint(name, dest, keep = [], platform = null) {
   if (!fs.existsSync(DIST)) { console.error(`[跳过] ${name}: dist/ 不存在，请先构建`); return; }
   // 保留指定子项（如 fnos 的 config/images，非 dist 产物，缺失会导致 fnpack 失败）
+  // 注意: 必须先「实拷贝」到 dest 之外的暂存区，否则 clearDir(dest) 会连同它们一起删除。
+  const stage = fs.mkdtempSync(path.join(os.tmpdir(), 'qd-keep-'));
   const keepSnap = [];
   for (const k of keep) {
     const src = path.join(dest, k);
-    if (fs.existsSync(src)) keepSnap.push([k, src]);
+    if (!fs.existsSync(src)) continue;
+    const snap = path.join(stage, k.replace(/[\\/]/g, '__'));
+    if (fs.statSync(src).isDirectory()) rcopy(src, snap);
+    else { fs.mkdirSync(path.dirname(snap), { recursive: true }); fs.copyFileSync(src, snap); }
+    keepSnap.push([k, snap]);
   }
   clearDir(dest);
   rcopy(DIST, dest);
-  for (const [k, src] of keepSnap) {
+  for (const [k, snap] of keepSnap) {
     const target = path.join(dest, k);
     fs.rmSync(target, { recursive: true, force: true });
-    rcopy(src, target);
+    if (fs.statSync(snap).isDirectory()) rcopy(snap, target);
+    else { fs.mkdirSync(path.dirname(target), { recursive: true }); fs.copyFileSync(snap, target); }
   }
+  fs.rmSync(stage, { recursive: true, force: true });
   // 注入平台标识，供云同步 detectPlatform 精确区分端（避免 fallback 成 web）
   if (platform) {
     const idx = path.join(dest, 'index.html');
@@ -168,11 +177,157 @@ function verify() {
   log(`[完成] 当前版本: ${(() => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'public/version.json'), 'utf8')).version; } catch { return '?'; } })()}`);
 }
 
+// ---------- 四端 smoke 校验 (T4 防漏端) ----------
+// 在同步后运行；任何失败项累计，主流程据此非零退出。
+// 也可用 `node scripts/release.cjs --check` 单独运行（不构建、不改动任何文件）。
+function smoke() {
+  const failures = [];
+  const fail = (m) => { console.error('   ✘ ' + m); failures.push(m); };
+  const ok = (m) => console.log('   ✔ ' + m);
+  const srcVersion = readVersion();
+
+  // 四端定义：rel=true 表示部署在子目录，必须使用相对路径 ./，禁止绝对 / 路径
+  const ends = [
+    { name: 'web(dist)',      dir: DIST,      rel: false, need: ['index.html', 'js.png', 'assets'] },
+    { name: '插件端(Emlog)',  dir: PLUGIN_WEB, rel: true,  need: ['index.html', 'js.png', 'preview.jpg', 'assets'], platform: 'plugin' },
+    { name: '飞牛端(NAS)',    dir: FNOS_UI,   rel: true,  need: ['index.html', 'assets', 'config', 'images/icon_64.png'], platform: 'fnos' },
+  ];
+  const isNonEmpty = (p) => {
+    if (!fs.existsSync(p)) return false;
+    if (fs.statSync(p).isDirectory()) {
+      let n = 0;
+      for (const e of fs.readdirSync(p)) { const fp = path.join(p, e); if (fs.statSync(fp).isDirectory() || fs.statSync(fp).size > 0) n++; }
+      return n > 0;
+    }
+    return fs.statSync(p).size > 0;
+  };
+
+  // A. 版本一致性（各端 version.json + quickdial.php 必须 == 源版本）
+  console.log('  [A] 版本一致性 (源版本 ' + srcVersion + ')');
+  for (const ep of ends) {
+    const vj = path.join(ep.dir, 'version.json');
+    if (fs.existsSync(vj)) {
+      try {
+        const v = JSON.parse(fs.readFileSync(vj, 'utf8')).version;
+        if (v !== srcVersion) fail(`${ep.name} version.json=${v} ≠ 源版本 ${srcVersion}`);
+        else ok(`${ep.name} version.json=${v}`);
+      } catch (e) { fail(`${ep.name} version.json 解析失败: ${e.message}`); }
+    } else ok(`${ep.name} 无 version.json(跳过)`);
+  }
+  const php = path.join(ROOT, 'quickdial-emlog/quickdial/quickdial.php');
+  if (fs.existsSync(php)) {
+    const s = fs.readFileSync(php, 'utf8');
+    const vm = s.match(/^\s*\*\s*Version:\s*([\d.]+)/m);
+    if (vm) {
+      if (vm[1] !== srcVersion) fail(`quickdial.php Version=${vm[1]} ≠ 源版本 ${srcVersion}`);
+      else ok(`quickdial.php Version=${vm[1]}`);
+    } else fail('quickdial.php 未找到 Version: 字段');
+    const nm = s.match(/Plugin Name:\s*([^\r\n]+)/);
+    if (nm && /Version:/i.test(nm[1])) fail('quickdial.php Plugin Name 仍含 Version 文本(标题会带版本号!)');
+  }
+
+  // B. 跨端构建哈希一致性（若各端引用的主 JS 哈希不同 → 漏端/未重新构建）
+  console.log('  [B] 跨端构建哈希一致性');
+  const mainHash = (dir) => {
+    const idx = path.join(dir, 'index.html');
+    if (!fs.existsSync(idx)) return null;
+    const m = fs.readFileSync(idx, 'utf8').match(/assets\/(index-[A-Za-z0-9_-]+)\.js/);
+    return m ? m[1] : null;
+  };
+  const hashes = {};
+  for (const ep of ends) { const h = mainHash(ep.dir); if (h) hashes[ep.name] = h; }
+  const uniq = new Set(Object.values(hashes));
+  if (uniq.size > 1) fail('各端构建哈希不一致(疑似漏端/未重新构建): ' + JSON.stringify(hashes));
+  else if (uniq.size === 1) ok('各端构建哈希一致: ' + [...uniq][0]);
+  else fail('未能从任何端解析到主 JS 哈希');
+
+  // C. 绝对路径泄漏（插件/飞牛端 index.html 不得出现 /assets、/js.png 等绝对路径）
+  console.log('  [C] 绝对路径检查 (插件/飞牛必须用 ./)');
+  for (const ep of ends) {
+    if (!ep.rel) continue;
+    const idx = path.join(ep.dir, 'index.html');
+    if (!fs.existsSync(idx)) { fail(`${ep.name} 缺少 index.html`); continue; }
+    const html = fs.readFileSync(idx, 'utf8');
+    const bad = [...html.matchAll(/(?:src|href)\s*=\s*["'](\/[^/"'][^"']*)["']/g)].map((x) => x[1]);
+    if (bad.length) fail(`${ep.name} index.html 含绝对路径(应为 ./): ${bad.join(', ')}`);
+    else ok(`${ep.name} 路径均为相对`);
+  }
+
+  // D. 引用资源存在性（index.html 引用的 ./xxx 必须存在）
+  console.log('  [D] 引用资源存在性');
+  for (const ep of ends) {
+    const idx = path.join(ep.dir, 'index.html');
+    if (!fs.existsSync(idx)) { fail(`${ep.name} 缺少 index.html`); continue; }
+    const html = fs.readFileSync(idx, 'utf8');
+    const refs = [...html.matchAll(/(?:src|href)\s*=\s*["'](\.\/[^"']+)["']/g)].map((x) => x[1].split('?')[0]);
+    for (const r of refs) { if (!fs.existsSync(path.resolve(ep.dir, r))) fail(`${ep.name} 引用缺失: ${r}`); }
+    ok(`${ep.name} index.html 引用资源已核对(${refs.length} 项)`);
+  }
+
+  // E. 关键资源齐全（飞牛端 config、images/icon_64.png 必须存在）
+  console.log('  [E] 关键资源齐全');
+  for (const ep of ends) {
+    for (const f of ep.need) {
+      const p = path.join(ep.dir, f);
+      if (!isNonEmpty(p)) fail(`${ep.name} 缺少关键资源(或为空): ${f}`);
+      else ok(`${ep.name} ✓ ${f}`);
+    }
+  }
+
+  // F0. 平台标识注入（云同步 detectPlatform 靠它区分端，漏注入会 fallback 成 web）
+  console.log('  [F0] 平台标识 __QD_PLATFORM');
+  for (const ep of ends) {
+    if (!ep.platform) continue;
+    const idx = path.join(ep.dir, 'index.html');
+    if (!fs.existsSync(idx)) { fail(`${ep.name} 缺 index.html，无法校验平台标识`); continue; }
+    const html = fs.readFileSync(idx, 'utf-8');
+    if (!html.includes(`__QD_PLATFORM='${ep.platform}'`)) fail(`${ep.name} 未注入 __QD_PLATFORM='${ep.platform}'`);
+    else ok(`${ep.name} ✓ __QD_PLATFORM='${ep.platform}'`);
+  }
+
+  // F. 飞牛端启动配置 app/ui/config 必须是「文件」且为合法 JSON
+  //    历史事故: 该文件曾被同步流程清成空目录, 导致 fnpack 报
+  //    Required file "app/ui/config" is missing。仅查存在性不足以拦截。
+  console.log('  [F] 飞牛端启动配置 config');
+  const fnosCfg = path.join(FNOS_UI, 'config');
+  if (!fs.existsSync(fnosCfg)) {
+    fail('飞牛端 app/ui/config 不存在');
+  } else if (fs.statSync(fnosCfg).isDirectory()) {
+    fail('飞牛端 app/ui/config 是目录，应为 JSON 文件(fnpack 会报 missing)');
+  } else {
+    try {
+      const cfg = JSON.parse(fs.readFileSync(fnosCfg, 'utf-8'));
+      const app = cfg['.url'] && cfg['.url']['quick-dial.APPLICATION'];
+      if (!app) fail('飞牛端 config 缺少 .url["quick-dial.APPLICATION"] 节点');
+      else {
+        for (const k of ['title', 'icon', 'type', 'port', 'url']) {
+          if (!app[k]) fail(`飞牛端 config 缺字段: ${k}`);
+        }
+        ok(`飞牛端 config 合法 (title=${app.title}, port=${app.port})`);
+      }
+    } catch (e) {
+      fail(`飞牛端 config 不是合法 JSON: ${e.message}`);
+    }
+  }
+
+  return failures;
+}
+
 // ---------- 主流程 ----------
 function main() {
   const args = process.argv.slice(2);
   const noBuild = args.includes('--no-build');
+  const checkOnly = args.includes('--check');
   const verArg = args.find((a) => /^\d+\.\d+\.\d+/.test(a));
+
+  // --check: 仅运行 smoke，不构建、不改动任何文件（非零退出即校验失败）
+  if (checkOnly) {
+    log('=== 呲啦起始页 四端 smoke 校验 (--check, 只读) ===');
+    const f = smoke();
+    if (f.length) { console.error(`\n[smoke] ${f.length} 项校验失败 → 非零退出`); process.exit(1); }
+    console.log('\n[smoke] 全部通过 ✔');
+    return;
+  }
 
   log('=== 呲啦起始页 一键四端 release ===');
   if (verArg) {
@@ -181,12 +336,17 @@ function main() {
   }
   if (!noBuild) build(); else log('[1/5] 跳过构建 (--no-build)');
   syncEndpoint('插件端(Emlog)', PLUGIN_WEB, [], 'plugin');
-  syncEndpoint('飞牛端(NAS)', FNOS_UI, ['config', 'images']);
+  syncEndpoint('飞牛端(NAS)', FNOS_UI, ['config', 'images'], 'fnos');
   packCrx();
   fnosPack();
   const published = ftpPublish();
   if (published) onlineVerify();
   verify();
+  // T4: 同步后门禁校验，失败则非零退出，阻断后续/发布
+  log('[6/6] 四端 smoke 校验:');
+  const f = smoke();
+  if (f.length) { console.error(`\n[smoke] ${f.length} 项校验失败 → 非零退出`); process.exit(1); }
+  console.log('\n[完成 + smoke 通过 ✔]');
 }
 
 main();

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理后台预览（本地，未部署）</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --panel: rgba(255,255,255,0.045);
+    --panel2: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.09);
+    --border2: rgba(255,255,255,0.06);
+    --text: #e7ecf5;
+    --text2: rgba(231,236,245,0.55);
+    --text3: rgba(231,236,245,0.38);
+    --accent: #4f8fff;
+    --accent2: #38bdf8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --purple: #a855f7;
+    --radius: 16px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    color: var(--text); display: flex; min-height: 100vh;
+    background:
+      radial-gradient(1200px 600px at 82% -12%, rgba(79,143,255,0.12), transparent 60%),
+      radial-gradient(900px 520px at -8% 112%, rgba(56,189,248,0.09), transparent 55%),
+      var(--bg);
+  }
+  .sidebar { width: 244px; background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)); border-right: 1px solid var(--border); padding: 26px 0; flex-shrink: 0; display: flex; flex-direction: column; }
+  .sidebar-logo { padding: 0 24px 24px; font-weight: 800; font-size: 18px; letter-spacing: .2px; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+  .sidebar-logo span { font-size: 10px; display: block; color: var(--text3); font-weight: 600; letter-spacing: 2px; -webkit-text-fill-color: var(--text3); }
+  .sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 0 14px; }
+  .sidebar-nav a { display: flex; align-items: center; gap: 12px; padding: 11px 16px; font-size: 13px; font-weight: 600; color: var(--text2); text-decoration: none; border-radius: 11px; transition: all .15s; }
+  .sidebar-nav a:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .sidebar-nav a.active { color: #fff; background: linear-gradient(135deg, rgba(79,143,255,0.22), rgba(56,189,248,0.14)); box-shadow: inset 0 0 0 1px rgba(79,143,255,0.35); }
+  .sidebar-nav .icon { font-size: 16px; width: 22px; text-align: center; }
+  .sidebar-footer { padding: 16px 20px 0; border-top: 1px solid var(--border); margin-top: 8px; }
+  .sidebar-user { font-size: 12px; color: var(--text2); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .sidebar-user::before { content: '👤'; }
+  .btn-logout { display: block; width: 100%; padding: 9px 0; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(220,38,38,0.1)); color: var(--red); transition: all .2s; }
+  .btn-logout:hover { background: linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0.16)); }
+  .main { flex: 1; overflow-y: auto; padding: 30px 36px 48px; }
+  .page-title { font-size: 25px; font-weight: 800; margin-bottom: 6px; letter-spacing: -.3px; }
+  .page-sub { font-size: 13px; color: var(--text2); margin-bottom: 28px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 34px; }
+  .stat { position: relative; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 22px 20px; overflow: hidden; transition: transform .2s, border-color .2s, box-shadow .2s; }
+  .stat:hover { transform: translateY(-3px); border-color: rgba(79,143,255,0.45); box-shadow: var(--shadow); }
+  .stat::before { content:''; position:absolute; left:0; top:0; width:100%; height:3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); opacity:.9; }
+  .stat-icon { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 21px; background: rgba(79,143,255,0.16); margin-bottom: 14px; }
+  .stat:nth-child(2) .stat-icon { background: rgba(168,85,247,0.16); }
+  .stat:nth-child(3) .stat-icon { background: rgba(245,158,11,0.16); }
+  .stat:nth-child(4) .stat-icon { background: rgba(34,197,94,0.16); }
+  .stat-label { font-size: 12px; color: var(--text2); letter-spacing: .3px; }
+  .stat-value { font-size: 31px; font-weight: 800; letter-spacing: -1px; margin-top: 2px; }
+  .stat-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 22px; box-shadow: var(--shadow); }
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+  .search-row { display: flex; gap: 8px; margin-bottom: 18px; }
+  .search-input { flex: 1; padding: 11px 15px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 11px; color: var(--text); font-size: 13px; outline: none; transition: border-color .15s, box-shadow .15s; }
+  .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,143,255,0.16); }
+  .table-wrap { overflow-x: auto; border-radius: 12px; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; min-width: 760px; }
+  thead th { text-align: left; padding: 13px 15px; color: var(--text3); font-weight: 600; font-size: 11px; letter-spacing: .7px; text-transform: uppercase; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+  tbody td { padding: 14px 15px; border-bottom: 1px solid var(--border2); vertical-align: middle; }
+  tbody tr { transition: background .15s; }
+  tbody tr:hover td { background: rgba(79,143,255,0.06); }
+  tbody tr:hover td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+  .mono { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11px; color: var(--text2); }
+  .break { word-break: break-all; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 11px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-green { background: rgba(34,197,94,0.14); color: var(--green); }
+  .badge-purple { background: rgba(168,85,247,0.14); color: var(--purple); }
+  .badge-blue { background: rgba(79,143,255,0.16); color: var(--accent); }
+  .badge-gray { background: rgba(255,255,255,0.06); color: var(--text2); }
+  .badge-red { background: rgba(239,68,68,0.14); color: var(--red); }
+  .btn { display: inline-flex; align-items: center; gap: 5px; padding: 9px 15px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; transition: all .15s; white-space: nowrap; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 6px 16px rgba(79,143,255,0.3); }
+  .btn-primary:hover { filter: brightness(1.06); transform: translateY(-1px); }
+  .btn-outline { background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { background: rgba(255,255,255,0.07); border-color: rgba(79,143,255,0.4); }
+  .btn-green { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 6px 16px rgba(34,197,94,0.25); }
+  .btn-green:hover { filter: brightness(1.06); transform: translateY(-1px); }
+  .btn-xs { padding: 5px 10px; font-size: 11px; border-radius: 8px; }
+  .act-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; margin-right: 9px; vertical-align: middle; }
+  .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+  .pagination a { min-width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 13px; font-weight: 600; text-decoration: none; border: 1px solid var(--border); color: var(--text2); background: rgba(255,255,255,0.02); transition: .15s; }
+  .pagination a:hover:not(.active) { background: rgba(79,143,255,0.1); color: var(--text); border-color: rgba(79,143,255,0.35); }
+  .pagination a.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; color: #fff; box-shadow: 0 6px 16px rgba(79,143,255,0.3); }
+  .pagination .page-nav { font-size: 16px; }
+  .msg { background: rgba(34,197,94,0.1); color: var(--green); padding: 11px 16px; border-radius: 11px; margin-bottom: 18px; font-size: 13px; }
+  .form-group { margin-bottom: 15px; }
+  .form-label { font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text2); display: block; }
+  .form-input { width: 100%; padding: 11px 15px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 13px; outline: none; transition: border-color .15s, box-shadow .15s; }
+  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,143,255,0.18); }
+  .filter-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .filter-tab { padding: 8px 18px; border-radius: 999px; font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid var(--border); color: var(--text2); transition: all .15s; }
+  .filter-tab:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+  .filter-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; color: #fff; box-shadow: 0 6px 16px rgba(79,143,255,0.25); }
+  .note-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 11px; border-radius: 999px; font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+  .note-chip.gift { background: rgba(168,85,247,0.16); color: var(--purple); }
+  .note-chip.compensation { background: rgba(245,158,11,0.16); color: var(--amber); }
+  .note-chip.confirm { background: rgba(34,197,94,0.16); color: var(--green); }
+  .note-chip.other { background: rgba(255,255,255,0.07); color: var(--text2); }
+  .note-text { font-size: 12px; color: var(--text2); white-space: pre-wrap; line-height: 1.5; }
+  .modal-mask { position: fixed; inset: 0; background: rgba(4,8,18,0.66); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal-mask.show { display: flex; }
+  .modal { width: 100%; max-width: 460px; background: linear-gradient(180deg, #111829, #0c1322); border: 1px solid var(--border); border-radius: 20px; padding: 28px; box-shadow: 0 30px 80px rgba(0,0,0,0.6); animation: pop .2s ease; }
+  @keyframes pop { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .modal .modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+  .modal textarea.form-input { resize: vertical; min-height: 74px; font-family: inherit; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+  .modal-actions .btn { flex: 1; justify-content: center; padding: 12px; }
+  .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); padding: 13px 24px; border-radius: 14px; font-size: 13px; font-weight: 600; color: #fff; z-index: 200; display: none; box-shadow: 0 12px 30px rgba(0,0,0,0.45); }
+  .toast.success { background: linear-gradient(135deg,#22c55e,#16a34a); }
+  .toast.error { background: linear-gradient(135deg,#ef4444,#dc2626); }
+  .toast.info { background: linear-gradient(135deg,#4f8fff,#38bdf8); }
+  /* 预览专用：把固定弹窗变成静态展示 */
+  .preview-modal { position: static; display: block; margin-top: 22px; background: rgba(4,8,18,0.3); }
+  .preview-modal .modal { animation: none; }
+  .preview-tag { display:inline-block; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--accent2); border:1px solid var(--border); padding:3px 10px; border-radius:999px; margin-bottom:14px; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">Quick Dial<span>管理后台</span></div>
+  <div class="sidebar-nav">
+    <a href="#" class="active"><span class="icon">📊</span> 仪表盘</a>
+    <a href="#"><span class="icon">👥</span> 用户管理</a>
+    <a href="#"><span class="icon">💰</span> 订单记录</a>
+    <a href="#"><span class="icon">⚙️</span> 设置</a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">corban</div>
+    <button class="btn-logout">退出登录</button>
+  </div>
+</div>
+
+<div class="main">
+  <span class="preview-tag">本地预览 · 与部署版本 CSS 完全一致 · 尚未上线</span>
+
+  <!-- 仪表盘 -->
+  <div class="page-title">仪表盘</div>
+  <div class="page-sub">Quick Dial 运行概览</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-icon">👥</div><div class="stat-label">注册用户</div><div class="stat-value">1,284</div></div>
+    <div class="stat"><div class="stat-icon">⭐</div><div class="stat-label">Pro 用户</div><div class="stat-value">312</div></div>
+    <div class="stat"><div class="stat-icon">💰</div><div class="stat-label">今日订单</div><div class="stat-value">18</div><div class="stat-sub">¥1,236.00</div></div>
+    <div class="stat"><div class="stat-icon">📈</div><div class="stat-label">本月收入</div><div class="stat-value" style="color:var(--green)">¥12,408.00</div></div>
+  </div>
+
+  <!-- 用户管理 -->
+  <div class="page-title">用户管理</div>
+  <div class="page-sub">共 1,284 位用户</div>
+  <div class="card">
+    <div class="search-row">
+      <input class="search-input" placeholder="搜索用户名..." />
+      <button class="btn btn-primary">搜索</button>
+    </div>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>用户名</th><th>状态</th><th>邮箱</th><th>注册</th><th>订阅</th><th>到期</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1284</td>
+          <td><span class="avatar">陈</span>chenliang ✅</td>
+          <td><button class="btn btn-xs btn-outline">封禁</button></td>
+          <td style="font-size:12px;opacity:.6">chen@cilacila.cn ✅</td>
+          <td style="font-size:12px;opacity:.6">2025-03-12</td>
+          <td><span class="badge badge-purple">终身</span></td>
+          <td style="font-size:11px;opacity:.6">永久</td>
+          <td>
+            <div class="act-group">
+              <button class="btn btn-green btn-xs">开通Pro</button>
+              <button class="btn btn-outline btn-xs">续费</button>
+              <button class="btn btn-outline btn-xs">密码</button>
+              <button class="btn btn-outline btn-xs" style="color:var(--red)">取消Pro</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>1283</td>
+          <td><span class="avatar">U</span>user_pro_09</td>
+          <td><button class="btn btn-xs btn-outline">封禁</button></td>
+          <td style="font-size:12px;opacity:.6">u09@qq.com</td>
+          <td style="font-size:12px;opacity:.6">2025-11-02</td>
+          <td><span class="badge badge-blue">年度</span></td>
+          <td style="font-size:11px;opacity:.6">2026-11-02</td>
+          <td>
+            <div class="act-group">
+              <button class="btn btn-green btn-xs">开通Pro</button>
+              <button class="btn btn-outline btn-xs">续费</button>
+              <button class="btn btn-outline btn-xs">密码</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>1282</td>
+          <td><span class="avatar">F</span>free_demo</td>
+          <td><button class="btn btn-xs btn-outline">封禁</button></td>
+          <td style="font-size:12px;opacity:.6">-</td>
+          <td style="font-size:12px;opacity:.6">2026-01-20</td>
+          <td><span class="badge badge-gray">免费</span></td>
+          <td style="font-size:11px;opacity:.6">-</td>
+          <td>
+            <div class="act-group">
+              <button class="btn btn-green btn-xs">开通Pro</button>
+              <button class="btn btn-outline btn-xs">续费</button>
+              <button class="btn btn-outline btn-xs">密码</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="pagination">
+      <a href="#" class="page-nav">‹</a><a href="#" class="active">1</a><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#" class="page-nav">›</a>
+    </div>
+  </div>
+
+  <!-- 订单记录 -->
+  <div class="page-title">订单记录</div>
+  <div class="page-sub">共 86 笔，第 1 / 3 页</div>
+  <div class="filter-tabs">
+    <a href="#" class="filter-tab active">全部</a>
+    <a href="#" class="filter-tab">待支付</a>
+    <a href="#" class="filter-tab">已支付</a>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>订单号</th><th>用户</th><th>套餐</th><th>金额</th><th>方式</th><th>状态</th><th>备注</th><th>时间</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>86</td>
+          <td class="mono break">20260722143015A8K2M9Q7Z1X4B6C3D5E8F0</td>
+          <td>chenliang</td>
+          <td><span class="badge badge-blue">年度</span></td>
+          <td style="font-weight:600">¥68.00</td>
+          <td>💙</td>
+          <td><span class="badge badge-gray">待支付</span></td>
+          <td><span class="note-chip confirm">✅ 人工确认</span><br><span class="note-text">管理员手动确认收款</span></td>
+          <td style="font-size:11px;opacity:.6">2026-07-22 14:30</td>
+          <td>
+            <div class="act-group">
+              <button class="btn btn-green btn-xs">确认支付</button>
+              <button class="btn btn-outline btn-xs" style="color:var(--red);border-color:rgba(239,68,68,0.25)">删除</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>85</td>
+          <td class="mono break">MANUAL2026072112000012345678</td>
+          <td>user_pro_09</td>
+          <td><span class="badge badge-purple">终身</span></td>
+          <td style="font-weight:600">¥198.00</td>
+          <td>🔧</td>
+          <td><span class="badge badge-green">已支付</span></td>
+          <td><span class="note-chip gift">🎁 赠送</span><br><span class="note-text">活动赠送测试</span></td>
+          <td style="font-size:11px;opacity:.6">2026-07-21 12:00</td>
+          <td>
+            <div class="act-group">
+              <button class="btn btn-outline btn-xs" style="color:var(--red);border-color:rgba(239,68,68,0.25)">删除</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>84</td>
+          <td class="mono break">MANUAL2026072010000099887766</td>
+          <td>free_demo</td>
+          <td><span class="badge badge-blue">3个月</span></td>
+          <td style="font-weight:600">¥30.00</td>
+          <td>🔧</td>
+          <td><span class="badge badge-green">已支付</span></td>
+          <td><span class="note-chip compensation">🛠 补偿</span><br><span class="note-text">Bug 补偿</span></td>
+          <td style="font-size:11px;opacity:.6">2026-07-20 10:00</td>
+          <td>
+            <div class="act-group">
+              <button class="btn btn-outline btn-xs" style="color:var(--red);border-color:rgba(239,68,68,0.25)">删除</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="pagination">
+      <a href="#" class="page-nav">‹</a><a href="#" class="active">1</a><a href="#">2</a><a href="#">3</a><a href="#" class="page-nav">›</a>
+    </div>
+  </div>
+
+  <!-- 弹窗预览 -->
+  <div class="page-title">弹窗预览</div>
+  <div class="page-sub">以下为静态展示（实际为居中浮层）</div>
+
+  <div class="modal-mask preview-modal">
+    <div class="modal">
+      <h3>确认支付</h3>
+      <div class="modal-sub">该用户当前已拥有有效的 Pro 订阅。如勾选开通，将不会重复开通（沿用现有到期时间）。</div>
+      <div class="form-group" style="display:flex;gap:10px;align-items:flex-start;background:rgba(79,143,255,0.06);border:1px solid var(--border);border-radius:12px;padding:14px;">
+        <input type="checkbox" checked style="margin-top:3px;width:16px;height:16px;accent-color:var(--accent);">
+        <label style="font-size:13px;line-height:1.5;cursor:pointer;">同步为用户开通 Pro 订阅
+          <br><span style="color:var(--text2);font-size:12px;">取消勾选则仅把订单标记为「已支付」，不开通订阅</span></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline">取消</button>
+        <button class="btn btn-primary">确认收款</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask preview-modal">
+    <div class="modal">
+      <h3>手动开通 Pro</h3>
+      <div class="modal-sub">为用户 <span>chenliang (#1284)</span></div>
+      <div class="form-group">
+        <label class="form-label">套餐</label>
+        <select class="form-input">
+          <option>月度（¥9.90 / 30天）</option>
+          <option>年度（¥68.00 / 365天）</option>
+          <option>终身（¥198.00）</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">备注类型</label>
+        <select class="form-input">
+          <option>🎁 赠送</option><option>🛠 补偿</option><option>📝 其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">备注说明（用户可见）</label>
+        <textarea class="form-input" placeholder="例如：活动赠送、Bug 补偿、节日福利……"></textarea>
+      </div>
+      <div class="form-group" style="display:flex;align-items:flex-start;gap:8px;">
+        <input type="checkbox" checked style="margin-top:3px;">
+        <label style="font-size:13px;line-height:1.5;">发送邮件通知用户<br><span style="color:var(--text2);font-size:12px;">邮件内含开通时间、到期时间，有备注则一并显示</span></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline">取消</button>
+        <button class="btn btn-primary">确认</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

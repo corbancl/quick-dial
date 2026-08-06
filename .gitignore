@@ -42,3 +42,13 @@ scripts/ssh-fnos-build.cjs
 scripts/upload-*.cjs
 scripts/verify-links.cjs
 scripts/scan-main-pages.cjs
+
+# 临时构建/缓存/下载产物
+.playwright-cli/
+.tmp_fpk/
+.tmp_fpk2/
+.tmp_fpk3/
+.tmp_dl/
+
+# 飞牛端编译二进制（由 Go 源码交叉编译生成，不入库）
+/fnos/app/server

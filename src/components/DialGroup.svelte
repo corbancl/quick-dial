@@ -76,6 +76,7 @@ import { t } from '../utils/i18n.svelte';
         >
           <DialCard
             {dial}
+            groupName={group.name}
             onedit={() => onedit(dial)}
             ondelete={() => ondelete(dial.id)}
             {ondragstart}

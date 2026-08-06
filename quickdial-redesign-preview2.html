@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>呲啦起始页 · 拓扑线场概念预览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0E16; --bg2:#0E1420;
+  --ink:#E9EFF3; --muted:rgba(233,239,243,.55);
+  --accent:#1FE0C7; --accent2:#FF6B4A;
+  --card:rgba(255,255,255,.035); --card-bd:rgba(255,255,255,.09);
+  --card-hi:rgba(31,224,199,.55);
+  --shadow:0 18px 50px -20px rgba(0,0,0,.7);
+}
+html.light{
+  --bg:#F4F6F8; --bg2:#FFFFFF;
+  --ink:#0F141B; --muted:rgba(15,20,27,.55);
+  --accent:#0FB89E; --accent2:#E8512F;
+  --card:rgba(15,20,27,.025); --card-bd:rgba(15,20,27,.10);
+  --card-hi:rgba(15,184,158,.55);
+  --shadow:0 18px 50px -24px rgba(20,40,60,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Noto Sans SC','Space Grotesk',system-ui,sans-serif;
+  background:radial-gradient(120% 120% at 50% -10%,var(--bg2),var(--bg) 60%);
+  color:var(--ink); overflow:hidden;
+  transition:background .6s ease,color .6s ease;
+}
+#bg{position:fixed;inset:0;z-index:0;opacity:.9}
+.stage{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;padding:40px}
+.clock{font-family:'Space Grotesk',sans-serif;font-weight:300;font-size:clamp(48px,9vw,104px);letter-spacing:.02em;line-height:1;display:flex;align-items:baseline;gap:6px;text-shadow:0 0 30px rgba(31,224,199,.12)}
+.clock .sec{font-size:.34em;color:var(--muted);font-weight:400;transform:translateY(-.2em)}
+.clock .dot{color:var(--accent);animation:blink 2s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+.date{font-size:14px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:400}
+.search{width:min(560px,86vw);position:relative}
+.search input{width:100%;padding:16px 22px 16px 52px;border-radius:18px;background:var(--card);border:1px solid var(--card-bd);color:var(--ink);font-size:16px;font-family:inherit;outline:none;transition:.25s;box-shadow:var(--shadow)}
+.search input:focus{border-color:var(--card-hi);box-shadow:0 0 0 4px rgba(31,224,199,.10),var(--shadow)}
+.search .ico{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted)}
+.dials{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:16px;width:min(720px,92vw)}
+.dial{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 10px;border-radius:18px;background:var(--card);border:1px solid var(--card-bd);text-decoration:none;color:var(--ink);transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s;opacity:0;animation:rise .6s cubic-bezier(.2,.8,.2,1) forwards}
+.dial:hover{transform:translateY(-6px);border-color:var(--card-hi);box-shadow:0 14px 30px -16px rgba(31,224,199,.5)}
+.dial .badge{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-weight:500;font-size:18px;color:#06121A;font-family:'Space Grotesk',sans-serif;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.dial .name{font-size:13px;color:var(--muted);font-weight:400}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.toggle{position:fixed;top:22px;right:24px;z-index:2;display:flex;gap:6px;background:var(--card);border:1px solid var(--card-bd);padding:5px;border-radius:12px}
+.toggle button{background:none;border:0;color:var(--muted);font-family:inherit;font-size:13px;padding:6px 12px;border-radius:8px;cursor:pointer;transition:.2s}
+.toggle button.on{background:var(--accent);color:#06121A;font-weight:500}
+.brand{position:fixed;left:24px;top:22px;z-index:2;font-family:'Space Grotesk';font-weight:500;letter-spacing:.06em;font-size:15px;color:var(--muted)}
+.brand b{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){.dial{animation:none;opacity:1}.clock .dot{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="brand">呲啦<b>·</b>QuickDial</div>
+<div class="toggle">
+  <button data-t="dark" class="on">夜</button>
+  <button data-t="light">昼</button>
+</div>
+<div class="stage">
+  <div class="date" id="date">THU · 2026.07.16</div>
+  <div class="clock"><span id="h">00</span><span class="dot">:</span><span id="m">00</span><span class="sec" id="s">00</span></div>
+  <div class="search">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+    <input placeholder="搜索网络，或输入网址直达…" />
+  </div>
+  <div class="dials" id="dials"></div>
+</div>
+<script>
+const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+let W,H,t=0;
+function resize(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);}
+resize();addEventListener('resize',resize);
+function draw(){
+  const w=innerWidth,h=innerHeight;
+  ctx.clearRect(0,0,w,h);
+  const lines=26, gap=h/lines;
+  ctx.lineWidth=1;
+  const light=document.documentElement.classList.contains('light');
+  for(let i=0;i<=lines;i++){
+    const y0=i*gap;
+    ctx.beginPath();
+    for(let x=0;x<=w;x+=8){
+      const y=y0 + Math.sin(x*0.006 + t*0.6 + i*0.5)*14 + Math.sin(x*0.013 - t*0.4 + i*0.3)*8;
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    const a=0.05+0.05*Math.sin(i*0.4+t*0.3);
+    ctx.strokeStyle=light?`rgba(20,90,100,${a})`:`rgba(120,205,215,${a})`;
+    ctx.stroke();
+  }
+  t+=0.01;
+  requestAnimationFrame(draw);
+}
+draw();
+function tick(){
+  const d=new Date(), p=n=>String(n).padStart(2,'0');
+  h.textContent=p(d.getHours());m.textContent=p(d.getMinutes());s.textContent=p(d.getSeconds());
+  const wd=['SUN','MON','TUE','WED','THU','FRI','SAT'][d.getDay()];
+  date.textContent=`${wd} · ${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())}`;
+}
+const h=document.getElementById('h'),m=document.getElementById('m'),s=document.getElementById('s'),date=document.getElementById('date');
+setInterval(tick,1000);tick();
+const apps=[
+  {n:'GitHub',c:'#1FE0C7'},{n:'Gmail',c:'#FF6B4A'},{n:'YouTube',c:'#FF5C7A'},
+  {n:'知乎',c:'#2B8CFF'},{n:'B站',c:'#42C9FF'},{n:'微博',c:'#FF8A3D'},
+  {n:'掘金',c:'#3DDC97'},{n:'少数派',c:'#9B8CFF'},{n:'微信',c:'#46C46A'},
+  {n:'淘宝',c:'#FF6B4A'},{n:'豆瓣',c:'#5FB96A'},{n:'V2EX',c:'#1FE0C7'}
+];
+const wrap=document.getElementById('dials');
+apps.forEach((a,i)=>{
+  const el=document.createElement('a');
+  el.href='#';el.className='dial';el.style.animationDelay=(i*0.04)+'s';
+  el.innerHTML=`<span class="badge" style="background:${a.c}">${a.n[0]}</span><span class="name">${a.n}</span>`;
+  wrap.appendChild(el);
+});
+document.querySelectorAll('.toggle button').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.toggle button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.documentElement.classList.toggle('light',b.dataset.t==='light');
+  };
+});
+</script>
+</body>
+</html>

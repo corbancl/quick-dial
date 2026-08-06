@@ -1,0 +1,92 @@
+#!/bin/bash
+# Native 应用生命周期脚本：由飞牛应用中心调用 start/stop/status
+# 直接运行编译好的 Go 单二进制 server（监听 service_port，托管 ui 静态页 + /api/apps）
+# 零运行时依赖：不依赖 nodejs_v22，跟 minimal-music 等编译型应用同构
+set -u
+
+LOG_FILE="${TRIM_PKGVAR}/quick-dial.log"
+PID_FILE="${TRIM_PKGVAR}/quick-dial.pid"
+DATA_DIR="${TRIM_PKGVAR}/data"
+APP_DIR="${TRIM_APPDEST}"
+BIN="${APP_DIR}/server"
+
+log_msg() { echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "${LOG_FILE}"; }
+
+check_process() { kill -0 "$1" 2>/dev/null; }
+
+status() {
+  if [ -f "${PID_FILE}" ]; then
+    pid=$(head -n 1 "${PID_FILE}" | tr -d '[:space:]')
+    if [ -n "${pid}" ] && check_process "${pid}"; then
+      return 0
+    fi
+    rm -f "${PID_FILE}"
+  fi
+  return 1
+}
+
+start_process() {
+  if status; then
+    log_msg "already running pid $(cat "${PID_FILE}" 2>/dev/null)"
+    return 0
+  fi
+  mkdir -p "${DATA_DIR}" "${TRIM_PKGVAR}"
+  if [ ! -x "${BIN}" ]; then
+    log_msg "server binary not found or not executable: ${BIN}"
+    return 1
+  fi
+  if [ ! -d "${APP_DIR}/ui" ]; then
+    log_msg "ui dir missing: ${APP_DIR}/ui"
+    return 1
+  fi
+  log_msg "starting quick-dial (bin=${BIN}, port=${QD_PORT:-9527})"
+  nohup "${BIN}" >> "${LOG_FILE}" 2>&1 &
+  printf '%s' "$!" > "${PID_FILE}"
+  sleep 1
+  if status; then
+    log_msg "started pid $(cat "${PID_FILE}")"
+    return 0
+  fi
+  log_msg "failed to start, see ${LOG_FILE}"
+  return 1
+}
+
+stop_process() {
+  log_msg "stopping quick-dial"
+  if [ -f "${PID_FILE}" ]; then
+    pid=$(head -n 1 "${PID_FILE}" | tr -d '[:space:]')
+    if [ -n "${pid}" ] && check_process "${pid}"; then
+      kill -TERM "${pid}" 2>/dev/null || true
+      count=0
+      while check_process "${pid}" && [ "${count}" -lt 10 ]; do
+        sleep 1
+        count=$((count + 1))
+      done
+      if check_process "${pid}"; then
+        kill -KILL "${pid}" 2>/dev/null || true
+      fi
+    fi
+    rm -f "${PID_FILE}"
+  fi
+  return 0
+}
+
+case "$1" in
+  start)
+    start_process
+    ;;
+  stop)
+    stop_process
+    ;;
+  status)
+    if status; then
+      exit 0
+    else
+      exit 3
+    fi
+    ;;
+  *)
+    echo "Unknown command: $1" >&2
+    exit 1
+    ;;
+esac

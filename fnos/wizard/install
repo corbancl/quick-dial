@@ -1,0 +1,19 @@
+[
+    {
+        "stepTitle": "欢迎使用 Quick Dial",
+        "items": [
+            {
+                "type": "tips",
+                "helpText": "Quick Dial 是一款极简无广告的浏览器起始页，安装后即可使用。"
+            },
+            {
+                "type": "tips",
+                "helpText": "默认端口 <strong>9527</strong>，安装后点击桌面图标，或访问 <strong>http://你的NAS:9527</strong> 即可打开。"
+            },
+            {
+                "type": "tips",
+                "helpText": "在浏览器扩展中把自定义新标签页 URL 设为该地址，即可让局域网所有设备共用同一起始页。"
+            }
+        ]
+    }
+]
